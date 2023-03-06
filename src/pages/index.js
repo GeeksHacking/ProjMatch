@@ -1,7 +1,15 @@
+// Imports
+import { useState } from 'react'
+
+// Components
+import SideNav from '../components/SideNav/SideNav'
+
 import Head from 'next/head'
-import Logo from '../components/Logo'
 
 export default function Home() {
+
+  const [sideNavActive, setSideNavActive] = useState(true)
+
   return (
     <div>
       <Head>
@@ -11,7 +19,7 @@ export default function Home() {
         <link rel="icon" href="/logo.svg" />
       </Head>
       <main>
-        <Logo />
+        <SideNav isActive={sideNavActive} />
       </main>
     </div>
   )
