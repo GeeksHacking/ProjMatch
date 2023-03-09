@@ -8,8 +8,6 @@ import Head from 'next/head'
 
 export default function Home() {
 
-  const [sideNavActive, setSideNavActive] = useState(true)
-
   return (
     <div className='w-full h-full'>
       <Head>
@@ -19,7 +17,7 @@ export default function Home() {
         <link rel="icon" href="/logo.svg" />
       </Head>
       <main className='w-full h-full'>
-        <SideNav isActive={sideNavActive} />
+        <SideNav />
       </main>
     </div>
   )

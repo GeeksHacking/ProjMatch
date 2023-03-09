@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     colors: {
       'logo-blue': '#39529D',
-      'light-blue': '#99B4E6',
+      'light-blue': '#C2D5F9',
     },
     borderWidth: {
       DEFAULT: '1px',

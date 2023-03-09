@@ -1,0 +1,8 @@
+.sidenav-btn:hover {
+    --btn-hovercolor: #b2cbfa;
+    --btn-selectcolor: #A1C2FF;
+
+    background-color: var(--btn-hovercolor);
+    width: 100%;
+
+}
