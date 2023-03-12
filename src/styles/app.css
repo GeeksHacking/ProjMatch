@@ -5,4 +5,41 @@
     background-color: var(--btn-hovercolor);
     width: 100%;
 
+    transition: 0.5s;
+    cursor: pointer;
+
 }
+
+.nav-container{
+    width: 188px;
+}
+
+.nav-container:hover{
+    width: 188px;
+}
+
+.max-nav{
+    left: -188px;
+    transition: left 1s;
+    z-index: 0;
+}
+
+.nav-container:hover .max-nav{
+    left: 0px;
+    z-index: 1;
+}
+
+.nav-container:hover .mini-nav{
+    left: -80px;
+    z-index: 0;
+}
+
+
+.mini-nav {
+    left: 0px;
+    width: fit-content;
+    transition: left 1s;
+    z-index: 1;
+}
+
+
