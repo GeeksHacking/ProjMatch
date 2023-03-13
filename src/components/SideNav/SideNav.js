@@ -3,7 +3,6 @@ import MiniSideNav from './MiniSideNav'
 
 const SideNav = () => {
 
-
     return (
         <div className="nav-container relative h-full">
             <MiniSideNav/>

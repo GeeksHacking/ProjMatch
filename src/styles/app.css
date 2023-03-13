@@ -1,7 +1,9 @@
-.sidenav-btn:hover {
+:root {
     --btn-hovercolor: #b2cbfa;
     --btn-selectcolor: #A1C2FF;
+}
 
+.sidenav-btn:hover {
     background-color: var(--btn-hovercolor);
     width: 100%;
 
@@ -11,21 +13,26 @@
 }
 
 .nav-container{
-    width: 188px;
-}
-
-.nav-container:hover{
-    width: 188px;
+    width: 80px;
 }
 
 .max-nav{
     left: -188px;
-    transition: left 1s;
+    width: max-content;
+    transition: left 0.6s;
     z-index: 0;
 }
 
 .nav-container:hover .max-nav{
+    width: max-content;
     left: 0px;
+    z-index: 1;
+}
+
+.mini-nav {
+    left: 0px;
+    width: fit-content;
+    transition: left 0.6s;
     z-index: 1;
 }
 
@@ -33,13 +40,4 @@
     left: -80px;
     z-index: 0;
 }
-
-
-.mini-nav {
-    left: 0px;
-    width: fit-content;
-    transition: left 1s;
-    z-index: 1;
-}
-
 
