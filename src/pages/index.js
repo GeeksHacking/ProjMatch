@@ -5,6 +5,7 @@ import { useState } from 'react'
 import SideNav from '../components/SideNav/SideNav'
 
 import Head from 'next/head'
+import Link from 'next/link'
 
 export default function Home() {
 
@@ -16,8 +17,15 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.svg" />
       </Head>
-      <main className='w-full h-full'>
-        <SideNav />
+      <main className='w-full h-full flex flex-row'>
+        <div className='grow'>
+          <SideNav /> 
+        </div>
+        <div className='flex h-full shrink items-center'>
+          <div className='post-alignment'>
+            <h1><Link href="/Landing/Landing">go to landing</Link></h1>
+          </div>
+        </div>
       </main>
     </div>
   )

@@ -3,6 +3,14 @@
     --btn-selectcolor: #A1C2FF;
 }
 
+/* Home Page Posts */
+.post-alignment {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+/* Nav Bar Items */
 .sidenav-btn:hover {
     background-color: var(--btn-hovercolor);
     width: 100%;
