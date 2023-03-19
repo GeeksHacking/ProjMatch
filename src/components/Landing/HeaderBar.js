@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export default function HeaderBar() {
     return (
         <div className="flex flex-row relative w-full p-2 z-50">
