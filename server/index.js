@@ -10,10 +10,9 @@ const MongoClient = mongodb.MongoClient
 
 const port = process.env.PORT || 8080
 
-MongoClient.connect(
-    process.env.ATLAS_URI
-)
+MongoClient.connect(process.env.ATLAS_URI)
 .catch(err => {
+    console.log("HI")
     console.error(err.stack)
     process.exit(1)
 })

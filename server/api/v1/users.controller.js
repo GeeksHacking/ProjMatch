@@ -6,13 +6,13 @@ export default class UsersController {
         const page = req.query.page ? parseInt(req.query.page, 10) : 0
 
         let filters = {}
-        if (req.query.users) {
-            filters.users = req.query.users
+        if (req.query.user) {
+            filters.user = req.query.user
         } else if (req.query.pw) {
             filters.pw = req.query.pw
         }
 
-        const { usersList, totalUsers }= await UsersDAO.getUsers({
+        const { usersList, totalUsers } = await UsersDAO.getUsers({
             filters,
             page,
             usersPerPage
@@ -30,15 +30,39 @@ export default class UsersController {
 
     static async apiPostUsers(req, res, next) {
         try {
-            const user = req.body.user
+            const username = req.body.username
             const pw = req.body.pw
+            const rlName = req.body.rlName
+            const regEmail = req.body.regEmail
+            const regPhone = req.body.regPhone
 
-            const date = new Date()
-
-            const userRes = await UsersDAO.addUser(user, pw, date)
+            const reviewRes = await UsersDAO.addUser(username, pw, rlName, regEmail, regPhone)
             res.json({ status: "success" })
         } catch (err) {
             res.status(500).json({ error: err.message })
+        }
+    }
+
+    static async apiUpdateUsers(req, res, next) {
+        const username = req.body.username
+        const pw = req.body.pw
+        const rlName = req.body.rlName
+        const regEmail = req.body.regEmail
+        const regPhone = req.body.regPhone
+        const userDat = req.body.userDat
+
+        // TODO
+    }
+
+    static async apiDeleteUsers(req, res, next) {
+        try {
+            const id = req.query.id
+            const username = req.body.username
+
+            const reviewRes = await UsersDAO.deleteUser(id, username)
+            res.json({ status: "success" })
+        } catch (err) {
+            res.status(500).json({ error: `Unable to delete user: ${username} as ${err.message}` })
         }
     }
 }
