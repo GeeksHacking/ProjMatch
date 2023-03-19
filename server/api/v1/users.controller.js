@@ -30,7 +30,7 @@ export default class UsersController {
 
     static async apiPostUsers(req, res, next) {
         try {
-            const userID = req.body.userID
+            const user = req.body.user
             const pw = req.body.pw
 
             const date = new Date()

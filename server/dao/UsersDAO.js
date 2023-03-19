@@ -57,9 +57,9 @@ export default class UsersDAO {
                 user: user,
                 pw: pw,
                 date: date,
-                user_id: ObjectID(user)
             }
-
+            console.log(userDoc)
+            console.log(users)
             return await users.insertOne(userDoc)
         } catch (err) {
             return {error: err}
