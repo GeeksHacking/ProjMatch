@@ -5,13 +5,13 @@ export default function HeaderBar() {
         <div className="flex flex-row relative w-full p-2 z-50">
             <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
             <div className="ml-auto space-x-3">
-                <button className="bg-light-blue p-2 rounded-lg text-white font-bold">
-                    <Link href={{pathname: "/pages/Landing/UserEntry", query: "login"}}>
+                <button className="bg-logo-lblue p-2 rounded-lg text-white font-bold">
+                    <Link href="/Login">
                         Log In
                     </Link>
                 </button>
-                <button className="bg-light-blue p-2 rounded-lg text-white font-bold">
-                    <Link href={{pathname: "/pages/Landing/UserEntry", query: "signup"}}>
+                <button className="bg-logo-blue p-2 rounded-lg text-white font-bold">
+                    <Link href="/SignUp">
                         Sign Up
                     </Link>
                 </button>

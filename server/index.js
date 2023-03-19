@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 
 // DAO
 import UsersDAO from "./dao/UsersDAO.js"
+import PostsDAO from "./dao/PostsDAO.js"
 
 dotenv.config()
 const MongoClient = mongodb.MongoClient
