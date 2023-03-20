@@ -26,7 +26,16 @@ export default class PostsController {
 
     static async apiPostPosts(req, res, next) {
         try {
-            
+            const projectName = req.body.projectName
+            const description = req.body.description
+            const creatorUserID = req.body.creatorUserID
+            const rating = req.body.rating
+            const tags = req.body.tags
+            const technologies = req.body.technologies
+            const images = req.body.images
+
+            const reviewResponse = await PostsDAO.addProject(projectName, description, creatorUserID, rating, tags, technologies, images)
+
             res.json({ status: "success" })
         } catch (err) {
             res.status(500).json({ error: err.message })

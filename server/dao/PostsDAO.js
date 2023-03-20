@@ -4,6 +4,32 @@ const ObjectID = mongodb.ObjectID
 
 let posts
 
+/*
+Post Object
+
+{
+    "projectName": "",
+    "description": "",
+    "creatorUserID": "",
+    "rating": "",
+    "tags": [],
+    "technologies": [],
+    "images": []
+}
+
+*/
+
+function makeStruct(keys) {
+    if (!keys) return null;
+    const count = keys.length;
+    
+    /** @constructor */
+    function constructor() {
+        for (let i = 0; i < count; i++) this[keys[i]] = arguments[i];
+    }
+    return constructor;
+}
+
 export default class PostsDAO {
     static async injectDB(conn) {
         if (posts) { return }
@@ -52,4 +78,15 @@ export default class PostsDAO {
         }
     }
     
+    static async addProject(projectName, description, creatorUserID, rating, tags, technologies, images) {
+        try {
+            const PostStruct = new makeStruct("projectName", "description", "creatorUserID", "rating", "tags", "technologies", "images")
+
+            const createdProj = new PostStruct(projectName, description, creatorUserID, rating, tags, technologies, images)
+
+            return await posts.insertOne(createdProj)
+        } catch (err) {
+            return { error: err }
+        }
+    }
 }
