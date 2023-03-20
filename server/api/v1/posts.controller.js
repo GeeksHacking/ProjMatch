@@ -1,4 +1,4 @@
-import PostsDAO from "../../dao/PostsDAO"
+import PostsDAO from "../../dao/PostsDAO.js"
 
 export default class PostsController {
     static async apiGetPosts(req, res, next) {
