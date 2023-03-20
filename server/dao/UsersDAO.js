@@ -1,6 +1,6 @@
 import { query } from "express"
 import mongodb from "mongodb"
-const ObjectID = mongodb.ObjectID
+const ObjectID = mongodb.ObjectId
 
 let users
 
@@ -9,11 +9,9 @@ User Object:
 
 {
     "username": "",
-    "pw": "",
     "rlName": "",
     "regEmail": "",
     "regPhone": "",
-    "is2FA": false,
     "dateCreated": "",
     "userDat": {
         "rating": 0.0,
@@ -67,8 +65,10 @@ export default class UsersDAO {
         if(filters) {
             if("user" in filters) {
                 userQuery = { "username": { $eq: filters["user"] } }
-            } else if ("pw" in filters) {
-                userQuery = { "pw": { $eq: filters["pw"] } }
+            } else if ("email" in filters) {
+                userQuery = { "regEmail": { $eq: filters["email"] } }
+            } else if ("ph" in filters) {
+                userQuery = { "regPhone": {$eq: filters["ph"]} }
             }
         }
 
@@ -94,14 +94,14 @@ export default class UsersDAO {
         }
     }
 
-    static async addUser(username, pw, rlName, regEmail, regPhone) {
+    static async addUser(username, rlName, regEmail, regPhone) {
         try {
             // User Structure
-            const UserStruct = new makeStruct(["username", "pw", "rlName", "regEmail", "regPhone", "dateCreated", "is2FA", "userDat"])
+            const UserStruct = new makeStruct(["username", "rlName", "regEmail", "regPhone", "dateCreated", "is2FA", "userDat"])
             const UserDatStruct = new makeStruct(["rating", "skills", "aboutMe", "location", "connectedAccounts", "createdProjs"])
             const CreatedProjsStruct = new makeStruct(["openProj", "closedProj"])
 
-            const userDoc = new UserStruct(username, pw, rlName, regEmail, regPhone, new Date(), false, new UserDatStruct(0.0, "", "", "", {}, new CreatedProjsStruct([], [])))
+            const userDoc = new UserStruct(username, rlName, regEmail, regPhone, new Date(), false, new UserDatStruct(0.0, "", "", "", {}, new CreatedProjsStruct([], [])))
 
             return await users.insertOne(userDoc)
         } catch (err) {
@@ -112,14 +112,27 @@ export default class UsersDAO {
     static async deleteUser(id, username) {
         try {
             const deleteResponse = await users.deleteOne({
-                _id: ObjectID(id),
-                username: username
+                "_id": new ObjectID(id)
             })
+
+            if (deleteResponse.deletedCount === 0) {
+                throw new Error("Delete Unsuccessful, 0 accounts deleted")
+            }
 
             return deleteResponse
         } catch (err) {
             console.error(`Unable to delete user with username: ${username}`)
-            return { error: err }
+            return { error: err.message }
+        }
+    }
+
+    static async updateUser(id, update) {
+        try {
+            const updateResponse = await users.updateOne({"_id": new ObjectID(id)}, {$set: update})
+
+            return updateResponse
+        } catch (err) {
+            return { error: err.message }
         }
     }
 }

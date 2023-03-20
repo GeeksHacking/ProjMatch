@@ -1,7 +1,6 @@
 import express from "express"
 import ImageController from "./images.controller.js"
 import multer from "multer"
-import { UUID } from "bson"
 
 // Image Upload
 const storage = multer.memoryStorage()
