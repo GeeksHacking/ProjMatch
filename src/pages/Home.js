@@ -56,9 +56,7 @@ function Project(){
                     {projectTags.map((tag) => (
                         <Tag tag={tag} key={tag.Name}/>
                     ))}
-                    {[1,1,1,0,0].map((star) => (
-                        <Stars rating={star} key={star}/>
-                    ))}
+                    <Stars rating={3}/>
                 </div>
                 <div className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl">
                     Find out more!
@@ -76,7 +74,25 @@ function Tag({tag}){
 }
 
 function Stars({rating}){
-    if (rating == 1){
+    let stars = [0,0,0,0,0]
+    for (let i = 0; i < rating; i++ ) {
+        stars[i] = 1
+    }
+    console.log(stars)
+    
+    return (
+        <div className="flex flex-row">
+            {stars.map((value) => (
+                <Star value={value}/>
+            ))}
+        </div>
+
+    )
+
+}
+
+function Star({value}) {
+    if (value === 1){
         return (
             <div className="flex flex-row justify-center items-center">
                 <img src="IconsStarFill.svg" alt="logo" className='w-6 h-6 flex-shrink-0'></img>
@@ -88,5 +104,4 @@ function Stars({rating}){
             <img src="IconsStar.svg" alt="logo" className='w-6 h-6 flex-shrink-0'></img>
         </div>
     )
-
 }
