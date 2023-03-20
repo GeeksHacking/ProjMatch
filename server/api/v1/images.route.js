@@ -13,7 +13,7 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-const upload = multer({ storage, fileFilter, limits: {fileSize: 5000000} }) // 5MB Max File Size
+const upload = multer({ storage, fileFilter, limits: {fileSize: 1500000} }) // 1.5MB Max File Size
 
 const router = express.Router()
 
@@ -26,7 +26,7 @@ router.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {
         switch (error.code) {
             case "LIMIT_FILE_SIZE":
-                return res.status(400).json({ message: "Uploaded file is too big, > 5MB" })
+                return res.status(400).json({ message: "Uploaded file is too big, > 1.5 MB" })
             case "LIMIT_UNEXPECTED_FILE":
                 return res.status(400).json({ mesage: "Uploaded file is not an image, file must be an Image" })
         }
