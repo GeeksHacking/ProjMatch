@@ -93,3 +93,18 @@ For GET Requests, you can also specify the **page number** and **number of shown
     "id": "64187ab0d6a4b0713becd1a0"
 }
 ```
+
+## Get Post Details
+### User Information Types
+All fields are compulsory when creating a post
+
+1. projectName
+2. description
+3. creatorUserID
+4. rating _(Not needed when creating a project, defaults to 0.0. Should never be updated by user)_
+5. tags
+6. technologies
+7. images
+8. isArchived _(Not needed when creating a project)_
+### API Requests
+- A **GET Request** returns 

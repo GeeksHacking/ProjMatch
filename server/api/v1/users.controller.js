@@ -77,14 +77,17 @@ export default class UsersController {
     static async apiDeleteUsers(req, res, next) {
         try {
             const id = req.body.id
-            const username = req.body.username
+            
+            if (id === undefined) {
+                throw new Error("ID returned undefined.")
+            }
 
-            const reviewRes = await UsersDAO.deleteUser(id, username)
+            const reviewRes = await UsersDAO.deleteUser(id)
 
             if (reviewRes.error) {
                 throw new Error(reviewRes.error)
             } else {
-                res.json({ status: "success", deletedUserWithID: id, return: reviewRes })
+                res.json({ status: "success", deletedUserWithID: id, response: reviewRes })
             }
         } catch (err) {
             res.status(500).json({ error: `${err.message}` })
