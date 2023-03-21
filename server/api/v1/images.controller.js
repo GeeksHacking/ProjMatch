@@ -4,26 +4,16 @@ import { createHash } from "crypto"
 export default class ImagesController {
     static async apiGetImages(req, res, next) {
         try {
-            let filters = {}
-            if (req.query.projectName) {
-                filters.projectName = req.query.projectName
-            }
-            if (req.query.userID) {
-                filters.userID = req.query.userID
-            }
-            if (req.query.tags) {
-                filters.tags = req.query.tags
+            const projectName = req.body.projectName
+            const creatorUserID = req.body.creatorUserID
+
+            if (projectName === undefined || creatorUserID === undefined) {
+                throw new Error("projectName or creatorUserID returned undefined, fields are required")
             }
 
-            const images = await ImagesDAO.getImages(filters)
-            console.log(images)
+            const reviewResponse = await ImagesDAO.getImages(projectName, creatorUserID)
 
-            let response = {
-                images: images,
-                filters: filters
-            }
-
-            res.json(response)
+            res.json({ status: "success", response: reviewResponse })
         } catch (err) {
             res.status(500).json({ error: err.message })
         }

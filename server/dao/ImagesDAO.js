@@ -14,20 +14,12 @@ const S3 = new AWS.S3({
 })
 
 export default class ImagesDAO {
-    static async getImages(filters = null) {
-        let query
-        if (filters) {
-            if ("projectName" in filters) {
-                query.projectName = filters.projectName
-            } else {
-                return "GET Request for Images requires the ProjectName"
-            }
-
-            if ("userID" in filters) {
-                query.userID = filters.userID
-            } else {
-                return "GET Request for Images requires the User ID"
-            }
+    static async getImages(projectName, creatorUserID) {
+        try {
+            // TODO
+            return "WIP"
+        } catch (err) {
+            return {error: err}
         }
     }
 

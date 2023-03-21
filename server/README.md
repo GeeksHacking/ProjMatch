@@ -1,6 +1,28 @@
 # ProjMatch BackEnd API
 Documentation on how to use the ProjMatch Backend API. If anything does not work as intended or a strange error has occured, please let me know
 
+## API Authentication
+- In order to send requests to the API, you will need to have an access token. This can be generated from the Auth0 Dashboard.
+    - Do create an Auth0 Account, and send your email to me
+### Generating a M2M Access Token
+- When in a Development Environemt testing the API (you shouldn't need to), send a **POST Request** to `https://projmatch.au.auth0.com/oauth/token`
+    - client_id, client_secret and audience is the same used in the _.env_ file
+- Then, when sending the GET/POST/PUT/DELETE Requests, paste the Access Token as a _Bearer Token_ in the Request Header
+#### Sample JSON POST Body
+```json
+{
+    "client_id": "",
+    "client_secret": "",
+    "audience": "",
+    "grant_type": "client_credentials"
+}
+```
+
+### Getting Past Authentication
+To get more information about how to get the unique access token for the user and to use Auth0 for user authentication, visit [https://auth0.com/blog/ultimate-guide-nextjs-authentication-auth0/](https://auth0.com/blog/ultimate-guide-nextjs-authentication-auth0/).
+- In other words, import getAccessToken, withApiAuthRequired from '@auth0/nextjs-auth0', then use the getAccessToken to get the access token before adding it into the header of the API Request, and making the request
+
+
 ## Get User Details
 ### User Information Types
 1. username -- **Required for User Creation**
@@ -95,6 +117,7 @@ For GET Requests, you can also specify the **page number** and **number of shown
 ```
 
 ## Get Post Details
+
 ### User Information Types
 All fields are compulsory when creating a post
 
@@ -106,5 +129,48 @@ All fields are compulsory when creating a post
 6. technologies
 7. images
 8. isArchived _(Not needed when creating a project)_
+
 ### API Requests
-- A **GET Request** returns 
+- The GET/POST/PUT/DELETE Requests works the same as the ones for the Users API
+    - However, do note that some of the field names are different. Refer to User Information Types to see the different field names used in the Posts API
+- For **PUT and DELETE Requests**, they have the same requirement as the Users API, where you need the ID and things to update in a update object and just the ID respectively
+- Do reach out if you need help with making an API Request to get Posts
+
+## Image API
+The Image API works differently from the Posts and Users API as it uses the Amazon S3 Database as compared to the MongoDB Database the other APIs use
+### API Requests
+
+#### GET Request
+- A **GET Request** allows you to get images to a certain project
+    - A **GET Request** will return all the imageURLs located in a certain project
+
+**API Request Fields**
+- What each field requires is pretty self-explainatory, but do let me know if you have any queries
+1. projectName
+2. creatorUserID _(This is NOT the ID of the Project!!)_
+
+#### POST Request
+- A **POST Request** allows you to add images to a certain project
+- To send a **POST Request**, instead of adding things into the Body of the API Request, you have to specify that it is 'form-data'.
+    - Once the **POST Request** has been sent, the API will respond you with an array of imageURLs, which contains the URL where you can find the image in S3.
+    - When loading the image in front-end, adding the _href_ as the imageURL should work fine.
+
+**API Request Fields**
+- What each field requires is pretty self-explainatory, but do let me know if you have any queries
+1. images
+2. projectName
+3. creatorUserID _(This is NOT the ID of the Project!!)_
+
+#### DELETE Request
+- A **DELETE Request** allows you to some (or all) of the images related to a certain project
+- **ENSURE THAT A USER HAS DOUBLE-CONFIRMED BEFORE SENDING A DELETE REQUEST.** A DELETE Request is irreversable
+- To delete images, the projectName, creatorUserID, and list of image names are required
+
+**Example of a body of the PUT Request**  
+```json
+{
+    "projectName": "projmatch",
+    "creatorUserID": "",
+    "imageName": ["c62c830b-ca58-4855-9ff4-d0c3ee7b1a21.png"]
+}
+```
