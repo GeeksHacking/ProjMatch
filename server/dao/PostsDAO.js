@@ -1,6 +1,6 @@
 import { query } from "express"
 import mongodb from "mongodb"
-const ObjectID = mongodb.ObjectID
+const ObjectID = mongodb.ObjectId
 
 let posts
 
@@ -14,7 +14,8 @@ Post Object
     "rating": "",
     "tags": [],
     "technologies": [],
-    "images": []
+    "images": [],
+    "isArchived": false
 }
 
 */
@@ -80,11 +81,43 @@ export default class PostsDAO {
     
     static async addProject(projectName, description, creatorUserID, rating, tags, technologies, images) {
         try {
-            const PostStruct = new makeStruct("projectName", "description", "creatorUserID", "rating", "tags", "technologies", "images")
+            const PostStruct = new makeStruct(["projectName", "description", "creatorUserID", "rating", "tags", "technologies", "images", "isArchived"])
+            
+            const createdProj = new PostStruct(projectName, description, creatorUserID, 0.0, tags, technologies, images, false)
+            
+            const insertRequest = await posts.insertOne(createdProj)
 
-            const createdProj = new PostStruct(projectName, description, creatorUserID, rating, tags, technologies, images)
+            if (!insertRequest.acknowledged) {
+                throw new Error("Insert Request not acknowledged by db")
+            }
 
-            return await posts.insertOne(createdProj)
+            return insertRequest
+        } catch (err) {
+            return { error: err }
+        }
+    }
+
+    static async updateProject(id, update) {
+        try {
+            const updateResponse = await posts.updateOne({"_id": new ObjectID(id)}, {$set: update})
+
+            return updateResponse
+        } catch (err) {
+            return { error: err }
+        }
+    }
+
+    static async deleteProject(id) {
+        try {
+            const deleteResponse = await posts.deleteOne({
+                "_id": new ObjectID(id)
+            })
+
+            if (deleteResponse.deletedCount === 0) {
+                throw new Error("Delete Unsuccessful, no projects deleted")
+            }
+
+            return deleteResponse
         } catch (err) {
             return { error: err }
         }

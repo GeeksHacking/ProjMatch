@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import { withPageAuthRequired } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 
 export default function Home() {
@@ -16,3 +17,5 @@ export default function Home() {
         </main>
     )
 }
+
+export const getServerSideProps = withPageAuthRequired()

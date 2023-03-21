@@ -54,10 +54,25 @@ export default class ImagesDAO {
     }
 
     static async editImages() {
-
+        // TODO
     }
 
-    static async deleteImages() {
+    static async deleteImages(folderName, imageNames) {
+        try {
+            let results = Array.apply(null, Array(imageNames.length)).map(function () {}) 
+            for (let i = 0; i < imageNames.length; i++) {
+                const param = {
+                    Bucket: process.env.AWS_BUCKET,
+                    Key: `${folderName}/${imageNames[i]}`
+                }
 
+                const res = await S3.deleteObject(param).promise()
+                results[i] = res
+            }
+
+            return results
+        } catch (err) {
+            return { error: err }
+        }
     }
 }
