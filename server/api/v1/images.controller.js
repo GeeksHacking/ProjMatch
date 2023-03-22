@@ -13,7 +13,19 @@ export default class ImagesController {
 
             const reviewResponse = await ImagesDAO.getImages(projectName, creatorUserID)
 
-            res.json({ status: "success", response: reviewResponse })
+            if (reviewResponse.error && reviewResponse.error.statusCode) {
+                res.status(reviewResponse.error.statusCode).json({ error: reviewResponse.error.message })
+                return
+            } else if (reviewResponse.error) {
+                throw new Error(reviewResponse.error.message)
+            }
+
+            let imageURL = []
+            for (let i = 0; i < reviewResponse.Contents.length; i++) {
+                const temp = "https://projmatch-images.s3.ap-southeast-1.amazonaws.com/"
+                imageURL.push(temp.concat(reviewResponse.Contents[i].Key))
+            }
+            res.json({ status: "success", response: reviewResponse, imageURL: imageURL })
         } catch (err) {
             res.status(500).json({ error: err.message })
         }
@@ -31,9 +43,16 @@ export default class ImagesController {
 
             const reviewResponse = await ImagesDAO.addImages(projectName, creatorUserID, images)
 
-            let imageURL
+            if (reviewResponse.error && reviewResponse.error.statusCode) {
+                res.status(reviewResponse.error.statusCode).json({ error: reviewResponse.error.message })
+                return
+            } else if (reviewResponse.error) {
+                throw new Error(reviewResponse.error.message)
+            }
+
+            let imageURL = []
             for (let i = 0; i < reviewResponse.length; i++) {
-                imageURL.append(reviewResponse[i].Location)
+                imageURL.push(reviewResponse[i].Location)
             }
 
             if (imageURL === []) {
@@ -66,9 +85,16 @@ export default class ImagesController {
 
             const folderName = createHash("sha256").update(`${projectName} | ${creatorUserID}`).digest("hex")
 
-            const deleteResponse = await ImagesDAO.deleteImages(folderName, imageName.split(","))
+            const reviewResponse = await ImagesDAO.deleteImages(folderName, imageName.split(","))
 
-            res.json({ status: "success", response: deleteResponse, deletedImagedWithName: imagesToDelete})
+            if (reviewResponse.error && reviewResponse.error.statusCode) {
+                res.status(reviewResponse.error.statusCode).json({ error: reviewResponse.error.message })
+                return
+            } else if (reviewResponse.error) {
+                throw new Error(reviewResponse.error.message)
+            }
+            
+            res.json({ status: "success", response: reviewResponse, deletedImagesWithNames: imageName.split(",")})
         } catch (err) {
             res.status(500).json({ error: err.message })
         }
