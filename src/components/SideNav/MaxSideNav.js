@@ -38,7 +38,7 @@ const MaxSideNav = () => {
                     <a className={`flex items-center flex-row space-x-2`}>
                         <img src="/NavBarIcons/IconsProfile.jpg" alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
                         <div className="flex items-start flex-col">
-                            <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {user.name} </span>
+                            <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {/*user.name*/}John Doe </span>
                             <span className={`${styles.SideNavTxt} font-bold text-lg text-start -translate-y-0.5`}> John Doe </span>
                         </div>
                         
