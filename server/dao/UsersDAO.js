@@ -13,6 +13,7 @@ User Object:
     "regEmail": "",
     "regPhone": "",
     "dateCreated": "",
+    "aboutMe": "",
     "userDat": {
         "rating": 0.0,
         "skills": "",
@@ -27,8 +28,16 @@ User Object:
 
             }
         },
-        "aboutMe": "",
-        "location": ""
+        "location": "",
+        "preference": [],
+    },
+    "settings": {
+        "web_settings": {
+            "theme": "light"
+        },
+        "privacy": {
+            "personalisation": false
+        }
     }
 }
 */
@@ -96,12 +105,16 @@ export default class UsersDAO {
 
     static async addUser(username, rlName, regEmail, regPhone) {
         try {
-            // User Structure
-            const UserStruct = new makeStruct(["username", "rlName", "regEmail", "regPhone", "dateCreated", "is2FA", "userDat"])
-            const UserDatStruct = new makeStruct(["rating", "skills", "aboutMe", "location", "connectedAccounts", "createdProjs"])
-            const CreatedProjsStruct = new makeStruct(["openProj", "closedProj"])
 
-            const userDoc = new UserStruct(username, rlName, regEmail, regPhone, new Date(), false, new UserDatStruct(0.0, "", "", "", {}, new CreatedProjsStruct([], [])))
+            // User Structure
+            const UserStruct = new makeStruct(["username", "rlName", "regEmail", "regPhone", "dateCreated", "aboutMe", "userDat", "settings"])
+            const UserDatStruct = new makeStruct(["rating", "skills", "location", "preference", "connectedAccounts", "createdProjs"])
+            const CreatedProjsStruct = new makeStruct(["openProj", "closedProj"])
+            const SettingsStruct = new makeStruct(["web_settings", "privacy"])
+            const WebSettingsStruct = new makeStruct(["theme"])
+            const PrivacyStruct = new makeStruct(["personalisation"])
+
+            const userDoc = new UserStruct(username, rlName, regEmail, regPhone, new Date(), "Hi! I'm a new user of ProjMatch!", new UserDatStruct(0.0, [], "On Earth", [], [], new CreatedProjsStruct({}, {})), new SettingsStruct(new WebSettingsStruct("light"), new PrivacyStruct(true)))
 
             return await users.insertOne(userDoc)
         } catch (err) {

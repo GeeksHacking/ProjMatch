@@ -30,13 +30,19 @@ To get more information about how to get the unique access token for the user an
 3. regEmail -- **Required for User Creation**
 4. regPhone -- **Required for User Creation**
 5. dateCreated -- Auto-Generated on Creation
-6. userDat _(Needs to be set by the user in profile settings later on)_  
+6. aboutMe
+7. userDat _(Needs to be set by the user in profile settings later on)_  
     1. rating _(Cannot be edited by user)_
     2. skills
     3. connectedAccounts
     4. createdProjects
-    5. aboutMe
     6. location
+    7. preference
+8. settings
+    1. web_settings
+        1. theme
+    2. privacy
+        1. personalisation
 ## API Requests
 Use `(domain)/api/v1/users` to communicate with the User API
 - Additional query can be appended to the URL to get certain information _(only applicable for GET requests)_
@@ -167,7 +173,7 @@ The Image API works differently from the Posts and Users API as it uses the Amaz
 
 **API Request Fields**
 - What each field requires is pretty self-explainatory, but do let me know if you have any queries
-1. projectName
+1. projectName _(This is only needed when you are getting the images of a project)_
 2. creatorUserID _(This is NOT the ID of the Project!!)_
 
 **API Response**
@@ -185,7 +191,7 @@ The Image API works differently from the Posts and Users API as it uses the Amaz
 **API Request Fields**
 - What each field requires is pretty self-explainatory, but do let me know if you have any queries
 1. images
-2. projectName
+2. projectName _(This is only needed when you are getting the images of a project)_
 3. creatorUserID _(This is NOT the ID of the Project!!)_
 
 **API Response**
@@ -199,7 +205,13 @@ The Image API works differently from the Posts and Users API as it uses the Amaz
 - **ENSURE THAT A USER HAS DOUBLE-CONFIRMED BEFORE SENDING A DELETE REQUEST.** A DELETE Request is irreversable
 - To delete images, the projectName, creatorUserID, and list of image names are required
 
-**Example of a body of the PUT Request**  
+**API Request Fields**
+- What each field requires is pretty self-explainatory, but do let me know if you have any queries
+1. imageName
+2. projectName _(This is only needed when you are getting the images of a project)_
+3. creatorUserID _(This is NOT the ID of the Project!!)_
+
+**Example of a body of the DELETE Request**  
 ```json
 {
     "projectName": "projmatch",

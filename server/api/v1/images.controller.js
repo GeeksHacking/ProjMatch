@@ -6,12 +6,19 @@ export default class ImagesController {
         try {
             const projectName = req.body.projectName
             const creatorUserID = req.body.creatorUserID
+            let type = ""
 
-            if (projectName === undefined || creatorUserID === undefined) {
-                throw new Error("projectName or creatorUserID returned undefined, fields are required")
+            if (creatorUserID === undefined) {
+                throw new Error("creatorUserID returned undefined, field is required")
             }
 
-            const reviewResponse = await ImagesDAO.getImages(projectName, creatorUserID)
+            if (projectName === undefined) {
+                type = "user"
+            } else {
+                type = "project"
+            }
+
+            const reviewResponse = await ImagesDAO.getImages(type, projectName, creatorUserID)
 
             if (reviewResponse.error && reviewResponse.error.statusCode) {
                 res.status(reviewResponse.error.statusCode).json({ error: reviewResponse.error.message })
@@ -36,12 +43,19 @@ export default class ImagesController {
             const images = req.files
             const projectName = req.body.projectName
             const creatorUserID = req.body.creatorUserID
+            let type = ""
 
-            if (projectName === undefined || creatorUserID === undefined) {
-                throw new Error("Project Name or User ID is undefined.")
+            if (creatorUserID === undefined) {
+                throw new Error("creatorUserID returned undefined, field is required")
             }
 
-            const reviewResponse = await ImagesDAO.addImages(projectName, creatorUserID, images)
+            if (projectName === undefined) {
+                type = "user"
+            } else {
+                type = "project"
+            }
+
+            const reviewResponse = await ImagesDAO.addImages(type, projectName, creatorUserID, images)
 
             if (reviewResponse.error && reviewResponse.error.statusCode) {
                 res.status(reviewResponse.error.statusCode).json({ error: reviewResponse.error.message })
@@ -75,15 +89,20 @@ export default class ImagesController {
             const creatorUserID = req.body.creatorUserID
             const imageName = req.body.imageName
 
-            if (projectName === undefined || creatorUserID === undefined) {
-                throw new Error("projectName or creatorUserID returned undefined, unable to delete")
+            if (creatorUserID === undefined) {
+                throw new Error("creatorUserID returned undefined, field is required")
+            }
+
+            let folderName
+            if (projectName === undefined) {
+                folderName = createHash("sha256").update(`${creatorUserID}`).digest("hex")
+            } else {
+                folderName = createHash("sha256").update(`${projectName} | ${creatorUserID}`).digest("hex")
             }
 
             if (imageName === undefined || imageName === []) {
                 throw new Error("imageName is undefined or contains no elements")
             }
-
-            const folderName = createHash("sha256").update(`${projectName} | ${creatorUserID}`).digest("hex")
 
             const reviewResponse = await ImagesDAO.deleteImages(folderName, imageName.split(","))
 
