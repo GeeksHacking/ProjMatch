@@ -6,24 +6,29 @@ import Tabs from "@/components/Tabs/Tabs.js"
 
 const Settings = () => {
     const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
-    const settingsPages={
       
-    }
 
     return (
     <div>
-       <SideNav/> 
-       <div>
-        <img src="" id="Banner"></img>
-        <div> 
-            
+       <SideNav/>
+       <div class="MainDiv">
+        <img src="/BannerTemp.jpg" id="Banner"></img>
+        <div id="ProfileText">
+        <img src="/PPTemp.jpg" id="SettingsPP"></img>
+        <div id="TitleText">
+           <h1>Settings</h1>
+           <h2>John Doe</h2>
+        </div>
+        </div>
+        <div id="SignOutDiv">
+            <a class="button" id="SignOutBtn">Sign Up</a>
         </div>
         <Tabs>
         <div label="Gator">
           See ya later, <em>Alligator</em>!
         </div>
         <div label="Croc">
-          After 'while, <em>Crocodile</em>!
+          After awhile, <em>Crocodile</em>!
         </div>
         <div label="Sarcosuchus">
           Nothing to see here, this tab is <em>extinct</em>!

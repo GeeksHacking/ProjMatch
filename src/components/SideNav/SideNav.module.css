@@ -1,4 +1,5 @@
 .SideNav{
+   z-index:10000000;
    display:fixed;
    transition: max-width 1s;
    overflow:hidden;

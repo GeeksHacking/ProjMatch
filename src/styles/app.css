@@ -53,13 +53,18 @@
    width: 100vw;
    height:20vh;
    object-fit:cover;
+   top:0;
 }
 .tab-list {
   border-bottom: 1px solid #ccc;
   padding-left: 0;
 }
-
+.tab-list-item:hover{
+   background-color:#fafafa55
+}
 .tab-list-item {
+  background-color: #fafafaff;
+  transition: background-color 0.5s;
   display: inline-block;
   list-style: none;
   margin-bottom: -1px;
@@ -69,4 +74,51 @@
 .tab-list-active {
   background-color: white;
   border-bottom: solid 3px #000;
+}
+#ProfileText{
+   position: absolute;
+   top: 16vh;
+   left:3vw;
+   display:flex;
+   flex-direction:row;
+   align-items:center;
+}
+#SettingsPP{
+   border-radius:50%;
+   width:10vw;
+   height:10vw;
+   object-fit: cover;
+   border: 2px solid #ccc;
+}
+#TitleText{
+   margin-left: 3vw;
+}
+h1{
+   font-size:2rem;
+   font-weight: bold;
+}
+h2{
+   font-size:1rem;
+}
+.button{
+   padding: 5px;
+   
+   color:#fff;
+   background: #FF7D7D;
+   border: 1px solid #ED5A5A;
+   border-radius: 10px;
+
+}
+#SignOutBtn{
+margin:10px;
+float:right;
+}
+#SignOutDiv{
+margin-bottom: 13vh;
+
+}
+.MainDiv{
+   background:#fafafa;
+   padding-left:10px;
+   height:100vh;
 }
