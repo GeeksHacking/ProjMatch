@@ -14,20 +14,38 @@ const S3 = new AWS.S3({
 })
 
 export default class ImagesDAO {
-    static async getImages(projectName, creatorUserID) {
+    static async getImages(type, projectName, creatorUserID) {
         try {
-            // TODO
-            return "WIP"
+            let hashedFolderName
+            if (type === "project") {
+                hashedFolderName = createHash("sha256").update(`${projectName} | ${creatorUserID}`).digest("hex")
+            } else {
+                hashedFolderName = createHash("sha256").update(`${creatorUserID}`).digest("hex")
+            }
+            const param = {
+                Bucket: process.env.AWS_BUCKET,
+                Prefix: `${hashedFolderName}/`
+            }
+
+            const response = await S3.listObjectsV2(param).promise()
+
+            return response
         } catch (err) {
             return {error: err}
         }
     }
 
-    static async addImages(projectName, creatorUserID, images) {
+    static async addImages(type, projectName, creatorUserID, images) {
         try {
             let results = Array.apply(null, Array(images.length)).map(function () {})
             for (let i = 0; i < images.length; i++) {
-                const hashedURL = createHash("sha256").update(`${projectName} | ${creatorUserID}`).digest("hex")
+                let hashedFolderName
+                if (type === "project") {
+                    hashedFolderName = createHash("sha256").update(`${projectName} | ${creatorUserID}`).digest("hex")
+                } else {
+                    hashedFolderName = createHash("sha256").update(`${creatorUserID}`).digest("hex")
+                }
+                
                 const fileType= images[i].mimetype.split("/")[1]
                 const param = {
                     Bucket: process.env.AWS_BUCKET,
@@ -36,6 +54,7 @@ export default class ImagesDAO {
                 }
 
                 const response = await S3.upload(param).promise()
+
                 results[i] = response
             }
 
@@ -58,7 +77,7 @@ export default class ImagesDAO {
                     Key: `${folderName}/${imageNames[i]}`
                 }
 
-                const res = await S3.deleteObject(param).promise()
+                const res =await S3.deleteObject(param).promise()
                 results[i] = res
             }
 
