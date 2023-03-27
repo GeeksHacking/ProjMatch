@@ -21,17 +21,21 @@ const Settings = () => {
         </div>
         </div>
         <div id="SignOutDiv">
-            <a class="button" id="SignOutBtn">Sign Up</a>
+            <a class="button" id="SignOutBtn">Sign out</a>
         </div>
         <Tabs>
-        <div label="Gator">
-          See ya later, <em>Alligator</em>!
+        <div label="My Profile">
         </div>
-        <div label="Croc">
-          After awhile, <em>Crocodile</em>!
+        <div label="Web Settings">
         </div>
-        <div label="Sarcosuchus">
-          Nothing to see here, this tab is <em>extinct</em>!
+        <div label="Privacy">
+        </div>
+        <div label="Security">
+         <a class="updater button">Update!</a>
+        </div>
+        <div label="Support">
+         <p>Any questions? Feature request or problems? Contact us at <a href="mailto:INSERTEMAIL@gmail.com">INSERTEMAIL@gmail.com</a></p>
+
         </div>
       </Tabs> 
        </div>
