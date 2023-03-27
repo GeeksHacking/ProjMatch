@@ -30,6 +30,8 @@ User Object:
         },
         "location": "",
         "preference": [],
+        "profilePic": "",
+        "profileBanner": ""
     },
     "settings": {
         "web_settings": {
@@ -108,13 +110,13 @@ export default class UsersDAO {
 
             // User Structure
             const UserStruct = new makeStruct(["username", "rlName", "regEmail", "regPhone", "dateCreated", "aboutMe", "userDat", "settings"])
-            const UserDatStruct = new makeStruct(["rating", "skills", "location", "preference", "connectedAccounts", "createdProjs"])
+            const UserDatStruct = new makeStruct(["rating", "skills", "location", "preference", "connectedAccounts", "createdProjs", "profilePic", "profileBanner"])
             const CreatedProjsStruct = new makeStruct(["openProj", "closedProj"])
             const SettingsStruct = new makeStruct(["web_settings", "privacy"])
             const WebSettingsStruct = new makeStruct(["theme"])
             const PrivacyStruct = new makeStruct(["personalisation"])
 
-            const userDoc = new UserStruct(username, rlName, regEmail, regPhone, new Date(), "Hi! I'm a new user of ProjMatch!", new UserDatStruct(0.0, [], "On Earth", [], [], new CreatedProjsStruct({}, {})), new SettingsStruct(new WebSettingsStruct("light"), new PrivacyStruct(true)))
+            const userDoc = new UserStruct(username, rlName, regEmail, regPhone, new Date(), "Hi! I'm a new user of ProjMatch!", new UserDatStruct(0.0, [], "On Earth", [], [], new CreatedProjsStruct({}, {}), "", ""), new SettingsStruct(new WebSettingsStruct("light"), new PrivacyStruct(true)))
 
             return await users.insertOne(userDoc)
         } catch (err) {

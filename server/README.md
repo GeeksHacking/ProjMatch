@@ -38,6 +38,8 @@ To get more information about how to get the unique access token for the user an
     4. createdProjects
     6. location
     7. preference
+    8. profilePic
+    9. profileBanner
 8. settings
     1. web_settings
         1. theme
