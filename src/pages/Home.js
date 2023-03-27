@@ -5,8 +5,8 @@ import Link from "next/link"
 export default function Home() {
 
     return (
-        <main className='w-full h-full flex flex-row'>
-            <div className="z-20">
+        <main className='relative w-full h-full flex flex-row'>
+            <div className="h-screen fixed z-20">
                 <SideNav />
             </div>
             <div className='absolute flex w-full h-full flex-col justify-start items-center'>
@@ -40,9 +40,9 @@ function Project(){
             <div id="gridscroll" className="relative w-full h-[70%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
                 <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                 </img>
-                <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                <img src="http://placekitten.com/901/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                 </img>
-                <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl">
+                <img src="http://placekitten.com/900/602" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl">
                 </img>
             </div>
             <div id="project-info" className="grow flex flex-col w-[90%]">
