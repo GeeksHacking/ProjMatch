@@ -1,8 +1,13 @@
 import SideNav from "@/components/SideNav/SideNav"
 import { ST } from "next/dist/shared/lib/utils"
 import Link from "next/link"
+import {useUser} from "@auth0/nextjs-auth0/client"
 
 export default function Home() {
+
+    console.log("Home Page")
+    const { user, error, isLoading } = useUser();
+    console.log(user)
 
     return (
         <main className='relative w-full h-full flex flex-row'>
