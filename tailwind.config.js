@@ -9,6 +9,10 @@ module.exports = {
       'logo-lblue': "#779EE9",
       'light-blue': '#C2D5F9',
       'white': "#FFFFFF",
+      "JS": "#FFD057",
+      "React": "#61DAFB",
+      "Discord": "#7289DA",
+      "Email": "#FFA15A",
     },
     borderWidth: {
       DEFAULT: '1px',
