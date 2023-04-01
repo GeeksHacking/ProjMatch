@@ -1,11 +1,11 @@
 import MaxSideNav from './MaxSideNav'
-import MiniSideNav from './MiniSideNav'
+import styles from './SideNav.module.css'
 
 const SideNav = () => {
 
     return (
-        <div className="nav-container relative h-full">
-            <MiniSideNav/>
+        <div className={`relative h-full`}>
+{/*             <MiniSideNav/> */}
             <MaxSideNav/>
         </div>
     )

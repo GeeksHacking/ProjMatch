@@ -6,10 +6,12 @@ module.exports = {
   theme: {
     colors: {
       'logo-blue': '#39529D',
+      'logo-lblue': "#779EE9",
       'light-blue': '#C2D5F9',
       'blue': '#779EE9',
       'white': '#FFFFFF',
       'black': '#000000',
+      'white': "#FFFFFF",
     },
     borderWidth: {
       DEFAULT: '1px',
