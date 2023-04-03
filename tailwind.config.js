@@ -10,8 +10,6 @@ module.exports = {
       'light-blue': '#C2D5F9',
       'blue': '#779EE9',
       'white': '#FFFFFF',
-      'black': '#000000',
-      'white': "#FFFFFF",
       'black': "#000000",
       "JS": "#FFD057",
       "React": "#61DAFB",
