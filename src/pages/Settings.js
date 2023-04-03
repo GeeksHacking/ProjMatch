@@ -34,7 +34,7 @@ const Settings = () => {
          <a class="updater button">Update!</a>
         </div>
         <div label="Support">
-         <p>Any questions? Feature request or problems? Contact us at <a href="mailto:INSERTEMAIL@gmail.com">INSERTEMAIL@gmail.com</a></p>
+         <p>Any questions? Feature request or problems?Contact us at <a href="mailto:INSERTEMAIL@gmail.com">INSERTEMAIL@gmail.com</a></p>
 
         </div>
       </Tabs> 
