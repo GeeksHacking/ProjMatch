@@ -1,5 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
-import { ST } from "next/dist/shared/lib/utils"
+import { withPageAuthRequired } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
 
@@ -110,3 +110,5 @@ function Star({value}) {
         </div>
     )
 }
+
+export const getServerSideProps = withPageAuthRequired()

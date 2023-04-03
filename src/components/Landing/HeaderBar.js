@@ -6,7 +6,7 @@ export default function HeaderBar() {
             <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
             <div className="ml-auto space-x-3">
                 <button className="bg-logo-lblue p-2 rounded-lg text-white font-bold">
-                    <Link href="/Login">
+                    <Link href="/api/auth/login">
                         Log In
                     </Link>
                 </button>

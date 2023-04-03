@@ -1,6 +1,6 @@
 import { query } from "express"
 import mongodb from "mongodb"
-const ObjectID = mongodb.ObjectID
+const ObjectID = mongodb.ObjectId
 
 let users
 
@@ -9,12 +9,11 @@ User Object:
 
 {
     "username": "",
-    "pw": "",
     "rlName": "",
     "regEmail": "",
     "regPhone": "",
-    "is2FA": false,
     "dateCreated": "",
+    "aboutMe": "",
     "userDat": {
         "rating": 0.0,
         "skills": "",
@@ -29,8 +28,18 @@ User Object:
 
             }
         },
-        "aboutMe": "",
-        "location": ""
+        "location": "",
+        "preference": [],
+        "profilePic": "",
+        "profileBanner": ""
+    },
+    "settings": {
+        "web_settings": {
+            "theme": "light"
+        },
+        "privacy": {
+            "personalisation": false
+        }
     }
 }
 */
@@ -67,8 +76,10 @@ export default class UsersDAO {
         if(filters) {
             if("user" in filters) {
                 userQuery = { "username": { $eq: filters["user"] } }
-            } else if ("pw" in filters) {
-                userQuery = { "pw": { $eq: filters["pw"] } }
+            } else if ("email" in filters) {
+                userQuery = { "regEmail": { $eq: filters["email"] } }
+            } else if ("ph" in filters) {
+                userQuery = { "regPhone": {$eq: filters["ph"]} }
             }
         }
 
@@ -94,14 +105,18 @@ export default class UsersDAO {
         }
     }
 
-    static async addUser(username, pw, rlName, regEmail, regPhone) {
+    static async addUser(username, rlName, regEmail, regPhone) {
         try {
-            // User Structure
-            const UserStruct = new makeStruct(["username", "pw", "rlName", "regEmail", "regPhone", "dateCreated", "is2FA", "userDat"])
-            const UserDatStruct = new makeStruct(["rating", "skills", "aboutMe", "location", "connectedAccounts", "createdProjs"])
-            const CreatedProjsStruct = new makeStruct(["openProj", "closedProj"])
 
-            const userDoc = new UserStruct(username, pw, rlName, regEmail, regPhone, new Date(), false, new UserDatStruct(0.0, "", "", "", {}, new CreatedProjsStruct([], [])))
+            // User Structure
+            const UserStruct = new makeStruct(["username", "rlName", "regEmail", "regPhone", "dateCreated", "aboutMe", "userDat", "settings"])
+            const UserDatStruct = new makeStruct(["rating", "skills", "location", "preference", "connectedAccounts", "createdProjs", "profilePic", "profileBanner"])
+            const CreatedProjsStruct = new makeStruct(["openProj", "closedProj"])
+            const SettingsStruct = new makeStruct(["web_settings", "privacy"])
+            const WebSettingsStruct = new makeStruct(["theme"])
+            const PrivacyStruct = new makeStruct(["personalisation"])
+
+            const userDoc = new UserStruct(username, rlName, regEmail, regPhone, new Date(), "Hi! I'm a new user of ProjMatch!", new UserDatStruct(0.0, [], "On Earth", [], [], new CreatedProjsStruct({}, {}), "", ""), new SettingsStruct(new WebSettingsStruct("light"), new PrivacyStruct(true)))
 
             return await users.insertOne(userDoc)
         } catch (err) {
@@ -109,17 +124,29 @@ export default class UsersDAO {
         }
     }
 
-    static async deleteUser(id, username) {
+    static async deleteUser(id) {
         try {
             const deleteResponse = await users.deleteOne({
-                _id: ObjectID(id),
-                username: username
+                "_id": new ObjectID(id)
             })
+
+            if (deleteResponse.deletedCount === 0) {
+                throw new Error("Delete Unsuccessful, 0 accounts deleted")
+            }
 
             return deleteResponse
         } catch (err) {
-            console.error(`Unable to delete user with username: ${username}`)
-            return { error: err }
+            return { error: err.message }
+        }
+    }
+
+    static async updateUser(id, update) {
+        try {
+            const updateResponse = await users.updateOne({"_id": new ObjectID(id)}, {$set: update})
+
+            return updateResponse
+        } catch (err) {
+            return { error: err.message }
         }
     }
 }

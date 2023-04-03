@@ -1,8 +1,35 @@
 import { query } from "express"
 import mongodb from "mongodb"
-const ObjectID = mongodb.ObjectID
+const ObjectID = mongodb.ObjectId
 
 let posts
+
+/*
+Post Object
+
+{
+    "projectName": "",
+    "description": "",
+    "creatorUserID": "",
+    "rating": "",
+    "tags": [],
+    "technologies": [],
+    "images": [],
+    "isArchived": false
+}
+
+*/
+
+function makeStruct(keys) {
+    if (!keys) return null;
+    const count = keys.length;
+    
+    /** @constructor */
+    function constructor() {
+        for (let i = 0; i < count; i++) this[keys[i]] = arguments[i];
+    }
+    return constructor;
+}
 
 export default class PostsDAO {
     static async injectDB(conn) {
@@ -52,4 +79,47 @@ export default class PostsDAO {
         }
     }
     
+    static async addProject(projectName, description, creatorUserID, rating, tags, technologies, images) {
+        try {
+            const PostStruct = new makeStruct(["projectName", "description", "creatorUserID", "rating", "tags", "technologies", "images", "isArchived"])
+            
+            const createdProj = new PostStruct(projectName, description, creatorUserID, 0.0, tags, technologies, images, false)
+            
+            const insertRequest = await posts.insertOne(createdProj)
+
+            if (!insertRequest.acknowledged) {
+                throw new Error("Insert Request not acknowledged by db")
+            }
+
+            return insertRequest
+        } catch (err) {
+            return { error: err }
+        }
+    }
+
+    static async updateProject(id, update) {
+        try {
+            const updateResponse = await posts.updateOne({"_id": new ObjectID(id)}, {$set: update})
+
+            return updateResponse
+        } catch (err) {
+            return { error: err }
+        }
+    }
+
+    static async deleteProject(id) {
+        try {
+            const deleteResponse = await posts.deleteOne({
+                "_id": new ObjectID(id)
+            })
+
+            if (deleteResponse.deletedCount === 0) {
+                throw new Error("Delete Unsuccessful, no projects deleted")
+            }
+
+            return deleteResponse
+        } catch (err) {
+            return { error: err }
+        }
+    }
 }
