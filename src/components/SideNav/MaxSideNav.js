@@ -5,6 +5,9 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 
 const MaxSideNav = () => {
     const { user, error, isLoading } = useUser();
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>{error.message}</div>;
+    console.log(user.picture)
 
     // Navigation Data
     const navOptions = [{"Page": "Home", "IconPath": "/NavBarIcons/IconsHome.svg"},
@@ -36,12 +39,11 @@ const MaxSideNav = () => {
                     </a>
 
                     <a className={`flex items-center flex-row space-x-2`}>
-                        <img src="/NavBarIcons/IconsProfile.jpg" alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
+                        <img src={user.picture} alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
                         <div className="flex items-start flex-col">
-                            <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {/*user.name*/}John Doe </span>
-                            <span className={`${styles.SideNavTxt} font-bold text-lg text-start -translate-y-0.5`}> John Doe </span>
+                            <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {user.nickname} </span>
+                            <span className={`${styles.SideNavTxt} font-bold text-lg text-start -translate-y-0.5`}> {user.name} </span>
                         </div>
-                        
                     </a>
                 </div>
             </div>

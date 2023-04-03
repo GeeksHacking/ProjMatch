@@ -85,7 +85,6 @@ function Stars({rating}){
     for (let i = 0; i < rating; i++ ) {
         stars[i] = 1
     }
-    console.log(stars)
     
     return (
         <div className="flex flex-row">
