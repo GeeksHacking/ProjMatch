@@ -2,6 +2,7 @@
 import Logo from "./Logo"
 import styles from './SideNav.module.css'
 import { useUser } from '@auth0/nextjs-auth0/client';
+import Link from 'next/link'
 
 const MaxSideNav = () => {
     const { user, error, isLoading } = useUser();
@@ -32,11 +33,12 @@ const MaxSideNav = () => {
                         ))}
                     </ul>
                 </div>
+                
                 <div className={`mt-auto space-y-6 p-3`}>
-                    <a className={`flex items-center space-x-4 text-light-blue bg-logo-blue w-full h-fit rounded-lg`}>
+                    <Link className={`flex items-center space-x-4 text-light-blue bg-logo-blue w-full h-fit rounded-lg`} href="/CreateProject">
                         <img src="/NavBarIcons/IconsCreate.svg" alt="logo" className='w-8 h-8 flex-shrink-0 ml-[0.6875rem] my-2'></img>
                         <span className={`${styles.SideNavTxt} font-bold text-xl flex items-center pb-0.5`}> Create </span>
-                    </a>
+                    </Link>
 
                     <a className={`flex items-center flex-row space-x-2`}>
                         <img src={user.picture} alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
