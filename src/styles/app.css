@@ -10,11 +10,7 @@
 
 }
 a{
-   text-decoration:underline;
-   color:var(--secondary);
-}
-a:hover{
-
+   text-decoration:none ;
 }
 /* Home Page Posts */
 .post-alignment {

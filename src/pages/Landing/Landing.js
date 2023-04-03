@@ -1,4 +1,5 @@
 import anime from "animejs"
+import Link from "next/link"
 import { useEffect } from "react"
 
 const Landing = () => {
@@ -72,10 +73,20 @@ const Landing = () => {
 const LandingHeaderBar = () => {
     return (
         <div className="flex flex-row relative w-full p-2">
-            <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
+            <Link href="/Home" className="hover:scale-105 duration-500">
+                <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
+            </Link>
             <div className="ml-auto space-x-3">
-                <button className="bg-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center">Log In</button>
-                <button className="bg-logo-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center">Sign Up</button>
+                <Link href="/api/auth/login" className="">
+                    <button className="bg-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center hover:scale-105 duration-500">
+                        Log In
+                    </button>
+                </Link>
+                <Link href="/SignUp">
+                    <button className="bg-logo-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center hover:scale-105 duration-500">
+                        Sign Up
+                    </button>
+                </Link>
             </div>
         </div>
     )
