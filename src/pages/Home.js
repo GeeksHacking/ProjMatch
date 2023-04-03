@@ -63,9 +63,11 @@ function Project(){
                     ))}
                     <Stars rating={3}/>
                 </div>
-                <div className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl">
-                    Find out more!
-                </div>
+                <Link className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl" href="/ProjectPage">
+                    <div >
+                        Find out more!
+                    </div>
+                </Link>
             </div>
         </div>
     )
