@@ -72,7 +72,7 @@ function Project(){
 }
 function Tag({tag}){
     return (
-        <div className={`mx-2 flex flex-row justify-center items-center w-fit h-8 bg-${tag.Color} rounded-full min-w-[62px]`}>
+        <div className={`mx-2 flex flex-row justify-center items-center w-fit h-8 bg-black rounded-full min-w-[62px]`}>
             <span className="mx-4 text-white font-bold text-lg">{tag.Name}</span>
         </div>
     )

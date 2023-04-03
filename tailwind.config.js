@@ -9,6 +9,7 @@ module.exports = {
       'logo-lblue': "#779EE9",
       'light-blue': '#C2D5F9',
       'white': "#FFFFFF",
+      'black': "#000000",
       "JS": "#FFD057",
       "React": "#61DAFB",
       "Discord": "#7289DA",
