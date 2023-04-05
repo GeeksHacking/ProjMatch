@@ -45,7 +45,7 @@ function Project(){
             <div id="gridscroll" className="relative w-full h-[70%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
                 <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                 </img>
-                <img src="http://placekitten.com/901/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                <img src="http://placekitten.com/901/601" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                 </img>
                 <img src="http://placekitten.com/900/602" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl">
                 </img>
