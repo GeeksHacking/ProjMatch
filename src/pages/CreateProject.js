@@ -13,7 +13,7 @@ export default function CreateProject() {
                     
                     <h2 className="text-3xl font-medium mt-10">Project Description</h2>
                     <p className="text-lg mt-1">Include important details about what your project is about and more!</p>
-                    <textarea name="projectDescription" placeholder="Enter your project’s description!" className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2"/>
+                    <textarea name="projectDescription" placeholder="Enter your project’s description!" className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1"/>
                     
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
                     <input type="file" name="projectImages"></input>

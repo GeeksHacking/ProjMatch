@@ -4,7 +4,7 @@ import styles from './SideNav.module.css'
 const SideNav = () => {
 
     return (
-        <div className={`relative h-full`}>
+        <div className={`z-[1000] w-fit relative h-full`}>
 {/*             <MiniSideNav/> */}
             <MaxSideNav/>
         </div>
