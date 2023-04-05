@@ -159,7 +159,7 @@ export default function SettingsPage() {
                     <div id="tabs-bar" className="flex flex-row justify-start items-center w-full h-[3rem]">
                         {tabs.map((tab) => (
                             <button id={tab.id} className="h-full" onClick={handleTabClick} disabled={currentTab === `${tab.id}`}>
-                                <TabButton Name={tab}/>
+                                <TabButton tab={tab} selected={currentTab === `${tab.id}`}/>
                             </button>
                         ))}
                     </div>
@@ -176,12 +176,20 @@ export default function SettingsPage() {
     )
 }
 
-function TabButton({Name}) {
-
-    return (
-        <div id={Name.id} className="hover:cursor-pointer z-10 relative flex flex-row justify-start items-center w-fit h-full mr-10">
-            <p id={Name.id} className="text-xl mx-1">{Name.tabTitle}</p>
-            <div id={Name.id} className="absolute w-full h-1 bg-black bottom-0"></div>
-        </div>
-    )
+function TabButton(props) {
+    if (props.selected) {
+        return (
+            <div id={props.tab.id} className="z-10 relative flex flex-row justify-start items-center w-fit h-full mr-10">
+                <p id={props.tab.id} className="text-xl mx-1 text-black">{props.tab.tabTitle}</p>
+                <div id={props.tab.id} className="absolute w-full h-1 bg-black bottom-0"></div>
+            </div>
+        )
+    }
+    else {
+        return (
+            <div id={props.tab.id} className="hover:cursor-pointer z-10 relative flex flex-row justify-start items-center w-fit h-full mr-10">
+                <p id={props.tab.id} className="text-xl mx-1 text-[#B5B4B4]">{props.tab.tabTitle}</p>
+            </div>
+        )
+    }
 }

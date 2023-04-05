@@ -49,10 +49,15 @@ const Landing = () => {
         }
         )
 
-        setInterval(() => {
+        let animationInterval = setInterval(() => {
             document.getElementById("word").innerHTML = "Python"
             pythonTimeline.play()
         }, 5 * 1000)
+
+        return () => {
+            clearInterval(animationInterval)
+        }
+
     }, [])
 
     return (
