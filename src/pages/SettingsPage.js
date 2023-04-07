@@ -1,6 +1,7 @@
 import SideNav from "@/components/SideNav/SideNav"
 import { useState } from "react"
 import Switch from "react-switch";
+import Link from "next/link";
 
 export default function SettingsPage() {
 
@@ -141,9 +142,9 @@ export default function SettingsPage() {
             <SideNav/>
             <img src="http://placekitten.com/800/600"id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]">
             </img>
-            <button className="font-bold text-white text-lg absolute w-fit h-fit right-[3%] top-[23%] bg-[#ED5A5A] px-6 py-3 rounded-md">
+            <a href="/api/auth/logout" className="font-bold text-white text-lg absolute w-fit h-fit right-[3%] top-[23%] bg-[#ED5A5A] px-6 py-3 rounded-md">
                 Sign Out
-            </button>
+            </a>
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">
                 <div id="pfp-name" className="flex flex-row w-full h-full ">
                     <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img>
