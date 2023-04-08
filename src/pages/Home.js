@@ -3,27 +3,33 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
 
+
 export default function Home() {
 
     console.log("Home Page")
     const { user, error, isLoading } = useUser();
     console.log(user)
-
     return (
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
                 <SideNav />
             </div>
             <div className='absolute flex w-full h-full flex-col justify-start items-center'>
-                <Project />
-                <Project />
-                <Project />
+                <Project tags={[{"Name": "JS","Color": "JS"},
+                                {"Name": "React","Color": "React"},
+                                {"Name": "Discord","Color": "Discord"},
+                                {"Name": "Email","Color": "Email"},]} 
+                        userPP='/NavBarIcons/IconsProfile.jpg' 
+                        un='wow' 
+                        noStars={0}
+                        images={["http://placekitten.com/900/600","http://placekitten.com/900/600","http://placekitten.com/900/600"]}/>
+               
             </div>
         </main>
     )
 }
 
-function Project(){
+function Project({images, un, userPP, tags, noStars, id}){
 
     const projectTags = [
         {"Name": "JS","Color": "JS"},
@@ -31,24 +37,28 @@ function Project(){
         {"Name": "Discord","Color": "Discord"},
         {"Name": "Email","Color": "Email"},
     ]
-
+    
     return (
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
             <div id="owner-profile" class="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
                 <a className={`ml-4 flex items-center flex-row space-x-2`}>
-                    <img src="/NavBarIcons/IconsProfile.jpg" alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
+                    <img src={userPP} alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
                     <div className="flex items-start flex-col">
-                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'> MrJohnDoe </span>
+                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'> {un} </span>
                     </div>
                 </a>
             </div>
             <div id="gridscroll" className="relative w-full h-[70%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
-                <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                {images.map((img)=>
+                    <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                    </img>
+                )}
+                {/* <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                 </img>
                 <img src="http://placekitten.com/901/601" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                 </img>
                 <img src="http://placekitten.com/900/602" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl">
-                </img>
+                </img> */}
             </div>
             <div id="project-info" className="grow flex flex-col w-[90%]">
                 <div className="grow flex flex-row">
@@ -58,10 +68,10 @@ function Project(){
                     </div>
                 </div>
                 <div className="grow flex flex-row">
-                    {projectTags.map((tag) => (
+                    {tags.map((tag) => (
                         <Tag tag={tag} key={tag.Name}/>
                     ))}
-                    <Stars rating={3}/>
+                    <Stars rating={noStars}/>
                 </div>
                 <Link className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl" href="/ProjectPage">
                     <div >
