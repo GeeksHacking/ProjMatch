@@ -1,8 +1,7 @@
 import SideNav from "@/components/SideNav/SideNav"
-import { withPageAuthRequired } from "@auth0/nextjs-auth0"
+import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
-
 
 export default function Home() {
 
@@ -23,13 +22,12 @@ export default function Home() {
                         un='wow' 
                         noStars={0}
                         images={["http://placekitten.com/900/600","http://placekitten.com/900/600","http://placekitten.com/900/600"]}/>
-               
             </div>
         </main>
     )
 }
 
-function Project({images, un, userPP, tags, noStars, id}){
+function Project({images, un, userPP, tags, noStars, id}) {
 
     const projectTags = [
         {"Name": "JS","Color": "JS"},
@@ -121,5 +119,14 @@ function Star({value}) {
         </div>
     )
 }
+
+// Helper Functions
+function getUserData() {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+}
+
+
 
 export const getServerSideProps = withPageAuthRequired()
