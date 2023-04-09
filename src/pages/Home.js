@@ -8,6 +8,8 @@ export default function Home() {
     console.log("Home Page")
     const { user, error, isLoading } = useUser();
     console.log(user)
+    
+    
     return (
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
@@ -29,12 +31,7 @@ export default function Home() {
 
 function Project({images, un, userPP, tags, noStars, id}) {
 
-    const projectTags = [
-        {"Name": "JS","Color": "JS"},
-        {"Name": "React","Color": "React"},
-        {"Name": "Discord","Color": "Discord"},
-        {"Name": "Email","Color": "Email"},
-    ]
+    
     
     return (
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
