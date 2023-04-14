@@ -1,6 +1,8 @@
 import anime from "animejs"
 import Link from "next/link"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { useRouter } from "next/router";
 
 const Landing = () => {
 
@@ -76,13 +78,51 @@ const Landing = () => {
 }
 
 const LandingHeaderBar = () => {
+
+    const router = useRouter()
+    const [accessToken, setAccessToken] = useState("")
+
+    const storeAuthToken = async (accessToken) => {
+        var apiOptions = {
+            method: 'POST',
+            url: 'https://projmatch.us.auth0.com/oauth/token',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                "Access-Control-Allow-Origin": "*"
+            },
+            data: new URLSearchParams({
+                grant_type: 'authorization_code',
+                client_id: process.env.AUTH0_CLIENT_ID,
+                client_secret: process.env.AUTH0_CLIENT_SECRET,
+                code: accessToken,
+                redirect_uri: 'https://localhost:3000'
+            })
+        };
+
+        axios.request(apiOptions).then(function (res) {
+            const responseBody = res.data
+            localStorage.setItem("authorisation_token", responseBody["access_token"])
+        }).catch(function (err) {
+            console.error("Failed to get API Authentication Token with: ", err)
+        })
+    }
+
+    useEffect(() => {
+        if(!router.isReady) return;
+        const query = router.query
+        if (query != undefined) {
+            setAccessToken(query.code)
+            storeAuthToken(accessToken)
+        }
+    }, [router.isReady, router.query]);
+
     return (
         <div className="flex flex-row relative w-full p-2">
             <Link href="/Home" className="hover:scale-105 duration-500">
                 <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
             </Link>
             <div className="ml-auto space-x-3">
-                <Link href="/api/auth/login" className="">
+                <Link href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=http://localhost:3000`} className="">
                     <button className="bg-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center hover:scale-105 duration-500">
                         Log In
                     </button>
