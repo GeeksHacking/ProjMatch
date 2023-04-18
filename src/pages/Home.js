@@ -2,10 +2,43 @@ import SideNav from "@/components/SideNav/SideNav"
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
+import axios from "axios"
+import { useEffect } from "react"
+
+async function getPosts(authToken) {
+    const API_URL = process.env.API_URL
+
+    var axiosAPIOptions = {
+        method: 'GET',
+        url: `${API_URL}/posts`,
+        headers: {
+            'Authorisation': `Bearer ${authToken}`,
+        },
+        data: new URLSearchParams({
+        })
+    };
+
+    axios.request(axiosAPIOptions).then(function (res) {
+        console.log(res)
+    }).catch(function (err) {
+        console.error("Failed to get Posts with: ", err)
+    })
+}
 
 export default function Home() {
 
     const { user, error, isLoading } = useUser();
+
+    useEffect(async () => {
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+    
+        const postResponse = await getPosts(authToken)
+        console.log(postResponse)
+    }, [])
         
     return (
         <main className='relative w-full h-full flex flex-row'>
