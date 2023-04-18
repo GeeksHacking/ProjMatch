@@ -77,10 +77,10 @@ const Landing = () => {
     )
 }
 
+
 const LandingHeaderBar = () => {
 
     const router = useRouter()
-    const [accessToken, setAccessToken] = useState("")
 
     const storeAuthToken = async (accessToken) => {
         var apiOptions = {
@@ -88,14 +88,14 @@ const LandingHeaderBar = () => {
             url: 'https://projmatch.us.auth0.com/oauth/token',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                "Access-Control-Allow-Origin": "*"
             },
             data: new URLSearchParams({
                 grant_type: 'authorization_code',
                 client_id: process.env.AUTH0_CLIENT_ID,
                 client_secret: process.env.AUTH0_CLIENT_SECRET,
                 code: accessToken,
-                redirect_uri: 'https://localhost:3000'
+                audience: process.env.AUTH0_AUDIENCE,
+                redirect_uri: "http://localhost:3000/Home"
             })
         };
 
@@ -111,8 +111,7 @@ const LandingHeaderBar = () => {
         if(!router.isReady) return;
         const query = router.query
         if (query != undefined) {
-            setAccessToken(query.code)
-            storeAuthToken(accessToken)
+            storeAuthToken(query.code)
         }
     }, [router.isReady, router.query]);
 

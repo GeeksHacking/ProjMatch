@@ -5,11 +5,8 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 
 export default function Home() {
 
-    console.log("Home Page")
     const { user, error, isLoading } = useUser();
-    console.log(user)
-    
-    
+        
     return (
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
@@ -30,9 +27,6 @@ export default function Home() {
 }
 
 function Project({images, un, userPP, tags, noStars, id}) {
-
-    
-    
     return (
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
             <div id="owner-profile" class="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
