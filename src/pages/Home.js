@@ -3,7 +3,7 @@ import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 async function getPosts(authToken) {
     const API_URL = process.env.API_URL
@@ -29,14 +29,15 @@ export default function Home() {
 
     const { user, error, isLoading } = useUser();
 
-    useEffect(async () => {
+    useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
             console.error("Authorisation Token returned Undefined.")
         }
     
-        const postResponse = await getPosts(authToken)
+        const postResponse = getPosts(authToken) 
+
         console.log(postResponse)
     }, [])
         
