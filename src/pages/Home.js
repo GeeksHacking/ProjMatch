@@ -26,7 +26,7 @@ async function getPosts(authToken) {
 }
 
 export default function Home() {
-
+    const [projects, setProjects] = useState('');
     const { user, error, isLoading } = useUser();
 
     useEffect(() => {
@@ -47,14 +47,24 @@ export default function Home() {
                 <SideNav />
             </div>
             <div className='absolute flex w-full h-full flex-col justify-start items-center'>
-                <Project tags={[{"Name": "JS","Color": "JS"},
+                {projects.map(proj=>{
+                    <Project 
+                        tags={proj[0]} 
+                        userPP={proj[1]}
+                        un={proj[2]}
+                        noStars={proj[3]}
+                        images={proj[4]}/>
+
+
+                }))}
+                {/* <Project tags={[{"Name": "JS","Color": "JS"},
                                 {"Name": "React","Color": "React"},
                                 {"Name": "Discord","Color": "Discord"},
                                 {"Name": "Email","Color": "Email"},]} 
                         userPP='/NavBarIcons/IconsProfile.jpg' 
                         un='wow' 
                         noStars={0}
-                        images={["http://placekitten.com/900/600","http://placekitten.com/900/600","http://placekitten.com/900/600"]}/>
+                        images={["http://placekitten.com/900/600","http://placekitten.com/900/600","http://placekitten.com/900/600"]}/> */}
             </div>
         </main>
     )
