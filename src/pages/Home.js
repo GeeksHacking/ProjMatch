@@ -3,31 +3,52 @@ import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { use, useCallback, useEffect, useState } from "react"
 
-async function getPosts(authToken) {
-    const API_URL = process.env.API_URL
-
-    var axiosAPIOptions = {
-        method: 'GET',
-        url: `${API_URL}/posts`,
-        headers: {
-            'Authorisation': `Bearer ${authToken}`,
-        },
-        data: new URLSearchParams({
-        })
-    };
-
-    axios.request(axiosAPIOptions).then(function (res) {
-        console.log(res)
-    }).catch(function (err) {
-        console.error("Failed to get Posts with: ", err)
-    })
-}
+// Dev Imports
+import { tagColors } from "@/tagColors"
 
 export default function Home() {
 
     const { user, error, isLoading } = useUser();
+    const [ posts, setPosts ] = useState([]);
+    const [ postReq, setPostReq ] = useState([]);
+
+    const getPosts = useCallback(async (authToken) => {
+        const API_URL = process.env.API_URL
+    
+        var axiosAPIOptions = {
+            method: 'GET',
+            url: `${API_URL}/posts`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        };
+    
+        axios.request(axiosAPIOptions).then(function (res) {
+            if (res.status == 200) {
+                setPostReq(res)
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    }, [])
+
+    const getUserWithID = useCallback(async (authToken) => {
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+    })
 
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
@@ -35,66 +56,64 @@ export default function Home() {
         if (authToken === undefined) {
             console.error("Authorisation Token returned Undefined.")
         }
-    
-        const postResponse = getPosts(authToken) 
-
-        console.log(postResponse)
-    }, [])
         
+        getPosts(authToken)
+        .catch(console.error)
+    }, [getPosts])
+        
+    useEffect(() => {
+        try {
+            setPosts(postReq.data.posts)
+            console.log(posts)
+        } catch (err) { }
+    }, [postReq])
+
     return (
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
                 <SideNav />
             </div>
             <div className='absolute flex w-full h-full flex-col justify-start items-center'>
-                <Project tags={[{"Name": "JS","Color": "JS"},
-                                {"Name": "React","Color": "React"},
-                                {"Name": "Discord","Color": "Discord"},
-                                {"Name": "Email","Color": "Email"},]} 
-                        userPP='/NavBarIcons/IconsProfile.jpg' 
-                        un='wow' 
-                        noStars={0}
-                        images={["http://placekitten.com/900/600","http://placekitten.com/900/600","http://placekitten.com/900/600"]}/>
+                {posts.length !== 0 ?
+                    posts.map((post) => (
+                        <Project post={post} key={post._id} />
+                    )) : <></>
+                }
+                <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1>
             </div>
         </main>
     )
 }
 
-function Project({images, un, userPP, tags, noStars, id}) {
+function Project({post}) {
+    console.log(post)
     return (
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
-            <div id="owner-profile" class="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
+            <div id="owner-profile" className="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
                 <a className={`ml-4 flex items-center flex-row space-x-2`}>
-                    <img src={userPP} alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
+                    <img src="" alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
                     <div className="flex items-start flex-col">
-                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'> {un} </span>
+                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'> Loading... </span>
                     </div>
                 </a>
             </div>
             <div id="gridscroll" className="relative w-full h-[70%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
-                {images.map((img)=>
-                    <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
-                    </img>
-                )}
-                {/* <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
-                </img>
-                <img src="http://placekitten.com/901/601" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
-                </img>
-                <img src="http://placekitten.com/900/602" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl">
-                </img> */}
+                {post.images !== null ? post.images.map((img)=>
+                    <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]" key={img}></img>
+                ) : <></>}
             </div>
             <div id="project-info" className="grow flex flex-col w-[90%]">
                 <div className="grow flex flex-row">
-                    <h1 className="text-3xl font-bold text-black">Project Name</h1>
+                    <h1 className="text-3xl font-bold text-black">{post.projectName}</h1>
                     <div id="Menu" className="grow flex flex-row justify-end">
                         <img src="IconsMenuDots.svg" alt="logo" className='mt-2 w-6 h-6 flex-shrink-0'></img>
                     </div>
                 </div>
                 <div className="grow flex flex-row">
-                    {tags.map((tag) => (
+                    {post.tags.map((tag) => (
                         <Tag tag={tag} key={tag.Name}/>
                     ))}
-                    <Stars rating={noStars}/>
+                    <Stars rating={post.rating}/>
                 </div>
                 <Link className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl" href="/ProjectPage">
                     <div >
@@ -122,7 +141,7 @@ function Stars({rating}){
     return (
         <div className="flex flex-row">
             {stars.map((value) => (
-                <Star value={value}/>
+                <Star value={value} key={Math.random()}/>
             ))}
         </div>
 
