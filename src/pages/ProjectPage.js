@@ -1,6 +1,15 @@
 import SideNav from "@/components/SideNav/SideNav";
-
+import { useState } from 'react';
 export default function ProjectPage() {
+    const [images, setImages] = useState('');
+    const [details, setDetails] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [projDesc,setprojDesc] = useState('');
+    const [projRating,setprojRating] = useState('');
+    const [projTags,setprojTags] = useState('');
+    const [projComms,setprojComms] = useState('');
+    const [ownerName,setownerName] = useState('');
+    const [ownerContact,setownerContact] = useState('');
 
     return (
         <main className='relative w-full h-full flex flex-row'>
@@ -10,16 +19,19 @@ export default function ProjectPage() {
             <div className='absolute flex w-full h-full flex-col justify-start items-center'>
                 <div id="project-details-container" className="flex relative w-2/3 h-[95%] my-10 flex-col">
                     <div id="gridscroll" className="relative w-full h-[50%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
-                        <img src="http://placekitten.com/900/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
-                        </img>
-                        <img src="http://placekitten.com/901/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                        {images.map((img)=>
+                            <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                            </img>
+                        )}
+                        
+                        {/* <img src="http://placekitten.com/901/600" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
                         </img>
                         <img src="http://placekitten.com/900/602" className="w-[90%] h-[99%] inline-block object-cover rounded-2xl">
-                        </img>
+                        </img> */}
                     </div>
                     <div id="title-menu-container" className="flex w-full h-[7%] flex-row">
                         <div id="title-container" className="flex flex-row justify-start items-center w-[50%] h-full">
-                            <h1 className="text-3xl font-bold text-black">Some Project Name</h1>
+                            <h1 className="text-3xl font-bold text-black">{projName}</h1>
                         </div>
                         <div id="menu-container" className="flex flex-row justify-end items-center w-[50%] h-full">
                             <img src="/IconsFlag.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
@@ -31,20 +43,18 @@ export default function ProjectPage() {
                         <div id="description-container" className="flex flex-col justify-start items-start w-[80%] h-full p-5">
                             <h1 className="text-2xl font-bold text-black">Description</h1>
                             <p className="text-lg font-normal text-black">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            <br></br>
-                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            {projDesc}
                             </p>
                         </div>
                         <div id="details-container" className=" flex flex-col justify-start items-start w-[20%] h-full">
                             <div id="rating-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Ratings</h2>
-                                <Stars rating={3}/>
+                                <Stars rating={projRating}/>
                             </div>
                             <div id="technologies-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Technologies</h2>
                                 <div className="flex flex-row">
-                                    {[{"Name": "JS","Color": "JS"},{"Name": "React","Color": "React"}].map((tag) => (
+                                    {projTags.map((tag) => (
                                         <Tag tag={tag} key={tag.name}/>
                                     ))}
                                 </div>
@@ -52,17 +62,17 @@ export default function ProjectPage() {
                             <div id="communication-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Communication</h2>
                                 <div className="flex flex-row">
-                                    {[{"Name": "Discord","Color": "Discord"},{"Name": "Email","Color": "Email"}].map((tag) => (
+                                    {projComms.map((tag) => (
                                         <Tag tag={tag} key={tag.name}/>
                                     ))}
                                 </div>
                             </div>
                             <div id="owner-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Original Poster</h2>
-                                <a>John_Doe</a>
+                                <a>{ownerName}</a>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
-                                <button className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
+                                <button src={ownerContact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
                                     Contact
                                 </button>
                             </div>
