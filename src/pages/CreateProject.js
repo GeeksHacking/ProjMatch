@@ -76,8 +76,9 @@ export default function CreateProject() {
             formData.append("projectName", newProject.projectName)
             formData.append("creatorUserID", user._id)
 
-            var axiosAPIOptions = {
+            let axiosAPIOptions = {
                 method: 'POST',
+                url: `${API_URL}/images`,
                 url: `${API_URL}/images`,
                 headers: {
                     'Authorisation': `Bearer ${authToken}`,
@@ -143,6 +144,7 @@ export default function CreateProject() {
             "projectImages": projectImages,
             "projectTech": projectTech
         })
+        console.log(newProject)
     }
 
     return (
@@ -160,7 +162,7 @@ export default function CreateProject() {
                     <textarea id="projectDescription" name="projectDescription" placeholder="Enter your project’s description!" className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1"/>
                     
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
-                    <input id="projectImages" type="file" name="projectImages" multiple></input>
+                    <input id="projectImages" accept="image/*" type="file" name="projectImages" multiple></input>
 
                     <h2 className="text-3xl font-medium mt-10">Contact</h2>
                     <p className="text-lg mt-1">Insert links or emails to allow the user to contact you</p>

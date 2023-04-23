@@ -3,8 +3,9 @@ import Link from "next/link"
 import { useMediaQuery } from "react-responsive"
 // Components
 import SideNav from "@/components/SideNav/SideNav.js"
+import { useState } from 'react';
 
-const ProjectDetails = () => {
+const ProjectDetails = (Title,Id,) => {
     const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
       
 
