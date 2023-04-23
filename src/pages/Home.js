@@ -64,6 +64,7 @@ export default function Home() {
 
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
+                console.log(res.data)
                 const responseData = res.data
                 if (responseData.users.length === 0) { // No user with email found, hence create user
                     createUserWithEmail(authToken, user)
@@ -124,7 +125,7 @@ export default function Home() {
         if (authToken === undefined) {
             console.error("Authorisation Token returned Undefined.")
         }
-        
+
         getPosts(authToken)
         .catch(console.error)
     }, [getPosts])
@@ -132,6 +133,7 @@ export default function Home() {
     useEffect(() => {
         try {
             setPosts(postReq.data.posts)
+            console.log(posts)
         } catch (err) { }
     }, [postReq])
 
