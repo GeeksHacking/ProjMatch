@@ -28,6 +28,7 @@ export default function Home() {
     
         axios.request(axiosAPIOptions).then(function (res) {
             if (res.status == 200) {
+                console.log(res)
                 setPostReq(res)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -131,6 +132,7 @@ export default function Home() {
         
     useEffect(() => {
         try {
+            console.log(postReq)
             setPosts(postReq.data.posts)
         } catch (err) { }
     }, [postReq])
@@ -181,7 +183,7 @@ function Project({post}) {
                     ))}
                     <Stars rating={post.rating}/>
                 </div>
-                <Link className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl" href="/ProjectPage">
+                <Link className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl" href={"/ProjectPage/?id="+post._id}>
                     <div >
                         Find out more!
                     </div>
