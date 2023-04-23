@@ -28,6 +28,7 @@ export default function Home() {
     
         axios.request(axiosAPIOptions).then(function (res) {
             if (res.status == 200) {
+                // console.log(res)
                 setPostReq(res)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -132,6 +133,7 @@ export default function Home() {
     useEffect(() => {
         try {
             setPosts(postReq.data.posts)
+            console.log(posts)
         } catch (err) { }
     }, [postReq])
 
@@ -146,7 +148,7 @@ export default function Home() {
                         <Project post={post} key={post._id} />
                     )) : <></>
                 }
-                <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1>
+                {/* <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1> */}
             </div>
         </main>
     )
@@ -166,7 +168,8 @@ function Project({post}) {
             <div id="gridscroll" className="relative w-full h-[70%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
                 {post.images !== null ? post.images.map((img)=>
                     <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]" key={img}></img>
-                ) : <></>}
+                ) : <img src={"http://placekitten.com/g/600/800"} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]" key={post._id+1}></img>
+                    }
             </div>
             <div id="project-info" className="grow flex flex-col w-[90%]">
                 <div className="grow flex flex-row">
@@ -177,9 +180,13 @@ function Project({post}) {
                 </div>
                 <div className="grow flex flex-row">
                     {post.tags.map((tag) => (
-                        <Tag tag={tag} key={tag.Name}/>
+                        // console.log(tag),
+                        <Tag tag={tag} key={tag}/>
                     ))}
-                    <Stars rating={post.rating}/>
+                    {post.technologies.map((techbud) => (
+                        <Tag tag={techbud} key={techbud}/>
+                    ))}
+                    <Stars rating={post.ratings}/>
                 </div>
                 <Link className="grow border-2 border-[#D3D3D3] rounded-md flex justify-center items-center text-xl" href="/ProjectPage">
                     <div >
@@ -193,17 +200,18 @@ function Project({post}) {
 function Tag({tag}){
     return (
         <div className={`mx-2 flex flex-row justify-center items-center w-fit h-8 bg-black rounded-full min-w-[62px]`}>
-            <span className="mx-4 text-white font-bold text-lg">{tag.Name}</span>
+            <span className="mx-4 text-white font-bold text-lg">{tag}</span>
         </div>
     )
 }
 
 function Stars({rating}){
+    console.log(rating)
     let stars = [0,0,0,0,0]
     for (let i = 0; i < rating; i++ ) {
         stars[i] = 1
     }
-    
+    console.log(stars)
     return (
         <div className="flex flex-row">
             {stars.map((value) => (
