@@ -7,25 +7,17 @@ import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
 export default function ProjectPage() {
     const router = useRouter()
-    const id = router.query["id"];
-    console.log(id)
-    const [ post, setPost ] = useState({
-        "projectName": "",
-        "description": "",
-        "creatorUserID": "",
-        "rating": "",
-        "tags": [],
-        "technologies": [],
-        "images": [],
-        "isArchived": false
-    });
+    const { id } = router.query
+    const [ post, setPost ] = useState([]);
     const [ postReq, setPostReq ] = useState([]);
     const { user, error, isLoading } = useUser();
     
 
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
-    
+        if (id === undefined) {
+            return
+        }
         var axiosAPIOptions = {
             method: 'GET',
             url: `${API_URL}/posts/?id=${id}`,
@@ -44,7 +36,7 @@ export default function ProjectPage() {
         }).catch(function (err) {
             console.error("Failed to get Posts with: ", err)
         })
-    }, [])
+    }, [id])
 
     // const getUserWithID = useCallback(async (authToken) => {
     //     const API_URL = process.env.API_URL
@@ -140,13 +132,20 @@ export default function ProjectPage() {
         
     useEffect(() => {
         try {
-            console.log(postReq)
+            // console.log(postReq)
+            // console.log(postReq.data.posts[0])
             setPost(postReq.data.posts[0])
+            // console.log(post)
         } catch (err) { }
     }, [postReq])
 
-
+    if (post.length === 0) {
+        return (
+            <></>
+        )
+    }
     return (
+        
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
                 <SideNav />
@@ -155,7 +154,7 @@ export default function ProjectPage() {
                 <div id="project-details-container" className="flex relative w-2/3 h-[95%] my-10 flex-col">
                     <div id="gridscroll" className="relative w-full h-[50%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
                         {((post.images)? post.images:["https://placekitten.com/200/300","https://placekitten.com/200/300"]).map((img)=>
-                            <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]">
+                            <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]" key={Math.random()}>
                             </img>
                         )}
                         
@@ -184,7 +183,7 @@ export default function ProjectPage() {
                         <div id="details-container" className=" flex flex-col justify-start items-start w-[20%] h-full">
                             <div id="rating-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Ratings</h2>
-                                <Stars rating={post.rating}/>
+                                <Stars rating={post.ratings}/>
                             </div>
                             <div id="technologies-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Technologies</h2>
@@ -222,7 +221,7 @@ export default function ProjectPage() {
 function Tag({tag}){
     return (
         <div className={`mx-2 flex flex-row justify-center items-center w-fit h-8 bg-black rounded-full min-w-[62px]`}>
-            <span className="mx-4 text-white font-bold text-lg">{tag.Name}</span>
+            <span className="mx-4 text-white font-bold text-lg">{tag}</span>
         </div>
     )
 }
@@ -232,12 +231,12 @@ function Stars({rating}){
     for (let i = 0; i < rating; i++ ) {
         stars[i] = 1
     }
-    console.log(stars)
+    // console.log(stars)
     
     return (
         <div className="flex flex-row">
             {stars.map((value) => (
-                <Star value={value}/>
+                <Star value={value} key={Math.random()}/>
             ))}
         </div>
 

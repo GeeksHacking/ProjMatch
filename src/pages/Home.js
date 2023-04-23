@@ -28,11 +28,6 @@ export default function Home() {
     
         axios.request(axiosAPIOptions).then(function (res) {
             if (res.status == 200) {
-<<<<<<< HEAD
-                console.log(res)
-=======
-                // console.log(res)
->>>>>>> ecca1dbccabff8a0d1c8bd382de4374944366c9e
                 setPostReq(res)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`

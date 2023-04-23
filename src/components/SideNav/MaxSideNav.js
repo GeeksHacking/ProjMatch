@@ -28,9 +28,9 @@ const MaxSideNav = () => {
                    <span className={`${styles.SideNavTxt} font-bold text-xl`}> ProjMatch </span>
                 </Link>
                 <div className={`mt-10 space-y-4`}>
-                    <ul className={`space-y-4`}>
+                    <ul className={`space-y-4`} key={Math.random()}>
                         {navOptions.map((option) => (
-                            option.Page != "Create" ? <SideNavOptn option={option} key={option.Page} /> : <></>
+                            option.Page != "Create" ? <SideNavOptn option={option} key={Math.random()} /> : <></>
                         ))}
                     </ul>
                 </div>
