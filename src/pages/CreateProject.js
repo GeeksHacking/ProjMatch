@@ -5,26 +5,57 @@ import { use, useCallback, useEffect, useState } from "react"
 
 export default function CreateProject() {
     const { user, error, isLoading } = useUser();
+    const [projMatchUser, setProjMatchUser] = useState({})
 
     // State Variables
     const [ newProject, setNewProject ] = useState({})
 
     // API Req
-    const createProject = useCallback((authToken) => {
+    const getUserWithID = useCallback((authToken, user) => {
         const API_URL = process.env.API_URL
-    
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users?email=${user.email}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                setProjMatchUser(res.data.users[0])
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
+    })
+
+    const createProject = useCallback((authToken, project, user, imageURL) => {
+        const API_URL = process.env.API_URL
+        console.log(projMatchUser)
         var axiosAPIOptions = {
             method: 'GET',
             url: `${API_URL}/posts`,
             headers: {
                 'Authorisation': `Bearer ${authToken}`,
             },
-            data: new URLSearchParams({ })
+            data: {
+                "projectName": project.projectName,
+                "description": project.projectDescription,
+                "creatorUserID": projMatchUser._id,
+                "tags": project.projectTags,
+                "technologies": project.projectTech,
+                "images": imageURL,
+            }
         };
     
         axios.request(axiosAPIOptions).then(function (res) {
             if (res.status == 200) {
-                setPostReq(res)
+                console.log(res)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
             }
@@ -38,13 +69,16 @@ export default function CreateProject() {
 
         if (user !== undefined) {
 
-            let formData = new FormData()
-            formData.append("files", newProject.projectImages)
+            var formData = new FormData()
+            for (let i = 0; i < newProject.projectImages.length; i++) {
+                formData.append("files", newProject.projectImages[i])
+            }
             formData.append("projectName", newProject.projectName)
             formData.append("creatorUserID", user._id)
 
             let axiosAPIOptions = {
                 method: 'POST',
+                url: `${API_URL}/images`,
                 url: `${API_URL}/images`,
                 headers: {
                     'Authorisation': `Bearer ${authToken}`,
@@ -55,7 +89,8 @@ export default function CreateProject() {
 
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
-                    console.log(res)
+                    const imageURL = res.imageURL
+                    createProject(authToken, newProject, user, imageURL)
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
@@ -72,9 +107,23 @@ export default function CreateProject() {
             console.error("Authorisation Token returned Undefined.")
         }
 
-        createS3Images(authToken, newProject, user)
+        if (newProject !== {}) {
+            createS3Images(authToken, newProject, user)
+        }
 
     }, [newProject])
+
+    useEffect(() => {
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+
+        if (user !== undefined) {
+            getUserWithID(authToken, user)
+        }
+    }, [getUserWithID])
 
     // Handle Form Submission
     const handleSubmission = (event) => {
@@ -85,20 +134,19 @@ export default function CreateProject() {
         const projectContact = event.target.projectContact.value
         const projectTags = event.target.projectTags.value
         const projectImages = [...event.target.projectImages.files]
+        const projectTech = event.target.projectTech.value
 
         setNewProject({
             "projectName": projectName,
             "projectDescription": projectDescription,
             "projectContact": projectContact,
             "projectTags": projectTags,
-            "projectImages": projectImages
+            "projectImages": projectImages,
+            "projectTech": projectTech
         })
-
-        if (newProject === {}) {
-            console.error("Failed to create project")
-        }
+        console.log(newProject)
     }
-    
+
     return (
         <div className='absolute flex w-full h-full flex-col justify-start items-center'>
             <SideNav/>
@@ -124,6 +172,10 @@ export default function CreateProject() {
                     <p className="text-lg mt-1">Add tags to help users find your project!</p>
                     <input type="text" name="projectTags" id="projectTags" placeholder="Enter your project’s tags! e.g. Clicker, Game, Fun" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2"/>
                 
+                    <h2 className="text-3xl font-medium mt-10">Technologies</h2>
+                    <p className="text-lg mt-1">Let users know what Programming Language/Framework you use!</p>
+                    <input type="text" name="projectTech" id="projectTech" placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2"/>
+
                     <input type="submit" value="Create Project" className="w-[30%] h-11 rounded-full bg-logo-blue text-white text-2xl font-bold mt-10 mb-20"></input>
                 </form>
             </div>

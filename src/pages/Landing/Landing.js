@@ -121,7 +121,7 @@ const LandingHeaderBar = () => {
                 <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
             </Link>
             <div className="ml-auto space-x-3">
-                <Link href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=http://localhost:3000`} className="">
+                <Link href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=http://localhost:3000/Home`} className="">
                     <button className="bg-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center hover:scale-105 duration-500">
                         Log In
                     </button>
