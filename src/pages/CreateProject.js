@@ -56,7 +56,8 @@ export default function CreateProject() {
             data: {
                 "projectName": project.projectName,
                 "description": project.projectDescription,
-                "creatorUserID": projMatchUser._id,
+                "creatorUserID": user._id,
+                "contact": project.projectContact,
                 "tags": project.projectTags,
                 "technologies": project.projectTech,
                 "images": imageURL,

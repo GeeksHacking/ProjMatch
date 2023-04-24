@@ -168,7 +168,7 @@ function Project({post}) {
                 </a>
             </div>
             <div id="gridscroll" className="relative w-full h-[70%] overflow-x-scroll overflow-y-hidden whitespace-nowrap rounded-l-3xl">
-                {post.images !== null ? post.images.map((img)=>
+                {(post.images !== null && post.images.length !== 0) ? post.images.map((img)=>
                     <img src={img} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]" key={img}></img>
                 ) : <img src={"http://placekitten.com/g/600/800"} className="w-[90%] h-[99%] inline-block object-cover rounded-2xl mr-[15px]" key={post._id+1}></img>
                     }

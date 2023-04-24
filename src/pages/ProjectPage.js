@@ -5,6 +5,7 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
+import e from "cors"
 export default function ProjectPage() {
     const router = useRouter()
     const { id } = router.query
@@ -135,7 +136,13 @@ export default function ProjectPage() {
             // console.log(postReq)
             // console.log(postReq.data.posts[0])
             setPost(postReq.data.posts[0])
-            // console.log(post)
+            console.log(post)
+            console.log(String(post.contact))
+            if (String(post.contact).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                console.log("Email")
+            } else {
+                console.log("Phone")
+            }
         } catch (err) { }
     }, [postReq])
 
@@ -206,9 +213,9 @@ export default function ProjectPage() {
                                 <a>{"test"}</a>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
-                                <button src={"test"} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
+                                <a href={"mailto:" + post.contact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
                                     Contact
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
