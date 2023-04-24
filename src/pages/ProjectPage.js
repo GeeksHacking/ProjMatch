@@ -13,6 +13,7 @@ export default function ProjectPage() {
     const [ postReq, setPostReq ] = useState([]);
     const [ ouser, setUser ] = useState([]);
     const { user, error, isLoading } = useUser();
+    const [ userContact, setUserContact ] = useState("");
     
 
     const getPosts = useCallback(async (authToken) => {
@@ -59,7 +60,7 @@ export default function ProjectPage() {
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
                 setUser(res.data.users[0])
-                console.log(res)
+                // console.log(res)
             } else {
             
                 throw `Status ${res.status}, ${res.statusText}`
@@ -154,7 +155,21 @@ export default function ProjectPage() {
             console.log(postReq.data.posts[0])
             getUserWithID(postReq.data.posts[0].creatorUserID)
             setPost(postReq.data.posts[0])
-            // console.log(post)
+            console.log("checking")
+            if (post.contact !== undefined) {
+                if (String(post.contact).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                    console.log("Email")
+                    setUserContact("mailto:"+post.contact)
+                    console.log(userContact)
+                } else if (String(post.contact).match(/^\d{10}$/)) {
+                    console.log("Phone")
+                    setUserContact("tel:"+post.contact)
+                    console.log(userContact)
+                } else {
+                    console.log("normal link")
+                    setUserContact(post.contact)
+                }
+            }
         } catch (err) { }
     }, [postReq])
 
@@ -225,7 +240,7 @@ export default function ProjectPage() {
                                 <a>{ouser.username}</a>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
-                                <a href={"mailto:" + post.contact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
+                                <a href={userContact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
                                     Contact
                                 </a>
                             </div>

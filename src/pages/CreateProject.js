@@ -46,7 +46,6 @@ export default function CreateProject() {
 
     const createProject = useCallback((authToken, project, user, imageURL) => {
         const API_URL = process.env.API_URL
-
         var axiosAPIOptions = {
             method: 'POST',
             url: `${API_URL}/posts`,
