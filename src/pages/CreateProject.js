@@ -141,9 +141,9 @@ export default function CreateProject() {
         const projectName = event.target.projectName.value
         const projectDescription = event.target.projectDescription.value
         const projectContact = event.target.projectContact.value
-        const projectTags = event.target.projectTags.value
+        const projectTags = event.target.projectTags.value.replace(/\s/g, '').split(',')
         const projectImages = [...event.target.projectImages.files]
-        const projectTech = event.target.projectTech.value
+        const projectTech = event.target.projectTech.value.replace(/\s/g, '').split(',')
 
         setNewProject({
             "projectName": projectName,

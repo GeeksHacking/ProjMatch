@@ -132,11 +132,10 @@ export default function Home() {
         
     useEffect(() => {
         try {
-            console.log(postReq)
             setPosts(postReq.data.posts)
-            console.log(posts)
+            console.log(postReq.data.posts)
         } catch (err) { }
-    }, [postReq])
+    }, [setPosts, postReq])
 
     return (
         <main className='relative w-full h-full flex flex-row'>
@@ -144,7 +143,9 @@ export default function Home() {
                 <SideNav />
             </div>
             <div className='absolute flex w-full h-full flex-col justify-start items-center'>
-                {posts.length !== 0 ?
+                {
+                posts.length !== 0 ?
+                    
                     posts.map((post) => (
                         <Project post={post} key={post._id} />
                     )) : <></>
@@ -180,11 +181,10 @@ function Project({post}) {
                     </div>
                 </div>
                 <div className="grow flex flex-row">
-                    {post.tags.map((tag) => (
-                        // console.log(tag),
+                    {(post.tags !== "" ? post.tags : [""]).map((tag) => (
                         <Tag tag={tag} key={tag}/>
                     ))}
-                    {post.technologies.map((techbud) => (
+                    {(post.technologies !== "" ? post.technologies : [""]).map((techbud) => (
                         <Tag tag={techbud} key={techbud}/>
                     ))}
                     <Stars rating={post.ratings}/>
@@ -207,12 +207,10 @@ function Tag({tag}){
 }
 
 function Stars({rating}){
-    console.log(rating)
     let stars = [0,0,0,0,0]
     for (let i = 0; i < rating; i++ ) {
         stars[i] = 1
     }
-    console.log(stars)
     return (
         <div className="flex flex-row">
             {stars.map((value) => (
