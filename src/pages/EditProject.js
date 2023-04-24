@@ -71,7 +71,7 @@ export default function EditProject() {
 
         axios.request(options).then(function (res) {
             if (res.status == 200) {
-                console.log(res)
+                router.push(`http://localhost:3000/ProjectPage?id=${id}`)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
             }

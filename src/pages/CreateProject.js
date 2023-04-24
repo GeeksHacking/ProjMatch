@@ -3,14 +3,18 @@ import axios from "axios"
 import {useUser} from "@auth0/nextjs-auth0/client"
 import { use, useCallback, useEffect, useState } from "react"
 import { get } from "animejs";
+import { useRouter } from "next/router";
 
 export default function CreateProject() {
+    const router = useRouter()
+
     const { user, error, isLoading } = useUser();
     if (isLoading) return <div>Loading...</div>
     const [projMatchUser, setProjMatchUser] = useState({})
 
     // State Variables
     const [ newProject, setNewProject ] = useState({})
+    const [ newProjID, setNewProjID ] = useState("")
 
     // API Req
     const getUserWithID = useCallback(async (authToken, user) => {
@@ -26,15 +30,6 @@ export default function CreateProject() {
         }
         console.log("geeting user")
         let res = await axios.request(apiOptions)
-        // .then((res) => {
-        //     if (res.status == 200) {
-        //         setProjMatchUser(res.data.users[0])
-        //         console.log(projMatchUser, res.data.users[0])
-        //         return res.data.users[0]
-        //     } else {
-        //         throw `Status ${res.status}, ${res.statusText}`
-        //     }
-        // })
         .catch(function (err) {
             console.error("Failed to get User with: ", err)
         })
@@ -49,10 +44,8 @@ export default function CreateProject() {
     const createProject = useCallback((authToken, project, projuser, imageURL) => {
         const API_URL = process.env.API_URL
         var uId;
-        console.log("test")
-        console.log(projMatchUser)
         var axiosAPIOptions;
-        console.log(user)
+
         getUserWithID(authToken, user).then((res) => {
             uId = res
         }).then(() => {
@@ -72,11 +65,10 @@ export default function CreateProject() {
                     "images": imageURL,
                 }
             };
-        }).then(() => {
-        
+        }).then(() => {   
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
-                    console.log(res)
+                    return res
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
@@ -114,7 +106,13 @@ export default function CreateProject() {
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
                     const imageURL = res.data.imageURL
-                    createProject(authToken, newProject, projMatchUser, imageURL)
+                    createProject(authToken, newProject, projMatchUser, imageURL).then((res) => {
+                        const id = res.data.insertedProjectWithID
+
+                        if (id !== undefined || id !== "") {
+                            router.push(`http://localhost:3000/ProjectPage?id=${id}`)
+                        }
+                    })
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
