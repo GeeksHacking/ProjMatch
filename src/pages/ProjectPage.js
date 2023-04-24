@@ -11,6 +11,7 @@ export default function ProjectPage() {
     const { id } = router.query
     const [ post, setPost ] = useState([]);
     const [ postReq, setPostReq ] = useState([]);
+    const [ ouser, setUser ] = useState([]);
     const { user, error, isLoading } = useUser();
     
 
@@ -39,18 +40,34 @@ export default function ProjectPage() {
         })
     }, [id])
 
-    // const getUserWithID = useCallback(async (authToken) => {
-    //     const API_URL = process.env.API_URL
+    const getUserWithID = useCallback(async (uid) => {
+        const authToken = localStorage.getItem("authorisation_token")
 
-    //     var apiOptions = {
-    //         method: 'GET',
-    //         url: `${API_URL}/users`,
-    //         headers: {
-    //             'Authorisation': `Bearer ${authToken}`,
-    //         },
-    //         data: new URLSearchParams({ })
-    //     }
-    // })
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users/?id=${uid}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                setUser(res.data.users[0])
+                console.log(res)
+            } else {
+            
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    })
 
     const checkUserExistWithEmail = useCallback(async (authToken, email) => {
         const API_URL = process.env.API_URL
@@ -134,15 +151,10 @@ export default function ProjectPage() {
     useEffect(() => {
         try {
             // console.log(postReq)
-            // console.log(postReq.data.posts[0])
+            console.log(postReq.data.posts[0])
+            getUserWithID(postReq.data.posts[0].creatorUserID)
             setPost(postReq.data.posts[0])
-            console.log(post)
-            console.log(String(post.contact))
-            if (String(post.contact).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-                console.log("Email")
-            } else {
-                console.log("Phone")
-            }
+            // console.log(post)
         } catch (err) { }
     }, [postReq])
 
@@ -210,7 +222,7 @@ export default function ProjectPage() {
                             </div>
                             <div id="owner-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Original Poster</h2>
-                                <a>{"test"}</a>
+                                <a>{ouser.username}</a>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <a href={"mailto:" + post.contact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
