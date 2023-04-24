@@ -11,7 +11,9 @@ export default function ProjectPage() {
     const { id } = router.query
     const [ post, setPost ] = useState([]);
     const [ postReq, setPostReq ] = useState([]);
+    const [ ouser, setUser ] = useState([]);
     const { user, error, isLoading } = useUser();
+    const [ userContact, setUserContact ] = useState("");
     
 
     const getPosts = useCallback(async (authToken) => {
@@ -39,6 +41,103 @@ export default function ProjectPage() {
         })
     }, [id])
 
+    const getUserWithID = useCallback(async (uid) => {
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users/?id=${uid}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                setUser(res.data.users[0])
+                // console.log(res)
+            } else {
+            
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    })
+
+    const checkUserExistWithEmail = useCallback(async (authToken, email) => {
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users?email=${email}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            
+        }
+
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                const responseData = res.data
+                if (responseData.users.length === 0) { // No user with email found, hence create user
+                    createUserWithEmail(authToken, user)
+                }
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User Existance with: ", err)
+        })
+    })
+
+    const createUserWithEmail = async (authToken, user) => {
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'POST',
+            url: `${API_URL}/users`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: {
+                "username": user.nickname,
+                "rlName": user.name,
+                "regEmail": user.email,
+                "regPhone": 0
+            }
+        }
+
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                return res
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Create User with: ", err)
+        })
+    }
+
+    useEffect(() => {
+        // Check if the user exists. If not, create a new user for this user
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+
+        if (user !== undefined) {
+            checkUserExistWithEmail(authToken, user.email).then((res) => {
+            })
+        }
+    }, [checkUserExistWithEmail])
+
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
 
@@ -53,9 +152,24 @@ export default function ProjectPage() {
     useEffect(() => {
         try {
             // console.log(postReq)
-            // console.log(postReq.data.posts[0])
+            console.log(postReq.data.posts[0])
+            getUserWithID(postReq.data.posts[0].creatorUserID)
             setPost(postReq.data.posts[0])
-            // console.log(post)
+            console.log("checking")
+            if (post.contact !== undefined) {
+                if (String(post.contact).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                    console.log("Email")
+                    setUserContact("mailto:"+post.contact)
+                    console.log(userContact)
+                } else if (String(post.contact).match(/^\d{10}$/)) {
+                    console.log("Phone")
+                    setUserContact("tel:"+post.contact)
+                    console.log(userContact)
+                } else {
+                    console.log("normal link")
+                    setUserContact(post.contact)
+                }
+            }
         } catch (err) { }
     }, [postReq])
 
@@ -123,12 +237,12 @@ export default function ProjectPage() {
                             </div>
                             <div id="owner-container" className="flex flex-col w-full h-1/5 justify-center items-start">
                                 <h2 className="text-xl font-bold text-black">Original Poster</h2>
-                                <a>{"test"}</a>
+                                <a>{ouser.username}</a>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
-                                <button src={"test"} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
+                                <a href={userContact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
                                     Contact
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

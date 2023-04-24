@@ -57,7 +57,8 @@ export default function CreateProject() {
             data: {
                 "projectName": project.projectName,
                 "description": project.projectDescription,
-                "creatorUserID": projMatchUser._id,
+                "creatorUserID": user._id,
+                "contact": project.projectContact,
                 "tags": project.projectTags,
                 "technologies": project.projectTech,
                 "images": imageURL,
@@ -81,6 +82,9 @@ export default function CreateProject() {
         if (user !== undefined && newProject !== {}) {
 
             var formData = new FormData()
+            if (!newProject.projectImages) {
+                return
+            }
             for (let i = 0; i < newProject.projectImages.length; i++) {
                 formData.append("files", newProject.projectImages[i])
             }
@@ -100,7 +104,7 @@ export default function CreateProject() {
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
                     const imageURL = res.data.imageURL
-                    createProject(authToken, newProject, user, imageURL)
+                    createProject(authToken, newProject, projMatchUser, imageURL)
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
