@@ -57,10 +57,6 @@ export default function EditProject() {
             return
         }
 
-        if (changedProj === {}) {
-            console.error("Nothing Changed")
-        }
-
         const options = {
             method: 'PUT',
             url: `${API_URL}/posts`,
@@ -115,18 +111,16 @@ export default function EditProject() {
             "technologies": projectTech
         }
 
-        let tempUpdatedProj = []
+        let tempUpdatedProj = {}
         if (temp !== undefined) {
             const keys = ["projectName", "description", "contact", "tags", "technologies", "images"]
             for(let i = 0; i < keys.length; i++) {
                 if (JSON.stringify(post[keys[i]]) !== JSON.stringify(temp[keys[i]])) {
-                    console.log(JSON.stringify(temp[keys[i]]))
                     tempUpdatedProj[keys[i]] = temp[keys[i]]
                 }
             }
         }
         setChangedProj(tempUpdatedProj)
-        console.log(tempUpdatedProj)
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
@@ -148,7 +142,7 @@ export default function EditProject() {
 
                     <h2 className="text-3xl font-medium mt-10">Project Description</h2>
                     <p className="text-lg mt-1">Include important details about what your project is about and more!</p>
-                    <textarea disabled={post.description === "Loading..." ? true : false} name="projectDescription" defaultValue={`${post.description}`} className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1" />
+                    <textarea name="projectDescription" defaultValue={`${post.description}`} className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1" />
 
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
                     <input type="file" name="projectImages"></input>
