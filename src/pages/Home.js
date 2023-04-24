@@ -13,6 +13,7 @@ export default function Home() {
     const { user, error, isLoading } = useUser();
     const [ posts, setPosts ] = useState([]);
     const [ postReq, setPostReq ] = useState([]);
+    const [ users, setUsers ] = useState({});
 
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
@@ -36,7 +37,38 @@ export default function Home() {
             console.error("Failed to get Posts with: ", err)
         })
     }, [])
+    const getUserWithID = useCallback(async (pid,uid) => {
+        const authToken = localStorage.getItem("authorisation_token")
 
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users/?id=${uid}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                let temp=users;
+                users[pid]=res.data.users[0]
+                setUsers(temp)
+                console.log(res)
+                console.log(temp)
+                
+            } else {
+            
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    })
     // const getUserWithID = useCallback(async (authToken) => {
     //     const API_URL = process.env.API_URL
 
@@ -104,7 +136,7 @@ export default function Home() {
             console.error("Failed to get Create User with: ", err)
         })
     }
-
+    
     useEffect(() => {
         // Check if the user exists. If not, create a new user for this user
         const authToken = localStorage.getItem("authorisation_token")
@@ -134,7 +166,9 @@ export default function Home() {
         try {
             setPosts(postReq.data.posts)
             console.log(postReq.data.posts)
-        } catch (err) { }
+            postReq.data.posts.map((post)=>getUserWithID(post._id,post.creatorUserID))
+            console.log(postReq.data.posts)
+        } catch (err) {console.log(err) }
     }, [setPosts, postReq])
 
     return (
@@ -147,7 +181,7 @@ export default function Home() {
                 posts.length !== 0 ?
                     
                     posts.map((post) => (
-                        <Project post={post} key={post._id} />
+                        <Project post={post} uss={users} key={post._id} />
                     )) : <></>
                 }
                 {/* <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1> */}
@@ -156,14 +190,16 @@ export default function Home() {
     )
 }
 
-function Project({post}) {
+function Project({post,uss}) {
+    console.log(uss)
+    
     return (
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
             <div id="owner-profile" className="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
                 <a className={`ml-4 flex items-center flex-row space-x-2`}>
-                    <img src="" alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
+                    <img src={(uss[post._id])?uss[post._id].userDat.profilePic:""} alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
                     <div className="flex items-start flex-col">
-                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'> Loading... </span>
+                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'>{(uss[post._id])?uss[post._id].username:"Loading..."} </span>
                     </div>
                 </a>
             </div>
