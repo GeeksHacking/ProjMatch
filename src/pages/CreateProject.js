@@ -2,6 +2,7 @@ import SideNav from "@/components/SideNav/SideNav";
 import axios from "axios"
 import {useUser} from "@auth0/nextjs-auth0/client"
 import { use, useCallback, useEffect, useState } from "react"
+import { get } from "animejs";
 
 export default function CreateProject() {
     const { user, error, isLoading } = useUser();
@@ -11,7 +12,7 @@ export default function CreateProject() {
     const [ newProject, setNewProject ] = useState({})
 
     // API Req
-    const getUserWithID = useCallback((authToken, user) => {
+    const getUserWithID = useCallback(async (authToken, user) => {
         const API_URL = process.env.API_URL
 
         var apiOptions = {
@@ -23,22 +24,31 @@ export default function CreateProject() {
             data: new URLSearchParams({ })
         }
 
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                setProjMatchUser(res.data.users[0])
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
+        let res = await axios.request(apiOptions)
+        // .then((res) => {
+        //     if (res.status == 200) {
+        //         setProjMatchUser(res.data.users[0])
+        //         console.log(projMatchUser, res.data.users[0])
+        //         return res.data.users[0]
+        //     } else {
+        //         throw `Status ${res.status}, ${res.statusText}`
+        //     }
+        // })
+        .catch(function (err) {
             console.error("Failed to get User with: ", err)
         })
-    })
+        if (res.status == 200) {
+            return res.data.users[0]
+        } else {
+            throw `Status ${res.status}, ${res.statusText}`
+        }
+    }, [projMatchUser, setProjMatchUser])
 
     const createProject = useCallback((authToken, project, user, imageURL) => {
         const API_URL = process.env.API_URL
-        console.log(projMatchUser)
+
         var axiosAPIOptions = {
-            method: 'GET',
+            method: 'POST',
             url: `${API_URL}/posts`,
             headers: {
                 'Authorisation': `Bearer ${authToken}`,
@@ -52,7 +62,7 @@ export default function CreateProject() {
                 "images": imageURL,
             }
         };
-    
+        
         axios.request(axiosAPIOptions).then(function (res) {
             if (res.status == 200) {
                 console.log(res)
@@ -67,7 +77,7 @@ export default function CreateProject() {
     const createS3Images = useCallback((authToken, newProject, user) => {
         const API_URL = process.env.API_URL
 
-        if (user !== undefined) {
+        if (user !== undefined && newProject !== {}) {
 
             var formData = new FormData()
             for (let i = 0; i < newProject.projectImages.length; i++) {
@@ -79,7 +89,6 @@ export default function CreateProject() {
             let axiosAPIOptions = {
                 method: 'POST',
                 url: `${API_URL}/images`,
-                url: `${API_URL}/images`,
                 headers: {
                     'Authorisation': `Bearer ${authToken}`,
                     "Content-Type": "multipart/form-data"
@@ -89,7 +98,7 @@ export default function CreateProject() {
 
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
-                    const imageURL = res.imageURL
+                    const imageURL = res.data.imageURL
                     createProject(authToken, newProject, user, imageURL)
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
@@ -121,9 +130,9 @@ export default function CreateProject() {
         }
 
         if (user !== undefined) {
-            getUserWithID(authToken, user)
+            getUserWithID(authToken, user).then((res) => { setProjMatchUser(res) })
         }
-    }, [getUserWithID])
+    }, [user])
 
     // Handle Form Submission
     const handleSubmission = (event) => {
@@ -144,7 +153,6 @@ export default function CreateProject() {
             "projectImages": projectImages,
             "projectTech": projectTech
         })
-        console.log(newProject)
     }
 
     return (
