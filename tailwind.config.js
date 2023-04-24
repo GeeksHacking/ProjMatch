@@ -15,6 +15,8 @@ module.exports = {
       "React": "#61DAFB",
       "Discord": "#7289DA",
       "Email": "#FFA15A",
+      "delete-red": "#ef4444",
+      "edit-green": "#059668"
     },
     borderWidth: {
       DEFAULT: '1px',

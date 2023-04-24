@@ -14,7 +14,30 @@ export default function ProjectPage() {
     const [ ouser, setUser ] = useState([]);
     const { user, error, isLoading } = useUser();
     const [ userContact, setUserContact ] = useState("");
-    
+    const [ pmUser, setPMUser ] = useState({})
+
+    const getUserFromEmail = useCallback(async (authToken, user) => {
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users?email=${user.email}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+
+        let res = await axios.request(apiOptions)
+        .catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
+        if (res.status == 200) {
+            return res.data.users[0]
+        } else {
+            throw `Status ${res.status}, ${res.statusText}`
+        }
+    }, [])
 
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
@@ -62,7 +85,6 @@ export default function ProjectPage() {
                 setUser(res.data.users[0])
                 // console.log(res)
             } else {
-            
                 throw `Status ${res.status}, ${res.statusText}`
             }
         }).catch(function (err) {
@@ -151,22 +173,23 @@ export default function ProjectPage() {
         
     useEffect(() => {
         try {
-            // console.log(postReq)
-            console.log(postReq.data.posts[0])
+            const authToken = localStorage.getItem("authorisation_token")
+
+            if (authToken === undefined) {
+                console.error("Authorisation Token returned Undefined.")
+            }
+            getUserFromEmail(authToken, user).then((res) => {
+                setPMUser(res)
+            })
             getUserWithID(postReq.data.posts[0].creatorUserID)
             setPost(postReq.data.posts[0])
             console.log("checking")
             if (post.contact !== undefined) {
                 if (String(post.contact).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-                    console.log("Email")
                     setUserContact("mailto:"+post.contact)
-                    console.log(userContact)
                 } else if (String(post.contact).match(/^\d{10}$/)) {
-                    console.log("Phone")
                     setUserContact("tel:"+post.contact)
-                    console.log(userContact)
                 } else {
-                    console.log("normal link")
                     setUserContact(post.contact)
                 }
             }
@@ -179,7 +202,6 @@ export default function ProjectPage() {
         )
     }
     return (
-        
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
                 <SideNav />
@@ -198,10 +220,17 @@ export default function ProjectPage() {
                         </img> */}
                     </div>
                     <div id="title-menu-container" className="flex w-full h-[7%] flex-row">
-                        <div id="title-container" className="flex flex-row justify-start items-center w-[50%] h-full">
+                        <div id="title-container" className="flex flex-row justify-start items-center w-[40%] h-full">
                             <h1 className="text-3xl font-bold text-black">{post.projectName}</h1>
                         </div>
-                        <div id="menu-container" className="flex flex-row justify-end items-center w-[50%] h-full">
+                        <div id="menu-container" className="flex flex-row justify-end items-center w-[60%] h-full space-x-3">
+                            {pmUser._id === postReq.data.posts[0].creatorUserID ? 
+                            <div className="space-x-3">
+                                <button className="bg-delete-red text-white px-2 py-1 rounded-md" onClick={() => router.push("http://localhost:3000/")}>Delete Project</button>
+                                <button className="bg-edit-green text-white px-2 py-1 rounded-md" onClick={() => router.push(`http://localhost:3000/EditProject?id=${post._id}`)}>Edit Project</button>
+                            </div>
+                            : <></>}
+
                             <img src="/IconsFlag.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
                             <img src="/IconsShare.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
                             <img src="NavBarIcons/IconsSaved.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
