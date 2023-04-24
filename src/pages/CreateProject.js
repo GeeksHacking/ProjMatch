@@ -48,6 +48,8 @@ export default function CreateProject() {
     const createProject = useCallback((authToken, project, projuser, imageURL) => {
         const API_URL = process.env.API_URL
         var uId;
+
+        console.log(projMatchUser)
         var axiosAPIOptions;
         console.log(user)
         getUserWithID(authToken, user).then((res) => {
@@ -129,7 +131,11 @@ export default function CreateProject() {
         }
 
         if (newProject !== {}) {
-            createS3Images(authToken, newProject, projMatchUser)
+            if (projMatchUser === {} || projMatchUser === undefined) {
+                createS3Images(authToken, newProject, user)
+            } else {
+                console.error("ProjMatch User call returned empty or undefined")
+            }
         }
 
     }, [newProject])

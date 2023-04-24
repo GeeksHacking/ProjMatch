@@ -5,7 +5,7 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
-import e from "cors"
+
 export default function ProjectPage() {
     const router = useRouter()
     const { id } = router.query
