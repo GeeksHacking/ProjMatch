@@ -24,7 +24,7 @@ export default function CreateProject() {
             },
             data: new URLSearchParams({ })
         }
-
+        console.log("geeting user")
         let res = await axios.request(apiOptions)
         // .then((res) => {
         //     if (res.status == 200) {
@@ -39,6 +39,7 @@ export default function CreateProject() {
             console.error("Failed to get User with: ", err)
         })
         if (res.status == 200) {
+            console.log(res)
             return res.data.users[0]
         } else {
             throw `Status ${res.status}, ${res.statusText}`
@@ -48,7 +49,7 @@ export default function CreateProject() {
     const createProject = useCallback((authToken, project, projuser, imageURL) => {
         const API_URL = process.env.API_URL
         var uId;
-
+        console.log("test")
         console.log(projMatchUser)
         var axiosAPIOptions;
         console.log(user)
@@ -131,11 +132,14 @@ export default function CreateProject() {
         }
 
         if (newProject !== {}) {
-            if (projMatchUser === {} || projMatchUser === undefined) {
-                createS3Images(authToken, newProject, user)
-            } else {
-                console.error("ProjMatch User call returned empty or undefined")
-            }
+            getUserWithID(authToken, user).then((res) => {
+                console.log(res)
+                if (res !== {} || res !== undefined) {
+                    createS3Images(authToken, newProject, res)
+                } else {
+                    console.error("ProjMatch User call returned empty or undefined")
+                }
+            })
         }
 
     }, [newProject])
