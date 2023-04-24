@@ -80,6 +80,9 @@ export default function CreateProject() {
         if (user !== undefined && newProject !== {}) {
 
             var formData = new FormData()
+            if (!newProject.projectImages) {
+                return
+            }
             for (let i = 0; i < newProject.projectImages.length; i++) {
                 formData.append("files", newProject.projectImages[i])
             }
@@ -99,7 +102,7 @@ export default function CreateProject() {
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
                     const imageURL = res.data.imageURL
-                    createProject(authToken, newProject, user, imageURL)
+                    createProject(authToken, newProject, projMatchUser, imageURL)
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
@@ -117,7 +120,7 @@ export default function CreateProject() {
         }
 
         if (newProject !== {}) {
-            createS3Images(authToken, newProject, user)
+            createS3Images(authToken, newProject, projMatchUser)
         }
 
     }, [newProject])
