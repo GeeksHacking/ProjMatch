@@ -47,6 +47,7 @@ export default function CreateProject() {
     const createProject = useCallback((authToken, project, user, imageURL) => {
         const API_URL = process.env.API_URL
 
+        console.log(projMatchUser)
         var axiosAPIOptions = {
             method: 'POST',
             url: `${API_URL}/posts`,
@@ -117,7 +118,11 @@ export default function CreateProject() {
         }
 
         if (newProject !== {}) {
-            createS3Images(authToken, newProject, user)
+            if (projMatchUser === {} || projMatchUser === undefined) {
+                createS3Images(authToken, newProject, user)
+            } else {
+                console.error("ProjMatch User call returned empty or undefined")
+            }
         }
 
     }, [newProject])
