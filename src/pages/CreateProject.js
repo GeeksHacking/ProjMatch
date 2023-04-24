@@ -6,6 +6,7 @@ import { get } from "animejs";
 
 export default function CreateProject() {
     const { user, error, isLoading } = useUser();
+    if (isLoading) return <div>Loading...</div>
     const [projMatchUser, setProjMatchUser] = useState({})
 
     // State Variables
@@ -42,35 +43,43 @@ export default function CreateProject() {
         } else {
             throw `Status ${res.status}, ${res.statusText}`
         }
-    }, [projMatchUser, setProjMatchUser])
+    }, [projMatchUser, setProjMatchUser, setNewProject, newProject])
 
-    const createProject = useCallback((authToken, project, user, imageURL) => {
+    const createProject = useCallback((authToken, project, projuser, imageURL) => {
         const API_URL = process.env.API_URL
-        var axiosAPIOptions = {
-            method: 'POST',
-            url: `${API_URL}/posts`,
-            headers: {
-                'Authorisation': `Bearer ${authToken}`,
-            },
-            data: {
-                "projectName": project.projectName,
-                "description": project.projectDescription,
-                "creatorUserID": user._id,
-                "contact": project.projectContact,
-                "tags": project.projectTags,
-                "technologies": project.projectTech,
-                "images": imageURL,
-            }
-        };
+        var uId;
+        var axiosAPIOptions;
+        console.log(user)
+        getUserWithID(authToken, user).then((res) => {
+            uId = res
+        }).then(() => {
+            axiosAPIOptions = {
+                method: 'POST',
+                url: `${API_URL}/posts`,
+                headers: {
+                    'Authorisation': `Bearer ${authToken}`,
+                },
+                data: {
+                    "projectName": project.projectName,
+                    "description": project.projectDescription,
+                    "creatorUserID": String(uId._id),
+                    "contact": project.projectContact,
+                    "tags": project.projectTags,
+                    "technologies": project.projectTech,
+                    "images": imageURL,
+                }
+            };
+        }).then(() => {
         
-        axios.request(axiosAPIOptions).then(function (res) {
-            if (res.status == 200) {
-                console.log(res)
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
+            axios.request(axiosAPIOptions).then(function (res) {
+                if (res.status == 200) {
+                    console.log(res)
+                } else {
+                    throw `Status ${res.status}, ${res.statusText}`
+                }
+            }).catch(function (err) {
+                console.error("Failed to get Posts with: ", err)
+            })
         })
     }, [])
 
@@ -133,7 +142,9 @@ export default function CreateProject() {
         }
 
         if (user !== undefined) {
-            getUserWithID(authToken, user).then((res) => { setProjMatchUser(res) })
+            getUserWithID(authToken, user).then((res) => {
+                // console.log(res)
+                setProjMatchUser(res) })
         }
     }, [user])
 
