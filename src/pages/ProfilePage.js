@@ -1,9 +1,57 @@
 import SideNav from "@/components/SideNav/SideNav"
-import { useState } from "react"
-import Switch from "react-switch";
-import Link from "next/link";
+import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
+import Link from "next/link"
+import {useUser} from "@auth0/nextjs-auth0/client"
+import axios from "axios"
+import { use, useCallback, useEffect, useState } from "react"
+import { useRouter } from 'next/router'
 
 export default function ProfilePage() {
+    const router = useRouter()
+    const { id } = router.query
+    const { user, error, isLoading } = useUser()
+    const [profileUser, setProfileUser] = useState(null)
+
+    const getUserWithID = useCallback(async (uid) => {
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (authToken === undefined) {
+            console.error("Authorisation Token returned Undefined.")
+        }
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users/?id=${uid}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                console.log(res.data.users[0])
+                setProfileUser(res.data.users[0])
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    })
+
+    useEffect(() => {
+        if (id !== undefined) {
+            getUserWithID(id)
+
+        }
+    }, [id])
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>{error.message}</div>;
+    if (!user) return <div>Not logged in</div>;
+    if (profileUser === null) return <div>Loading...</div>
+
     return (
         <div className='absolute flex w-full h-full flex-col'>
             <SideNav/>
@@ -12,8 +60,8 @@ export default function ProfilePage() {
                 <div id="pfp-name" className="flex flex-row w-full h-full ">
                     <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img>
                     <div className="flex flex-col justify-end items-start h-[90%] ml-5">
-                        <h1 className="text-4xl font-bold text-black">Username</h1>
-                        <h3 className="text-xl text-logo-blue">Real Name</h3>
+                        <h1 className="text-4xl font-bold text-black">{profileUser.username}</h1>
+                        <h3 className="text-xl text-logo-blue">{profileUser.rlName}</h3>
                     </div>
                 </div>
             </div>
@@ -24,13 +72,13 @@ export default function ProfilePage() {
                             <div id="experience-container" className="flex flex-col justify-start items-start w-full h-[30%]">
                                 <h1>Experience</h1>
                                 <p>
-                                    Test
+                                    {profileUser.experience == null ? "No Experience" : profileUser.experience}
                                 </p>
                             </div>
                             <div id="About-container" className="flex flex-col justify-start items-start w-full h-[65%]">
                                 <h1>About Me</h1>
-                                <p class="w-full overflow-y-auto overflow-x-hidden whitespace-normal break-words	">
-                                    Test
+                                <p className="w-full overflow-y-auto overflow-x-hidden whitespace-normal break-words	">
+                                    {profileUser.aboutMe == null ? "No About" : profileUser.aboutMe}
                                 </p>
                             </div>
                         </div>
@@ -43,7 +91,7 @@ export default function ProfilePage() {
                                 <h2 className="text-xl font-bold text-black">Technologies</h2>
                                 <div className="flex flex-row">
                                     {["Swift", "Python"].map((tag) => (
-                                        <Tag tag={tag} key={tag.name}/>
+                                        <Tag tag={tag} key={Math.random()}/>
                                     ))}
                                 </div>
                             </div>

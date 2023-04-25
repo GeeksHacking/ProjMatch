@@ -1,15 +1,53 @@
 // Components Import
+import { useEffect, useState, useCallback } from "react";
 import Logo from "./Logo"
 import styles from './SideNav.module.css'
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link'
+import axios from "axios";
 
 const MaxSideNav = () => {
     const { user, error, isLoading } = useUser();
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>{error.message}</div>;
-    if (!user) return <div>Not logged in</div>;
-    // console.log(user.picture)
+    const [userId, setUserId] = useState(null)
+
+    const getUserFromEmail = useCallback(async (authToken, user) => {
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users?email=${user.email}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+
+        let res = await axios.request(apiOptions)
+        .catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
+        if (res.status == 200) {
+            return res.data.users[0]
+        } else {
+            throw `Status ${res.status}, ${res.statusText}`
+        }
+    }, [])
+
+    useEffect(() => {
+        const authToken = localStorage.getItem("authorisation_token")
+        
+        if (authToken === undefined) {
+        
+            console.error("Authorisation Token returned Undefined.")
+        }
+        if (user !== undefined) {
+            const API_URL = process.env.API_URL
+            getUserFromEmail(authToken, user).then((res) => {
+                setUserId(res._id)
+            })
+        }
+        
+    }, [user, setUserId])
 
     // Navigation Data
     const navOptions = [{"Page": "Home", "IconPath": "/NavBarIcons/IconsHome.svg", "PageLink": "/Home"},
@@ -19,13 +57,17 @@ const MaxSideNav = () => {
                         {"Page": "Create", "IconPath": "/NavBarIcons/IconsCreate.svg", "PageLink": "/CreateProject"}]
 
     // State Variables
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>{error.message}</div>;
+    if (!user) return <div>Not logged in</div>;
     
     return (
         <div className={`fixed z-0 top-0 left-0 h-full w-fit`}>
             <div className={`${styles.SideNav} bg-light-blue h-full w-fit flex flex-col items-left pt-3 pb-3`}>
                 <Link className={`flex items-center space-x-2 text-logo-blue pl-3 pr-3`} href="/">
-                   <img src="/logo.svg" alt="logo" className='w-12 h-12 flex-shrink-0'></img>
-                   <span className={`${styles.SideNavTxt} font-bold text-xl`}> ProjMatch </span>
+                    <img src="/logo.svg" alt="logo" className='w-12 h-12 flex-shrink-0'></img>
+                    <span className={`${styles.SideNavTxt} font-bold text-xl`}> ProjMatch </span>
                 </Link>
                 <div className={`mt-10 space-y-4`}>
                     <ul className={`space-y-4`} key={Math.random()}>
@@ -41,7 +83,7 @@ const MaxSideNav = () => {
                         <span className={`${styles.SideNavTxt} font-bold text-xl flex items-center pb-0.5`}> Create </span>
                     </Link>
 
-                    <Link className={`flex items-center flex-row space-x-2`} href="/ProfilePage">
+                    <Link className={`flex items-center flex-row space-x-2`} href={"/ProfilePage?id=" + userId}>
                         <img src={user.picture} alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
                         <div className="flex items-start flex-col">
                             <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {user.nickname} </span>
