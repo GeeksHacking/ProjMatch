@@ -14,6 +14,7 @@ export default function Home() {
     const [ posts, setPosts ] = useState([]);
     const [ postReq, setPostReq ] = useState([]);
     const [ users, setUsers ] = useState({});
+    const [ memusers, setMemUsers ] = useState({});
 
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
@@ -38,6 +39,14 @@ export default function Home() {
         })
     }, [])
     const getUserWithID = useCallback(async (pid,uid) => {
+        if (uid in memusers){
+            let temp=users;
+            temp[pid]=memusers[uid]
+            setUsers(temp)
+            
+            console.log(temp)
+            return;
+        }
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
@@ -56,8 +65,10 @@ export default function Home() {
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
                 let temp=users;
-                users[pid]=res.data.users[0]
+                temp[pid]=res.data.users[0]
                 setUsers(temp)
+                temp=memusers
+                temp[uid]=res.data.users[0];
                 console.log(res)
                 console.log(temp)
                 

@@ -32,7 +32,7 @@ export default function CreateProject() {
         let res = await axios.request(apiOptions)
         .catch(function (err) {
             console.error("Failed to get User with: ", err)
-        })
+        });
         if (res.status == 200) {
             console.log(res)
             return res.data.users[0]
