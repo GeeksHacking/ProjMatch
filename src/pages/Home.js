@@ -13,9 +13,10 @@ export default function Home() {
     const { user, error, isLoading } = useUser();
     const [ posts, setPosts ] = useState([]);
     const [ postReq, setPostReq ] = useState([]);
-    const [ users, setUsers ] = useState({});
+    //const [ users, setUsers ] = useState({});
     const [ memusers, setMemUsers ] = useState({});
-
+    
+    
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
     
@@ -39,14 +40,15 @@ export default function Home() {
         })
     }, [])
     const getUserWithID = useCallback(async (pid,uid) => {
+        console.log(uid)
+        console.log(memusers)
+        console.log(uid in memusers)
         if (uid in memusers){
-            let temp=users;
-            temp[pid]=memusers[uid]
-            setUsers(temp)
             
-            console.log(temp)
+            
+            
             return;
-        }
+        }else{
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
@@ -64,22 +66,21 @@ export default function Home() {
         }
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                let temp=users;
-                temp[pid]=res.data.users[0]
-                setUsers(temp)
+                let temp;
                 temp=memusers
                 temp[uid]=res.data.users[0];
-                console.log(res)
-                console.log(temp)
+                setMemUsers(temp)
+                
                 
             } else {
             
                 throw `Status ${res.status}, ${res.statusText}`
             }
+            
         }).catch(function (err) {
             console.error("Failed to get Posts with: ", err)
         })
-    })
+    }})
     // const getUserWithID = useCallback(async (authToken) => {
     //     const API_URL = process.env.API_URL
 
@@ -177,7 +178,10 @@ export default function Home() {
         try {
             setPosts(postReq.data.posts)
             console.log(postReq.data.posts)
-            postReq.data.posts.map((post)=>getUserWithID(post._id,post.creatorUserID))
+            postReq.data.posts.map((post)=>{
+                getUserWithID(post._id,post.creatorUserID);
+                
+            })
             console.log(postReq.data.posts)
         } catch (err) {console.log(err) }
     }, [setPosts, postReq])
@@ -192,7 +196,7 @@ export default function Home() {
                 posts.length !== 0 ?
                     
                     posts.map((post) => (
-                        <Project post={post} uss={users} key={post._id} />
+                        <Project post={post} uss={memusers} key={post._id} />
                     )) : <></>
                 }
                 {/* <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1> */}
@@ -208,9 +212,9 @@ function Project({post,uss}) {
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
             <div id="owner-profile" className="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
                 <a className={`ml-4 flex items-center flex-row space-x-2`}>
-                    <img src={(uss[post._id])?uss[post._id].userDat.profilePic:""} alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
+                    <img src={(uss[post.creatorUserID])?uss[post.creatorUserID].userDat.profilePic:""} alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
                     <div className="flex items-start flex-col">
-                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'>{(uss[post._id])?uss[post._id].username:"Loading..."} </span>
+                        <span className='ml-3 mr-6 font-bold text-lg text-white translate-y-0.5'>{(uss[post.creatorUserID])?uss[post.creatorUserID].username:"Loading..."} </span>
                     </div>
                 </a>
             </div>
