@@ -201,6 +201,42 @@ export default function ProjectPage() {
             <></>
         )
     }
+
+    const deleteProject = async (authToken, id) => {
+        const API_URL = process.env.API_URL
+        var apiOptions = {
+            method: 'DELETE',
+            url: `${API_URL}/posts`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: {
+                "id": id
+            }
+        }
+
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                // const responseData = res.data
+                console.log("Deleted Project")
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User Existance with: ", err)
+        })
+    }
+
+    const handleDelete = () => {
+        const authToken = localStorage.getItem("authorisation_token")
+        deleteProject(authToken, id)
+        router.push("http://localhost:3000/Home")
+    }
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>{error.message}</div>;
+    if (!user) return <div>Not logged in</div>;
+
     return (
         <main className='relative w-full h-full flex flex-row'>
             <div className="h-screen fixed z-20">
@@ -226,7 +262,7 @@ export default function ProjectPage() {
                         <div id="menu-container" className="flex flex-row justify-end items-center w-[60%] h-full space-x-3">
                             {pmUser._id === postReq.data.posts[0].creatorUserID ? 
                             <div className="space-x-3">
-                                <button className="bg-delete-red text-white px-2 py-1 rounded-md" onClick={() => router.push("http://localhost:3000/")}>Delete Project</button>
+                                <button className="bg-delete-red text-white px-2 py-1 rounded-md" onClick={handleDelete}>Delete Project</button>
                                 <button className="bg-edit-green text-white px-2 py-1 rounded-md" onClick={() => router.push(`http://localhost:3000/EditProject?id=${post._id}`)}>Edit Project</button>
                             </div>
                             : <></>}
