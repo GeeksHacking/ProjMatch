@@ -15,7 +15,7 @@ export default function Home() {
     const [ postReq, setPostReq ] = useState([]);
     //const [ users, setUsers ] = useState({});
     const [ memusers, setMemUsers ] = useState({});
-    
+    let usersid=[]
     
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
@@ -43,12 +43,7 @@ export default function Home() {
         console.log(uid)
         console.log(memusers)
         console.log(uid in memusers)
-        if (uid in memusers){
-            
-            
-            
-            return;
-        }else{
+        
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
@@ -69,7 +64,7 @@ export default function Home() {
                 let temp;
                 temp=memusers
                 temp[uid]=res.data.users[0];
-                setMemUsers(temp)
+                setMemUsers({...temp})
                 
                 
             } else {
@@ -80,7 +75,7 @@ export default function Home() {
         }).catch(function (err) {
             console.error("Failed to get Posts with: ", err)
         })
-    }})
+    })
     // const getUserWithID = useCallback(async (authToken) => {
     //     const API_URL = process.env.API_URL
 
@@ -178,8 +173,13 @@ export default function Home() {
         try {
             setPosts(postReq.data.posts)
             console.log(postReq.data.posts)
+            
             postReq.data.posts.map((post)=>{
-                getUserWithID(post._id,post.creatorUserID);
+                console.log(usersid);
+                if (!(usersid.includes(post.creatorUserID ))){
+                    usersid.push(post.creatorUserID)
+                    getUserWithID(post._id,post.creatorUserID);
+                }
                 
             })
             console.log(postReq.data.posts)
@@ -207,6 +207,8 @@ export default function Home() {
 
 function Project({post,uss}) {
     console.log(uss)
+    console.log(post.creatorUserID)
+    console.log(uss[post.creatorUserID])
     
     return (
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
