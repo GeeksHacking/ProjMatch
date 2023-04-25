@@ -3,13 +3,18 @@ import axios from "axios"
 import {useUser} from "@auth0/nextjs-auth0/client"
 import { use, useCallback, useEffect, useState } from "react"
 import { get } from "animejs";
+import { useRouter } from "next/router";
 
 export default function CreateProject() {
+    const router = useRouter()
+
     const { user, error, isLoading } = useUser();
+    if (isLoading) return <div>Loading...</div>
     const [projMatchUser, setProjMatchUser] = useState({})
 
     // State Variables
     const [ newProject, setNewProject ] = useState({})
+    const [ newProjID, setNewProjID ] = useState("")
 
     // API Req
     const getUserWithID = useCallback(async (authToken, user) => {
@@ -23,55 +28,53 @@ export default function CreateProject() {
             },
             data: new URLSearchParams({ })
         }
-
+        console.log("geeting user")
         let res = await axios.request(apiOptions)
-        // .then((res) => {
-        //     if (res.status == 200) {
-        //         setProjMatchUser(res.data.users[0])
-        //         console.log(projMatchUser, res.data.users[0])
-        //         return res.data.users[0]
-        //     } else {
-        //         throw `Status ${res.status}, ${res.statusText}`
-        //     }
-        // })
         .catch(function (err) {
             console.error("Failed to get User with: ", err)
         })
         if (res.status == 200) {
+            console.log(res)
             return res.data.users[0]
         } else {
             throw `Status ${res.status}, ${res.statusText}`
         }
-    }, [projMatchUser, setProjMatchUser])
+    }, [projMatchUser, setProjMatchUser, setNewProject, newProject])
 
-    const createProject = useCallback((authToken, project, user, imageURL) => {
+    const createProject = useCallback((authToken, project, projuser, imageURL) => {
         const API_URL = process.env.API_URL
+        var uId;
+        var axiosAPIOptions;
 
-        var axiosAPIOptions = {
-            method: 'POST',
-            url: `${API_URL}/posts`,
-            headers: {
-                'Authorisation': `Bearer ${authToken}`,
-            },
-            data: {
-                "projectName": project.projectName,
-                "description": project.projectDescription,
-                "creatorUserID": user._id,
-                "contact": project.projectContact,
-                "tags": project.projectTags,
-                "technologies": project.projectTech,
-                "images": imageURL,
-            }
-        };
-        
-        axios.request(axiosAPIOptions).then(function (res) {
-            if (res.status == 200) {
-                console.log(res)
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
+        getUserWithID(authToken, user).then((res) => {
+            uId = res
+        }).then(() => {
+            axiosAPIOptions = {
+                method: 'POST',
+                url: `${API_URL}/posts`,
+                headers: {
+                    'Authorisation': `Bearer ${authToken}`,
+                },
+                data: {
+                    "projectName": project.projectName,
+                    "description": project.projectDescription,
+                    "creatorUserID": String(uId._id),
+                    "contact": project.projectContact,
+                    "tags": project.projectTags,
+                    "technologies": project.projectTech,
+                    "images": imageURL,
+                }
+            };
+        }).then(() => {   
+            axios.request(axiosAPIOptions).then(function (res) {
+                if (res.status == 200) {
+                    return res
+                } else {
+                    throw `Status ${res.status}, ${res.statusText}`
+                }
+            }).catch(function (err) {
+                console.error("Failed to get Posts with: ", err)
+            })
         })
     }, [])
 
@@ -103,7 +106,13 @@ export default function CreateProject() {
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
                     const imageURL = res.data.imageURL
-                    createProject(authToken, newProject, projMatchUser, imageURL)
+                    createProject(authToken, newProject, projMatchUser, imageURL).then((res) => {
+                        const id = res.data.insertedProjectWithID
+
+                        if (id !== undefined || id !== "") {
+                            router.push(`http://localhost:3000/ProjectPage?id=${id}`)
+                        }
+                    })
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
@@ -121,7 +130,14 @@ export default function CreateProject() {
         }
 
         if (newProject !== {}) {
-            createS3Images(authToken, newProject, projMatchUser)
+            getUserWithID(authToken, user).then((res) => {
+                console.log(res)
+                if (res !== {} || res !== undefined) {
+                    createS3Images(authToken, newProject, res)
+                } else {
+                    console.error("ProjMatch User call returned empty or undefined")
+                }
+            })
         }
 
     }, [newProject])
@@ -134,7 +150,9 @@ export default function CreateProject() {
         }
 
         if (user !== undefined) {
-            getUserWithID(authToken, user).then((res) => { setProjMatchUser(res) })
+            getUserWithID(authToken, user).then((res) => {
+                // console.log(res)
+                setProjMatchUser(res) })
         }
     }, [user])
 
