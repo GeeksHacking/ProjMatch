@@ -304,7 +304,7 @@ export default function ProjectPage() {
                                 <a>{ouser.username}</a>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
-                                <a href={userContact} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
+                                <a href={userContact} target="_blank" className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
                                     Contact
                                 </a>
                             </div>

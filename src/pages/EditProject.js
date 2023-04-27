@@ -98,7 +98,7 @@ export default function EditProject() {
         const projectDescription = event.target.projectDescription.value
         const projectContact = event.target.projectContact.value
         const projectTags = event.target.projectTags.value.replace(/\s/g, '').split(',')
-        const projectImages = [...event.target.projectImages.files]
+        //const projectImages = [...event.target.projectImages.files]
         const projectTech = event.target.projectTech.value.replace(/\s/g, '').split(',')
         
         const temp = {
@@ -106,7 +106,7 @@ export default function EditProject() {
             "description": projectDescription,
             "contact": projectContact,
             "tags": projectTags,
-            "images": projectImages,
+            //"images": projectImages,
             "technologies": projectTech
         }
 
