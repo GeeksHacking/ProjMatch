@@ -194,7 +194,7 @@ export function Project({post}) {
     if (post.tags.length !== 0) {
         tagString += post.tags[0]
         if (post.tags.length > 1) {
-            for (let i = 1; i < post.tags.length; i++) {
+            for (let i = 1; i < (post.tags.length > 3 ? 3 : post.tags.length); i++) {
                 tagString += ', ' + post.tags[i]
             }
         }
