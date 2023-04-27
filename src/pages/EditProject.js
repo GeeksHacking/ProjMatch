@@ -39,7 +39,6 @@ export default function EditProject() {
             },
             data: new URLSearchParams({ })
         };
-    
         axios.request(axiosAPIOptions).then(function (res) {
             if (res.status == 200) {
                 setPost(res.data.posts[0])
@@ -49,6 +48,7 @@ export default function EditProject() {
         }).catch(function (err) {
             console.error("Failed to get Posts with: ", err)
         })
+
     }, [id])
 
     const updatePosts = useCallback(async (authToken, updatedProj) => {
@@ -56,7 +56,6 @@ export default function EditProject() {
         if (id === undefined) {
             return
         }
-
         const options = {
             method: 'PUT',
             url: `${API_URL}/posts`,
@@ -95,7 +94,7 @@ export default function EditProject() {
     const handleSubmission = (event) => {
         event.preventDefault()
 
-        const projectName = post.projectName
+        const projectName = event.target.projectName.value
         const projectDescription = event.target.projectDescription.value
         const projectContact = event.target.projectContact.value
         const projectTags = event.target.projectTags.value.replace(/\s/g, '').split(',')
@@ -130,6 +129,15 @@ export default function EditProject() {
         updatePosts(authToken, tempUpdatedProj)
     }
 
+    if (isLoading) return <div>Loading...</div>
+    if (error) return <div>{error.message}</div>
+    if (!user) return <div>Not logged in</div>
+    for (const key in post) {
+        if (post[key] === "Loading...") {
+            return <div>Loading...</div>
+        }
+    }
+
     return (
         <div className='absolute flex w-full h-full flex-col justify-start items-center'>
             <SideNav />
@@ -138,11 +146,11 @@ export default function EditProject() {
                     <h1 className="text-6xl font-bold text-black">Edit Project</h1>
                     <h2 className="text-3xl font-medium mt-10">Project Name</h2>
                     <p className="text-lg mt-1">Choose a name that is simple and easy to remember!</p>
-                    <input disabled type="text" name="projectName" placeholder={`${post.projectName}`} className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2" />
+                    <input type="text" name="projectName" defaultValue={`${post.projectName}`} className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2" />
 
                     <h2 className="text-3xl font-medium mt-10">Project Description</h2>
                     <p className="text-lg mt-1">Include important details about what your project is about and more!</p>
-                    <textarea name="projectDescription" defaultValue={`${post.description}`} className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1" />
+                    <textarea name="projectDescription" className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1">{post.description}</textarea>
 
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
                     <input type="file" name="projectImages"></input>

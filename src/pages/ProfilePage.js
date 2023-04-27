@@ -9,8 +9,32 @@ import { useRouter } from 'next/router'
 export default function ProfilePage() {
     const router = useRouter()
     const { id } = router.query
+    const [ posts, setPosts ] = useState([])
     const { user, error, isLoading } = useUser()
     const [profileUser, setProfileUser] = useState(null)
+
+    const getPostsWithCreatorID = useCallback(async (authToken, uid) => {
+        const API_URL = process.env.API_URL
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/posts?userID=${uid}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                //console.log(res.data.posts)
+                setPosts(res.data.posts)
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    }, [])
 
     const getUserWithID = useCallback(async (uid) => {
         const authToken = localStorage.getItem("authorisation_token")
@@ -30,7 +54,7 @@ export default function ProfilePage() {
         }
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                console.log(res.data.users[0])
+                //console.log(res.data.users[0])
                 setProfileUser(res.data.users[0])
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -46,6 +70,13 @@ export default function ProfilePage() {
 
         }
     }, [id])
+
+    useEffect(() => {
+        if (profileUser !== null) {
+            getPostsWithCreatorID(localStorage.getItem("authorisation_token"), profileUser._id)
+        }
+        //console.log(posts)
+    }, [profileUser])
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
@@ -105,8 +136,8 @@ export default function ProfilePage() {
                     <div id="projects-container" className="flex flex-col w-full">
                         <h1 className="text-3xl font-bold text-black">Projects</h1>
                         <div className="w-full h-fit relative grid grid-cols-3 gap-4 my-5">
-                            {Array(9).fill().map((_, i) => (
-                                <Project key={i}/>
+                            {posts.map((post) => (
+                                <Project post={post} key={post._id}/>
                             ))}
                         </div>
                     </div>
@@ -157,17 +188,27 @@ function Star({value}) {
     )
 }
 
-export function Project() {
+export function Project({post}) {
+    //console.log(post)
+    let tagString = ''
+    if (post.tags.length !== 0) {
+        tagString += post.tags[0]
+        if (post.tags.length > 1) {
+            for (let i = 1; i < post.tags.length; i++) {
+                tagString += ', ' + post.tags[i]
+            }
+        }
+    }
     return (
-        <div className="z-10 relative w-full aspect-[4/2] flex flex-col justify-center items-center rounded-lg">
+        <a className="z-10 relative w-full aspect-[4/2] flex flex-col justify-center items-center rounded-lg" href={"/ProjectPage/?id="+post._id}>
             <div className="z-10 absolute bg-white/[0.5] w-full h-1/4 bottom-0 rounded-b-lg px-4 flex flex-col justify-center items-start">
-                <h3 className="text-xl font-semibold">Project Name</h3>
-                <p className="text-lg font-light">Swift, SwiftUI</p>
+                <h3 className="text-xl font-semibold">{post.projectName}</h3>
+                <p className="text-lg font-light">{tagString}</p>
                 {/* <div className="z-20 absolute bg-logo-lblue aspect-square rounded-lg flex justify-center items-center right-10">
                     <img src="/NavBarIcons/IconsSaved.svg" className="w-5 mx-3.5"></img>
                 </div> */}
             </div>
-            <img src="http://placekitten.com/800/600" className="z-0 w-fit h-fit rounded-lg"></img>
-        </div>
+            <img src={post.images[0]} className="z-0 w-fit h-fit rounded-lg"></img>
+        </a>
     )
 }

@@ -18,7 +18,6 @@ export default function ProjectPage() {
 
     const getUserFromEmail = useCallback(async (authToken, user) => {
         const API_URL = process.env.API_URL
-
         var apiOptions = {
             method: 'GET',
             url: `${API_URL}/users?email=${user.email}`,

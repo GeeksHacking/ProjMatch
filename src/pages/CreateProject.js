@@ -68,6 +68,8 @@ export default function CreateProject() {
         }).then(() => {   
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
+                    console.log(res)
+                    setNewProjID(res.data.insertedProjectWithID)
                     return res
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
@@ -106,13 +108,12 @@ export default function CreateProject() {
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
                     const imageURL = res.data.imageURL
-                    createProject(authToken, newProject, projMatchUser, imageURL).then((res) => {
-                        const id = res.data.insertedProjectWithID
+                    createProject(authToken, newProject, projMatchUser, imageURL)
+                    // const id = resp.data.insertedProjectWithID
 
-                        if (id !== undefined || id !== "") {
-                            router.push(`http://localhost:3000/ProjectPage?id=${id}`)
-                        }
-                    })
+                    // if (id !== undefined || id !== "") {
+                    //     router.push(`http://localhost:3000/ProjectPage?id=${id}`)
+                    // }
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
                 }
@@ -141,6 +142,12 @@ export default function CreateProject() {
         }
 
     }, [newProject])
+
+    useEffect(() => {
+        if (newProjID !== "") {
+            router.push(`http://localhost:3000/ProjectPage?id=${newProjID}`)
+        }
+    }, [newProjID])
 
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
