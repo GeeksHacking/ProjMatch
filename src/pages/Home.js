@@ -39,11 +39,8 @@ export default function Home() {
             console.error("Failed to get Posts with: ", err)
         })
     }, [])
+
     const getUserWithID = useCallback(async (pid,uid) => {
-        console.log(uid)
-        console.log(memusers)
-        console.log(uid in memusers)
-        
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
@@ -76,18 +73,6 @@ export default function Home() {
             console.error("Failed to get Posts with: ", err)
         })
     })
-    // const getUserWithID = useCallback(async (authToken) => {
-    //     const API_URL = process.env.API_URL
-
-    //     var apiOptions = {
-    //         method: 'GET',
-    //         url: `${API_URL}/users`,
-    //         headers: {
-    //             'Authorisation': `Bearer ${authToken}`,
-    //         },
-    //         data: new URLSearchParams({ })
-    //     }
-    // })
 
     const checkUserExistWithEmail = useCallback(async (authToken, email) => {
         const API_URL = process.env.API_URL

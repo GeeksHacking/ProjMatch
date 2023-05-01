@@ -78,7 +78,7 @@ const MaxSideNav = () => {
                 </div>
                 
                 <div className={`mt-auto space-y-6 p-3`}>
-                    <Link className={`flex items-center space-x-4 text-light-blue bg-logo-blue w-full h-fit rounded-lg`} href="/CreateProject">
+                    <Link className={`flex items-center space-x-4 text-light-blue bg-logo-blue ${styles.create_button} h-fit rounded-lg`} href="/CreateProject">
                         <img src="/NavBarIcons/IconsCreate.svg" alt="logo" className='w-8 h-8 flex-shrink-0 ml-[0.6875rem] my-2'></img>
                         <span className={`${styles.SideNavTxt} font-bold text-xl flex items-center pb-0.5`}> Create </span>
                     </Link>
