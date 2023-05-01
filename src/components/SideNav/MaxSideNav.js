@@ -4,11 +4,13 @@ import Logo from "./Logo"
 import styles from './SideNav.module.css'
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link'
-import axios from "axios";
+import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
+import axios from "axios"
+import { useRouter } from 'next/router'
 
 const MaxSideNav = () => {
     const { user, error, isLoading } = useUser();
-    const [userId, setUserId] = useState(null)
+    const [userInfo, setUserInfo] = useState(null)
 
     const getUserFromEmail = useCallback(async (authToken, user) => {
         const API_URL = process.env.API_URL
@@ -43,11 +45,11 @@ const MaxSideNav = () => {
         if (user !== undefined) {
             const API_URL = process.env.API_URL
             getUserFromEmail(authToken, user).then((res) => {
-                setUserId(res._id)
+                setUserInfo(res)
             })
         }
         
-    }, [user, setUserId])
+    }, [user, setUserInfo])
 
     // Navigation Data
     const navOptions = [{"Page": "Home", "IconPath": "/NavBarIcons/IconsHome.svg", "PageLink": "/Home"},
@@ -61,6 +63,7 @@ const MaxSideNav = () => {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
     if (!user) return <div>Not logged in</div>;
+    if (userInfo === null) return <div>Loading...</div>;
     
     return (
         <div className={`fixed z-0 top-0 left-0 h-full w-fit`}>
@@ -83,11 +86,11 @@ const MaxSideNav = () => {
                         <span className={`${styles.SideNavTxt} font-bold text-xl flex items-center pb-0.5`}> Create </span>
                     </Link>
 
-                    <Link className={`flex items-center flex-row space-x-2`} href={"/ProfilePage?id=" + userId}>
-                        <img src={user.picture} alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
+                    <Link className={`flex items-center flex-row space-x-2`} href={"/ProfilePage?id=" + userInfo._id}>
+                        <img src={userInfo.userDat.profilePic} alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
                         <div className="flex items-start flex-col">
-                            <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {user.nickname} </span>
-                            <span className={`${styles.SideNavTxt} font-bold text-lg text-start -translate-y-0.5`}> {user.name} </span>
+                            <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {userInfo.username} </span>
+                            <span className={`${styles.SideNavTxt} font-bold text-lg text-start -translate-y-0.5`}> {userInfo.rlName} </span>
                         </div>
                     </Link>
                 </div>

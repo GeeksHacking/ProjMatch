@@ -1,45 +1,291 @@
 import SideNav from "@/components/SideNav/SideNav"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Switch from "react-switch";
 import Link from "next/link";
+import axios from "axios"
 import { useRouter } from 'next/router'
+import {useUser} from "@auth0/nextjs-auth0/client"
 
 export default function SettingsPage() {
+
+    const { user, error, isLoading } = useUser();
+    const [projMatchUser, setProjMatchUser] = useState(null)
     const router = useRouter()
     const [currentTab, setCurrentTab] = useState('1');
     const [darkMode, setDarkMode] = useState(false);
-    const [personalization, setPersonalization] = useState(false);   
+    const [personalization, setPersonalization] = useState(false);
+    const [ userData, setUserData ] = useState({
+        "aboutMe": "Loading...",
+        "regEmail": "Loading...",
+        "regPhone": "Loading...",
+        "rlName": "Loading...",
+        "profileBanner": "Loading...",
+        "profilePic": "Loading...",
+        "username": "Loading...",
+    });
+
+    const getUserWithID = useCallback(async (authToken, user) => {
+        const API_URL = process.env.API_URL
+
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users?email=${user.email}`,
+            headers: {
+                'Authorisation': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
+        //console.log("geeting user")
+        let res = await axios.request(apiOptions)
+        .catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        });
+        if (res.status == 200) {
+            //console.log(res)
+            //console.log(res.data.users[0])
+            //res.data.users[0]
+            setProjMatchUser(res.data.users[0])
+        } else {
+            throw `Status ${res.status}, ${res.statusText}`
+        }
+    }, [])
+
+    const createS3Images = useCallback((authToken, data, user) => {
+        const API_URL = process.env.API_URL
+
+        if (user !== undefined) {
+
+            var formData = new FormData()
+            formData.append("files", data.profileBanner)
+            formData.append("files", data.profilePic)
+            console.log(data.profilePic[0])
+            formData.append("creatorUserID", user._id)
+
+            let axiosAPIOptions = {
+                method: 'POST',
+                url: `${API_URL}/images`,
+                headers: {
+                    'Authorisation': `Bearer ${authToken}`,
+                    "Content-Type": "multipart/form-data"
+                },
+                data: formData
+            };
+
+            axios.request(axiosAPIOptions).then(function (res) {
+                if (res.status == 200) {
+                    const imageURL = res.data.imageURL
+                    console.log(imageURL)
+                    const bannerURL = imageURL[0]
+                    const profilePicURL = imageURL[1]
+
+                    const tempData = {
+                        ...data,
+                        "userDat": {
+                            "profileBanner": bannerURL,
+                            "profilePic": profilePicURL
+                        }
+                    }
+                    console.log("updating user after creating image urls")
+                    updateUser(authToken, tempData, user)
+                       //setUserData({
+                        //...userData,
+//"profileBanner": bannerURL,
+//"profilePic": profilePicURL
+//})
+                    //.log("updating user after creating image urls")
+                    //(authToken, userData, projMatchUser)
+                    // const id = resp.data.insertedProjectWithID
+
+                    // if (id !== undefined || id !== "") {
+                    //     router.push(`http://localhost:3000/ProjectPage?id=${id}`)
+                    // }
+                    return imageURL
+                } else {
+                    throw `Status ${res.status}, ${res.statusText}`
+                }
+            }).catch(function (err) {
+                console.error("Failed to get Posts with: ", err)
+            })
+        }
+    }, [])
+
+    const updateUser = useCallback(async (authToken, updateUser, user) => {
+        console.log("calling user update api")
+        const API_URL = process.env.API_URL
+        const options = {
+            method: 'PUT',
+            url: `${API_URL}/users`,
+            headers: {
+                "Authorisation": `Bearer ${authToken}`,
+            },
+            data: {
+                "id": user._id,
+                "update": updateUser
+            }
+        }
+        console.log(options)
+        axios.request(options).then(function (res) {
+            if (res.status == 200) {
+                console.log(res)
+                router.push(`http://localhost:3000/ProfilePage?id=${user._id}`)
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
+    }, [])
+
+    const handleTabClick = (e) => {
+        setCurrentTab(e.target.id);
+    }
+    const handleSignOut = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('authorisation_token');
+        router.push('http://localhost:3000/api/auth/logout');
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const userName = e.target.userName.value;
+        const aboutMe = e.target.aboutMe.value;
+        const regEmail = e.target.regEmail.value;
+        const regPhone = e.target.regPhone.value;
+        const profileBanner = e.target.profileBannerInput.files[0];
+        const profilePic = e.target.profilePicInput.files[0];
+
+        const UpdatedData = ({
+            ...userData,
+            "username": userName,
+            "aboutMe": aboutMe,
+            "regEmail": regEmail,
+            "regPhone": regPhone,
+            "profileBanner": profileBanner,
+            "profilePic": profilePic
+        })
+
+        const authToken = localStorage.getItem("authorisation_token")
+        let userDataArray = Object.values(userData)
+        userDataArray.splice(4,2)
+        let UpdatedDataArray = Object.values(UpdatedData)
+        UpdatedDataArray.splice(4,2)
+        if (userDataArray.every((val, index) => val === UpdatedDataArray[index])){
+            return
+        }
+
+        if (authToken === undefined) {
+            return
+        }
+        if (profileBanner || profilePic) {
+            console.log("creating images")
+            createS3Images(authToken, UpdatedData, projMatchUser)
+        } else {
+            console.log("updating user")
+            updateUser(authToken, UpdatedData, projMatchUser)
+        }
+
+    }
+    const handleImageButton = (e) => {
+        e.preventDefault();
+        if (e.target.id == "profilePic") {
+            document.getElementById("profilePicInput").click()
+        } else if (e.target.id == "profileBanner") {
+            document.getElementById("profileBannerInput").click()
+        }
+    }
+    const handlePicImageChange = (e) => {
+        e.preventDefault();
+        const file = e.target.files[0];
+        const fileURL = URL.createObjectURL(file);
+        if (e.target.id == "profilePicInput") {
+            setUserData({
+                ...userData,
+                "profilePic": fileURL
+            })
+        } else if (e.target.id == "profileBannerInput") {
+            setUserData({
+                ...userData,
+                "profileBanner": fileURL
+            })
+        }
+    }
+
+    useEffect(() => {
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (authToken === undefined) {
+            console.log("No token found")
+        }
+        
+        if (user != null) {
+            //console.log(user)
+            getUserWithID(authToken, user);
+        }
+    }, [user])
+
+    useEffect(() => {
+        if (projMatchUser !== null) {
+            setUserData({
+                "aboutMe": projMatchUser.aboutMe,
+                "regEmail": projMatchUser.regEmail,
+                "regPhone": projMatchUser.regPhone,
+                "rlName": projMatchUser.rlName,
+                "profileBanner": projMatchUser.userDat.profileBanner,
+                "profilePic": projMatchUser.userDat.profilePic,
+                "username": projMatchUser.username,
+            })
+        }
+    }, [projMatchUser])
+    
+    useEffect(() => {
+        console.log(userData)
+    }, [userData])
+
 
     const tabs = [
         {
             id:'1',
             tabTitle:"My Profile",
             content: 
-                <div className="flex flex-col justify-start items-start w-full">
+                <form className="flex flex-col justify-start items-start w-full" onSubmit={handleSubmit}>
                     <h1 className="text-2xl font-bold ">Username</h1>
                     <p className="text-lg text-[#636363]">You can only change your username every 7 days</p>
-                    <input type="text" name="projectName" placeholder="New Username" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                    <input type="text" name="userName" defaultValue={userData.username !== "Loading..." ? userData.username : ""} placeholder="New Username" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
                     
                     <h1 className="text-2xl font-bold mt-6">Email</h1>
                     <p className="text-lg text-[#636363]">example.email@gmail.com</p>
                     <div className="w-[70%] h-fit flex flex-row justify-between">
-                        <input type="text" name="projectName" placeholder="New Email" className="w-[80%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                        <input type="text" name="projectName" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                        <input type="text" name="regEmail" defaultValue={userData.regEmail !== "Loading..." ? userData.regEmail : ""} placeholder="New Email" className="w-[80%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                        <input type="text" name="regEmailOTP" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
                     </div>
                     <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input>
                     
-                    <h1 className="text-2xl font-bold mt-6">Phone</h1>
+                    {/* <h1 className="text-2xl font-bold mt-6">Phone</h1>
                     <p className="text-lg text-[#636363]">+65 9888 0000</p>
                     <div className="w-[70%] h-fit flex flex-row justify-between">
-                        <input type="text" name="projectName" placeholder="New Phone Number" className="w-[80%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                        <input type="text" name="projectName" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                        <input type="text" name="regPhone" defaultValue={userData.regPhone !== "Loading..." ? userData.regPhone : ""} placeholder="New Phone Number" className="w-[80%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                        <input type="text" name="regPhoneOTP" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
                     </div>
                     <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input>
-                    
+                     */}
                     <h1 className="text-2xl font-bold mt-6">About Me</h1>
                     <p className="text-lg text-[#636363]">Provide a short description about you and what you do</p>
-                    <textarea name="projectDescription" placeholder="Write something about yourself..." className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1  "/>
+                    <textarea name="aboutMe" defaultValue={userData.aboutMe !== "Loading..." ? userData.aboutMe : ""} placeholder="Write something about yourself..." className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1  "/>
+
+                    <h1 className="text-2xl font-bold mt-6">Profile Picture</h1>
+                    <div className="flex flex-row w-[70%] h-36 justify-start items-center">
+                        {userData.profilePic !== "Loading..." && userData.profilePic !== "" ? <img src={userData.profilePic} className="w-32 h-32 rounded-full mt-2 object-center object-cover"/> : <div className="w-32 h-32 rounded-full mt-2 bg-[#D3D3D3]"></div>}
+                        <button id="profilePic" className="w-32 h-11 rounded-md bg-logo-blue text-white text-xl mt-1 ml-4" onClick={handleImageButton}>Add images</button>
+                        <input type="file" id="profilePicInput" name="profilePic" className="hidden" onChange={handlePicImageChange}/>
+                    </div>
+                    <h1 className="text-2xl font-bold mt-6">Profile Banner</h1>
+                    <div className="flex flex-col w-[70%] h-fit justify-center items-start">
+                        {userData.profileBanner !== "Loading..." && userData.profileBanner !== "" ? <img src={userData.profileBanner} className="w-full h-36 mt-2 object-center object-cover"/> : <div className="w-full h-36 mt-2 bg-[#D3D3D3]"></div>}
+                        <button id="profileBanner" className="w-full h-11 rounded-md bg-logo-blue text-white text-xl mt-1" onClick={handleImageButton}>Add images</button>
+                        <input type="file" id="profileBannerInput" name="profilePic" className="hidden" onChange={handlePicImageChange}/>
+                    </div>
                     
+                    {/*
                     <h1 className="text-2xl font-bold mt-6">Languages</h1>
                     <p className="text-lg text-[#636363]">Specify the programming languages you are familliar with</p>
                     <input type="text" name="projectName" placeholder="Click to select the languages" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
@@ -47,9 +293,9 @@ export default function SettingsPage() {
                     <h1 className="text-2xl font-bold mt-6">Contact Link</h1>
                     <p className="text-lg text-[#636363]">Place a link people can contact you at</p>
                     <input type="text" name="projectName" placeholder="Click to edit link" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-
+                    */}
                     <input type="submit" value="Update!" className="w-[30%] h-11 rounded-lg bg-logo-blue text-white text-xl mt-10 mb-20"></input>
-                </div>
+                </form>
 
         },
         {
@@ -131,16 +377,8 @@ export default function SettingsPage() {
                     </p>
                 </div>
         },
-    ]
+    ];
 
-    const handleTabClick = (e) => {
-        setCurrentTab(e.target.id);
-    }
-    const handleSignOut = (e) => {
-        e.preventDefault();
-        localStorage.removeItem('authorisation_token');
-        router.push('http://localhost:3000/api/auth/logout');
-    }
 
     return (
         <div className='absolute flex w-full h-full flex-col'>

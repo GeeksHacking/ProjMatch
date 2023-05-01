@@ -1,7 +1,7 @@
-import SideNav from "@/components/SideNav/SideNav"
+import SideNav from "@/components/SideNav/SideNav";
+import { useUser } from '@auth0/nextjs-auth0/client';
+import Link from 'next/link'
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
-import Link from "next/link"
-import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
@@ -17,6 +17,7 @@ export default function ProjectPage() {
     const [ pmUser, setPMUser ] = useState({})
 
     const getUserFromEmail = useCallback(async (authToken, user) => {
+        console.log(user)
         const API_URL = process.env.API_URL
         var apiOptions = {
             method: 'GET',
@@ -171,6 +172,9 @@ export default function ProjectPage() {
     }, [getPosts])
         
     useEffect(() => {
+        if (user === undefined) {
+            return
+        }
         try {
             const authToken = localStorage.getItem("authorisation_token")
 
