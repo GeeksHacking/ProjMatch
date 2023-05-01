@@ -5,7 +5,6 @@ const SideNav = () => {
 
     return (
         <div className={`z-[1000] w-fit relative h-full`}>
-{/*             <MiniSideNav/> */}
             <MaxSideNav/>
         </div>
     )

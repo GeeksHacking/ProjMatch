@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors')
+
 module.exports = {
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
@@ -15,6 +17,11 @@ module.exports = {
       "React": "#61DAFB",
       "Discord": "#7289DA",
       "Email": "#FFA15A",
+      "delete-red": "#ef4444",
+      "edit-green": "#059668",
+      gray: colors.gray,
+      slate: colors.slate,
+      zinc: colors.zinc
     },
     borderWidth: {
       DEFAULT: '1px',

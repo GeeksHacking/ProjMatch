@@ -3,9 +3,10 @@
    transition: max-width 1s;
    overflow:hidden;
    width:auto;
-   max-width:10px;
+   /* max-width:10px; */
    z-index:10000000;
 }
+
 .SideNavTxt{
    transition: opacity 1s;
    width:0;
@@ -13,12 +14,23 @@
    overflow: hidden;
    z-index:10000000;
 }
+
 .SideNav:hover .SideNavTxt{
+   transition: opacity 0.5s;
    opacity:1;
    width:auto;
    z-index:10000000;
 }
-.SideNav:hover{
+
+.create_button {
+   width: fit-content;
+}
+
+.SideNav:hover .create_button {
+   width: 100%;
+}
+
+/* .SideNav:hover{
    max-width:2000px;
    z-index:10000000;
-}
+} */

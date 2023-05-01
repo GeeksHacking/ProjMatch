@@ -2,9 +2,10 @@ import SideNav from "@/components/SideNav/SideNav"
 import { useState } from "react"
 import Switch from "react-switch";
 import Link from "next/link";
+import { useRouter } from 'next/router'
 
 export default function SettingsPage() {
-
+    const router = useRouter()
     const [currentTab, setCurrentTab] = useState('1');
     const [darkMode, setDarkMode] = useState(false);
     const [personalization, setPersonalization] = useState(false);   
@@ -135,16 +136,20 @@ export default function SettingsPage() {
     const handleTabClick = (e) => {
         setCurrentTab(e.target.id);
     }
-
+    const handleSignOut = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('authorisation_token');
+        router.push('http://localhost:3000/api/auth/logout');
+    }
 
     return (
         <div className='absolute flex w-full h-full flex-col'>
             <SideNav/>
             <img src="http://placekitten.com/800/600"id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]">
             </img>
-            <a href="/api/auth/logout" className="font-bold text-white text-lg absolute w-fit h-fit right-[3%] top-[23%] bg-[#ED5A5A] px-6 py-3 rounded-md">
+            <button onClick={handleSignOut} className="font-bold text-white text-lg absolute w-fit h-fit right-[3%] top-[23%] bg-[#ED5A5A] px-6 py-3 rounded-md">
                 Sign Out
-            </a>
+            </button>
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">
                 <div id="pfp-name" className="flex flex-row w-full h-full ">
                     <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img>
