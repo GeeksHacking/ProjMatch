@@ -9,6 +9,11 @@
 
 .addedImage img {
     border-radius: 20%;
+
+    width: 100px;
+    height: 100px;
+
+    object-fit: fill;
 }
 
 .imageHoverContainer {
@@ -65,17 +70,13 @@
     top: 50%;
     left: 50%;
     margin: -35px 0 0 -35px;
-
     position: absolute;
-
     text-align: center;
-
     border-radius: 100%;
-
     cursor: pointer;
 }
 
-.addChild:hover {
+.inputImage:hover .addChild {
     background-color: #94a3b8;
     transition: background-color 0.2s;
 }
@@ -89,8 +90,15 @@
 .inputImage {
     width: 70px;
 	height: 70px;
-	opacity: 1;
+	opacity: 0;
 	overflow: hidden;
 	position: absolute;
 	z-index: 4;
+
+    top: 50%;
+    left: 50%;
+    margin: -35px 0 0 -35px;
+    text-align: center;
+    border-radius: 100%;
+    cursor: pointer;
 }
