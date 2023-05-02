@@ -16,12 +16,11 @@ export default function ProjectPage() {
     const [ userContact, setUserContact ] = useState("");
     const [ pmUser, setPMUser ] = useState({})
 
-    const getUserFromEmail = useCallback(async (authToken, user) => {
-        console.log(user)
+    const getUserFromEmail = useCallback(async (authToken, email) => {
         const API_URL = process.env.API_URL
         var apiOptions = {
             method: 'GET',
-            url: `${API_URL}/users?email=${user.email}`,
+            url: `${API_URL}/users?email=${email}`,
             headers: {
                 'Authorisation': `Bearer ${authToken}`,
             },
@@ -118,6 +117,35 @@ export default function ProjectPage() {
         })
     })
 
+    const updateUser = useCallback(async (authToken, updateUser, user) => {
+        //console.log("calling user update api")
+        const API_URL = process.env.API_URL
+        const options = {
+            method: 'PUT',
+            url: `${API_URL}/users`,
+            headers: {
+                "Authorisation": `Bearer ${authToken}`,
+            },
+            data: {
+                "id": user._id,
+                "update": updateUser
+            }
+        }
+        //console.log(options)
+        axios.request(options).then(function (res) {
+            if (res.status == 200) {
+                getUserFromEmail(authToken, user.regEmail).then((user) => {
+                    setPMUser(user)
+                })
+                //router.push(`http://localhost:3000/ProfilePage?id=${user._id}`)
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
+    }, [])
+
     const createUserWithEmail = async (authToken, user) => {
         const API_URL = process.env.API_URL
 
@@ -181,12 +209,12 @@ export default function ProjectPage() {
             if (authToken === undefined) {
                 console.error("Authorisation Token returned Undefined.")
             }
-            getUserFromEmail(authToken, user).then((res) => {
+            getUserFromEmail(authToken, user.email).then((res) => {
+                //console.log(res)
                 setPMUser(res)
             })
             getUserWithID(postReq.data.posts[0].creatorUserID)
             setPost(postReq.data.posts[0])
-            console.log("checking")
             if (post.contact !== undefined) {
                 if (String(post.contact).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
                     setUserContact("mailto:"+post.contact)
@@ -236,6 +264,33 @@ export default function ProjectPage() {
         router.push("http://localhost:3000/Home")
     }
 
+    const handleSavedClick = () => {
+        const authToken = localStorage.getItem("authorisation_token")
+
+        if (pmUser.savedPosts.includes(post._id)) {
+            const savedPosts = pmUser.savedPosts.filter((savedPost) => savedPost !== post._id)
+            const updateData = {
+                "savedPosts": savedPosts
+            }
+            updateUser(authToken, updateData, pmUser)
+
+        } else {
+            
+            const savedPosts = []
+            //console.log(pmUser.savedPosts)
+            if (pmUser.savedPosts !== undefined) {
+                for (let i = 0; i < pmUser.savedPosts.length; i++) {
+                    savedPosts.push(pmUser.savedPosts[i])
+                }
+            }
+            savedPosts.push(post._id)
+            const updateData = {
+                "savedPosts": savedPosts
+            }
+            updateUser(authToken, updateData, pmUser)
+        }
+    }
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
     if (!user) return <div>Not logged in</div>;
@@ -272,7 +327,11 @@ export default function ProjectPage() {
 
                             <img src="/IconsFlag.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
                             <img src="/IconsShare.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
-                            <img src="NavBarIcons/IconsSaved.svg" alt="logo" className='mx-1 w-6 h-6 flex-shrink-0'></img>
+                            <button className="p-1 mx-1 w-6 h-6 flex flex-shrink-0 justify-center items-center" onClick={handleSavedClick}>
+                            {pmUser.savedPosts !== undefined ? (pmUser.savedPosts.includes(post._id) ? <img src="NavBarIcons/IconsSaved.svg" alt="logo" className='w-full w-full flex-shrink-0'></img>: <img src="NavBarIcons/IconsSaved.svg" alt="logo" className='w-full w-full flex-shrink-0 invert'></img> ) : <img src="NavBarIcons/IconsSaved.svg" alt="logo" className='w-full w-full flex-shrink-0 invert'></img>}
+                            </button>
+                            
+                            
                         </div>
                     </div>
                     <div id="description-details-container" className="flex w-full h-[40%] flex-row">

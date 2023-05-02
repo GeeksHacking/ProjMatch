@@ -17,16 +17,17 @@ export default function SettingsPage() {
     const [ userData, setUserData ] = useState({
         "aboutMe": "Loading...",
         "regEmail": "Loading...",
-        "regPhone": "Loading...",
+        //"regPhone": "Loading...",
+        "contactLink": "Loading...",
         "rlName": "Loading...",
         "profileBanner": "Loading...",
         "profilePic": "Loading...",
         "username": "Loading...",
     });
 
-    const getUserWithID = useCallback(async (authToken, user) => {
+    const getUserWithEmail = useCallback(async (authToken, user) => {
         const API_URL = process.env.API_URL
-
+        console.log(user)
         var apiOptions = {
             method: 'GET',
             url: `${API_URL}/users?email=${user.email}`,
@@ -150,7 +151,9 @@ export default function SettingsPage() {
         const userName = e.target.userName.value;
         const aboutMe = e.target.aboutMe.value;
         const regEmail = e.target.regEmail.value;
-        const regPhone = e.target.regPhone.value;
+        const rlName = e.target.rlName.value;
+        const contactLink = e.target.contactLink.value;
+        //const regPhone = e.target.regPhone.value;
         const profileBanner = e.target.profileBannerInput.files[0];
         const profilePic = e.target.profilePicInput.files[0];
 
@@ -159,7 +162,9 @@ export default function SettingsPage() {
             "username": userName,
             "aboutMe": aboutMe,
             "regEmail": regEmail,
-            "regPhone": regPhone,
+            "rlName": rlName,
+            "contactLink": contactLink,
+            //"regPhone": regPhone,
             "profileBanner": profileBanner,
             "profilePic": profilePic
         })
@@ -216,10 +221,9 @@ export default function SettingsPage() {
         if (authToken === undefined) {
             console.log("No token found")
         }
-        
-        if (user != null) {
+        if (user !== null && user !== undefined) {
             //console.log(user)
-            getUserWithID(authToken, user);
+            getUserWithEmail(authToken, user);
         }
     }, [user])
 
@@ -228,7 +232,8 @@ export default function SettingsPage() {
             setUserData({
                 "aboutMe": projMatchUser.aboutMe,
                 "regEmail": projMatchUser.regEmail,
-                "regPhone": projMatchUser.regPhone,
+                //"regPhone": projMatchUser.regPhone,
+                "contactLink": projMatchUser.contactLink,
                 "rlName": projMatchUser.rlName,
                 "profileBanner": projMatchUser.userDat.profileBanner,
                 "profilePic": projMatchUser.userDat.profilePic,
@@ -252,13 +257,16 @@ export default function SettingsPage() {
                     <p className="text-lg text-[#636363]">You can only change your username every 7 days</p>
                     <input type="text" name="userName" defaultValue={userData.username !== "Loading..." ? userData.username : ""} placeholder="New Username" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
                     
+                    <h1 className="text-2xl font-bold mt-6">Name</h1>
+                    <input type="text" name="rlName" defaultValue={userData.rlName !== "Loading..." ? userData.rlName : ""} placeholder="New Name" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+
                     <h1 className="text-2xl font-bold mt-6">Email</h1>
                     <p className="text-lg text-[#636363]">example.email@gmail.com</p>
                     <div className="w-[70%] h-fit flex flex-row justify-between">
-                        <input type="text" name="regEmail" defaultValue={userData.regEmail !== "Loading..." ? userData.regEmail : ""} placeholder="New Email" className="w-[80%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                        <input type="text" name="regEmailOTP" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                        <input type="text" name="regEmail" defaultValue={userData.regEmail !== "Loading..." ? userData.regEmail : ""} placeholder="New Email" className="w-full h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+                        {/* <input type="text" name="regEmailOTP" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/> */}
                     </div>
-                    <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input>
+                    {/* <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input> */}
                     
                     {/* <h1 className="text-2xl font-bold mt-6">Phone</h1>
                     <p className="text-lg text-[#636363]">+65 9888 0000</p>
@@ -268,19 +276,22 @@ export default function SettingsPage() {
                     </div>
                     <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input>
                      */}
+                    <h1 className="text-2xl font-bold mt-6">Contact Link</h1>
+                    <input type="text" name="contactLink" defaultValue={userData.contactLink !== "Loading..." ? userData.contactLink : ""} placeholder="Add Contact Link" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+
                     <h1 className="text-2xl font-bold mt-6">About Me</h1>
                     <p className="text-lg text-[#636363]">Provide a short description about you and what you do</p>
                     <textarea name="aboutMe" defaultValue={userData.aboutMe !== "Loading..." ? userData.aboutMe : ""} placeholder="Write something about yourself..." className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1  "/>
 
                     <h1 className="text-2xl font-bold mt-6">Profile Picture</h1>
                     <div className="flex flex-row w-[70%] h-36 justify-start items-center">
-                        {userData.profilePic !== "Loading..." && userData.profilePic !== "" ? <img src={userData.profilePic} className="w-32 h-32 rounded-full mt-2 object-center object-cover"/> : <div className="w-32 h-32 rounded-full mt-2 bg-[#D3D3D3]"></div>}
+                        {userData.profilePic !== "Loading..." && userData.profilePic !== "" ? <img src={userData.profilePic} className="w-32 h-32 rounded-full mt-2 object-center object-cover border-3 border-[#C7C7C7]"/> : <div className="w-32 h-32 rounded-full mt-2 bg-[#D3D3D3] border-3 border-[#C7C7C7]"></div>}
                         <button id="profilePic" className="w-32 h-11 rounded-md bg-logo-blue text-white text-xl mt-1 ml-4" onClick={handleImageButton}>Add images</button>
                         <input type="file" id="profilePicInput" name="profilePic" className="hidden" onChange={handlePicImageChange}/>
                     </div>
                     <h1 className="text-2xl font-bold mt-6">Profile Banner</h1>
                     <div className="flex flex-col w-[70%] h-fit justify-center items-start">
-                        {userData.profileBanner !== "Loading..." && userData.profileBanner !== "" ? <img src={userData.profileBanner} className="w-full h-36 mt-2 object-center object-cover"/> : <div className="w-full h-36 mt-2 bg-[#D3D3D3]"></div>}
+                        {userData.profileBanner !== "Loading..." && userData.profileBanner !== "" ? <img src={userData.profileBanner} className="w-full h-36 mt-2 object-center object-cover border-3 border-[#C7C7C7]"/> : <div className="w-full h-36 mt-2 bg-[#D3D3D3] border-3 border-[#C7C7C7]"></div>}
                         <button id="profileBanner" className="w-full h-11 rounded-md bg-logo-blue text-white text-xl mt-1" onClick={handleImageButton}>Add images</button>
                         <input type="file" id="profileBannerInput" name="profilePic" className="hidden" onChange={handlePicImageChange}/>
                     </div>
@@ -383,14 +394,14 @@ export default function SettingsPage() {
     return (
         <div className='absolute flex w-full h-full flex-col'>
             <SideNav/>
-            <img src="http://placekitten.com/800/600"id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]">
-            </img>
+            {userData.profileBanner !== "" && userData.profileBanner !== "Loading..." ? <img src={userData.profileBanner} id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></img>: <div className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></div>}
             <button onClick={handleSignOut} className="font-bold text-white text-lg absolute w-fit h-fit right-[3%] top-[23%] bg-[#ED5A5A] px-6 py-3 rounded-md">
                 Sign Out
             </button>
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">
                 <div id="pfp-name" className="flex flex-row w-full h-full ">
-                    <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img>
+                    {userData.profilePic !== "" && userData.profilePic !== "Loading..." ? <img src={userData.profilePic} className="rounded-full border-3 border-[#C7C7C7]"></img>:  <div className="rounded-full border-3 border-[#C7C7C7]"></div>}
+                    {/* <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img> */}
                     <div className="flex flex-col justify-end items-start h-[90%] ml-5">
                         <h1 className="text-4xl font-bold text-black">Settings</h1>
                         <h3 className="text-xl text-logo-blue">John_Doe</h3>

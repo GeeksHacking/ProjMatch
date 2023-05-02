@@ -54,7 +54,6 @@ export default function ProfilePage() {
         }
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                //console.log(res.data.users[0])
                 setProfileUser(res.data.users[0])
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -67,13 +66,24 @@ export default function ProfilePage() {
     useEffect(() => {
         if (id !== undefined) {
             getUserWithID(id)
-
         }
+
     }, [id])
 
     useEffect(() => {
         if (profileUser !== null) {
             getPostsWithCreatorID(localStorage.getItem("authorisation_token"), profileUser._id)
+            if (String(profileUser.contactLink).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                setProfileUser({
+                    ...profileUser,
+                    contactLink: `mailto:${profileUser.contactLink}`
+                })
+            } else if (String(profileUser.contact).match(/^\d{10}$/)) {
+                setProfileUser({
+                    ...profileUser,
+                    contactLink: `tel:${profileUser.contact}`
+                })
+            }
         }
         //console.log(posts)
     }, [profileUser])
@@ -86,10 +96,11 @@ export default function ProfilePage() {
     return (
         <div className='absolute flex w-full h-full flex-col'>
             <SideNav/>
-            <img src="http://placekitten.com/800/600"id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></img>
+            {profileUser.userDat.profileBanner !== "" ? <img src={profileUser.userDat.profileBanner} id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></img> : <div className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></div>}
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">
                 <div id="pfp-name" className="flex flex-row w-full h-full ">
-                    <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img>
+                    {profileUser.userDat.profilePic !== ""? <img src={profileUser.userDat.profilePic} className="rounded-full border-3 border-[#C7C7C7]"></img> : <div className="rounded-full border-3 border-[#C7C7C7]"></div>}
+                    {/* <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img> */}
                     <div className="flex flex-col justify-end items-start h-[90%] ml-5">
                         <h1 className="text-4xl font-bold text-black">{profileUser.username}</h1>
                         <h3 className="text-xl text-logo-blue">{profileUser.rlName}</h3>
@@ -127,7 +138,7 @@ export default function ProfilePage() {
                                 </div>
                             </div>
                             <div id="contact-container" className="flex flex-col w-full h-1/5 justify-center items-start">
-                                <a href="" className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
+                                <a href={profileUser.contactLink} className="bg-logo-blue text-2xl text-white font-bold w-full h-[70%] py-2 px-4 rounded-md">
                                     Contact
                                 </a>
                             </div>
