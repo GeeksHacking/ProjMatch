@@ -24,6 +24,7 @@ export default function SettingsPage() {
         "profilePic": "Loading...",
         "username": "Loading...",
     });
+    const [popupDisplay, setPopupDisplay] = useState(false);
 
     const getUserWithEmail = useCallback(async (authToken, user) => {
         const API_URL = process.env.API_URL
@@ -215,6 +216,46 @@ export default function SettingsPage() {
         }
     }
 
+    const handleEmail = (e) => {
+        e.preventDefault();
+
+        const name = e.target.emailName.value;
+        const email = e.target.emailEmail.value;
+        const message = e.target.emailBody.value;
+
+        const emailData = {
+            "subject": `[ProjMatch] Feedback from ${name}`,
+            "text": `From: ${email}\n\n${message}`
+        }
+
+        // const API_URL = process.env.API_URL
+        // const options = {
+        //     method: 'POST',
+        //     url: `${API_URL}/email`,
+        //     data: emailData
+        // }
+        // axios.request(options).then(function (res) {
+        //     if (res.status == 200) {
+        //         console.log(res)
+        //     } else {
+        //         throw `Status ${res.status}, ${res.statusText}`
+        //     }
+        // }).catch(function (err) {
+        //     console.error("Failed to get User with: ", err)
+        // })
+
+        console.log(emailData)
+
+        setPopupDisplay(true)
+
+        e.target.emailName.value = "";
+        e.target.emailEmail.value = "";
+        e.target.emailBody.value = "";
+        
+
+    }
+
+
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
 
@@ -384,8 +425,25 @@ export default function SettingsPage() {
                     Any questions? Feature request or problems?
                     <br>
                     </br>
-                    Contact us at INSERTEMAIL@gmail.com
+                    Fill in this feedback form here and we will get back to you as soon as possible!
                     </p>
+                    <form className="mt-10 w-[60%]" onSubmit={handleEmail}>
+                        <p className="text-lg text-black font-medium">Your Name</p>
+                        <input type="text" name="emailName" placeholder="Enter your name here" className="w-full h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+
+                        <p className="text-lg text-black font-medium mt-5">Your Email</p>
+                        <p className="text-base text-[#636363] font-light"><i>This is so that we can contact you in the future for further information</i></p>
+                        <input type="text" name="emailEmail" placeholder="Enter your email here" className="w-full h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
+
+                        <p className="text-lg text-black font-medium mt-5">The content</p>
+                        <p className="text-base text-[#636363] font-light"><i>Try to keep it short and simple. We will follow up with you if needed</i></p>
+                        <textarea name="emailBody" placeholder="Write the issues/feedbacks/bugs you had here..." className="w-full h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1 mt-1"/>
+
+                        <input type="submit" value="Send Email" className="w-[30%] h-11 rounded-lg bg-logo-blue text-white text-xl mt-5 mb-20"></input>
+                    </form>
+                    <Popup trigger={popupDisplay} setTrigger={setPopupDisplay}>
+                        <h1>Your email has been sent!</h1>
+                    </Popup>
                 </div>
         },
     ];
@@ -447,4 +505,15 @@ function TabButton(props) {
             </div>
         )
     }
+}
+
+function Popup(props) {
+    return (props.trigger) ? (
+        <div className="w-full fixed top-0 left-0 h-full flex flex-col justify-center items-center bg-[#000000dd] z-[2000]">
+            <div className="w-[50%] h-[50%] bg-white flex flex-col justify-center items-center">
+                {props.children}
+                <button className="w-[30%] h-11 rounded-lg bg-logo-blue text-white text-xl mt-5 mb-20" onClick={() => props.setTrigger(false)}>Close</button>
+            </div>
+        </div>
+    ) : "";
 }
