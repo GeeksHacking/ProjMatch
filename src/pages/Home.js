@@ -191,12 +191,8 @@ export default function Home() {
 }
 
 function Project({post,uss}) {
-    console.log(uss)
-    console.log(post.creatorUserID)
-    console.log(uss[post.creatorUserID])
-    
     return (
-        <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
+        <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col" data-testid="project">
             <div id="owner-profile" className="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
                 <a className={`ml-4 flex items-center flex-row space-x-2`}>
                     <img src={(uss[post.creatorUserID])?uss[post.creatorUserID].userDat.profilePic:""} alt="logo" className='drop-shadow-custom w-14 h-14 flex-shrink-0 rounded-full'></img>
