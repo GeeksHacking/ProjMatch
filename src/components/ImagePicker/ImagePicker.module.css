@@ -1,0 +1,104 @@
+.addedImage {
+    width: 100px;
+    height: 100px;
+
+    object-fit: fill;
+
+    z-index: 2;
+}
+
+.addedImage img {
+    border-radius: 20%;
+
+    width: 100px;
+    height: 100px;
+
+    object-fit: fill;
+}
+
+.imageHoverContainer {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0);
+
+    top: -105%;
+
+    width: 110px;
+    height: 110px;
+
+    z-index: 4;
+    border-radius: 20%;
+
+    align-items: center;
+}
+
+.imageHoverContainer button {
+    position: relative;
+    top: 35%;
+    left: 20%;
+
+    background-color: #ef4444;
+    padding: 5px;
+    color: white;
+    border-radius: 30%;
+
+    opacity: 0;
+}
+
+.addedImage:hover .imageHoverContainer {
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: background-color 0.2s;
+}
+
+.addedImage:hover .imageHoverContainer button {
+    opacity: 1;
+    transition: opacity 0.2;
+}
+
+.addParent {
+    position: relative;
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 20%;
+}
+
+.addChild {
+    width: 70px;
+    height: 70px;
+
+    top: 50%;
+    left: 50%;
+    margin: -35px 0 0 -35px;
+    position: absolute;
+    text-align: center;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.inputImage:hover .addChild {
+    background-color: #94a3b8;
+    transition: background-color 0.2s;
+}
+
+.addChild p {
+    padding-top: 20%;
+
+    font-size: 35px;
+}
+
+.inputImage {
+    width: 70px;
+	height: 70px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: 4;
+
+    top: 50%;
+    left: 50%;
+    margin: -35px 0 0 -35px;
+    text-align: center;
+    border-radius: 100%;
+    cursor: pointer;
+}

@@ -4,6 +4,7 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 import { use, useCallback, useEffect, useState } from "react"
 import { get } from "animejs";
 import { useRouter } from "next/router";
+import ImagePicker from "@/components/ImagePicker/ImagePicker";
 
 export default function CreateProject() {
     const router = useRouter()
@@ -15,6 +16,7 @@ export default function CreateProject() {
     // State Variables
     const [ newProject, setNewProject ] = useState({})
     const [ newProjID, setNewProjID ] = useState("")
+    const [ projectImages, setProjectImages] = useState([])
 
     // API Req
     const getUserWithID = useCallback(async (authToken, user) => {
@@ -171,7 +173,6 @@ export default function CreateProject() {
         const projectDescription = event.target.projectDescription.value
         const projectContact = event.target.projectContact.value
         const projectTags = event.target.projectTags.value.replace(/\s/g, '').split(',')
-        const projectImages = [...event.target.projectImages.files]
         const projectTech = event.target.projectTech.value.replace(/\s/g, '').split(',')
 
         setNewProject({
@@ -182,6 +183,10 @@ export default function CreateProject() {
             "projectImages": projectImages,
             "projectTech": projectTech
         })
+    }
+
+    const dataFromPicker = (data) => {
+        setProjectImages(data)
     }
 
     return (
@@ -199,6 +204,7 @@ export default function CreateProject() {
                     <textarea id="projectDescription" name="projectDescription" placeholder="Enter your project’s description!" className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1"/>
                     
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
+                    <ImagePicker images={[]} sendToParent={dataFromPicker} />
                     <input id="projectImages" accept="image/*" type="file" name="projectImages" multiple></input>
 
                     <h2 className="text-3xl font-medium mt-10">Contact</h2>
