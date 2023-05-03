@@ -25,6 +25,8 @@ export default function EditProject() {
         }
     );
     const [ changedProj, setChangedProj ] = useState({})
+    const [ imagesData, setImagesData ] = useState()
+
     const { user, error, isLoading } = useUser();
     
     // API Requests
@@ -103,12 +105,19 @@ export default function EditProject() {
         //const projectImages = [...event.target.projectImages.files]
         const projectTech = event.target.projectTech.value.replace(/\s/g, '').split(',')
         
+        let projImages = []
+        if (imagesData === undefined) {
+            projImages = post.images
+        } else {
+            projImages = imagesData
+        }
+
         const temp = {
             "projectName": projectName,
             "description": projectDescription,
             "contact": projectContact,
             "tags": projectTags,
-            //"images": projectImages,
+            "images": projImages,
             "technologies": projectTech
         }
 
@@ -140,6 +149,10 @@ export default function EditProject() {
         }
     }
 
+    const dataFromPicker = (data) => {
+        setImagesData(data)
+    }
+
     return (
         <div className='absolute flex w-full h-full flex-col justify-start items-center'>
             <SideNav />
@@ -165,7 +178,7 @@ export default function EditProject() {
                         </div>
                     </div> */}
                     {/* <input type="file" name="projectImages"></input> */}
-                    <ImagePicker images={post.images} />
+                    <ImagePicker images={post.images} sendToParent={dataFromPicker} />
 
                     <h2 className="text-3xl font-medium mt-10">Contact</h2>
                     <p className="text-lg mt-1">Insert links or emails to allow the user to contact you</p>

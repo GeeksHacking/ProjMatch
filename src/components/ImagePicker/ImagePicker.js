@@ -1,7 +1,7 @@
 import styles from "./ImagePicker.module.css"
 import { useEffect, useState } from "react"
 
-const ImagePicker = ({ images }) => {
+const ImagePicker = ({ images, sendToParent }) => {
 
     const [ imgs, setImgs ] = useState([])
 
@@ -24,6 +24,7 @@ const ImagePicker = ({ images }) => {
 
         let temp = imgs.concat(fileURLs)
         setImgs(temp)
+        sendToParent(temp)
     }
 
     const deleteImage = (img) => {
