@@ -16,8 +16,6 @@ export default function SettingsPage() {
     const [personalization, setPersonalization] = useState(false);
     const [ userData, setUserData ] = useState({
         "aboutMe": "Loading...",
-        "regEmail": "Loading...",
-        //"regPhone": "Loading...",
         "contactLink": "Loading...",
         "rlName": "Loading...",
         "profileBanner": "Loading...",
@@ -28,7 +26,6 @@ export default function SettingsPage() {
 
     const getUserWithEmail = useCallback(async (authToken, user) => {
         const API_URL = process.env.API_URL
-        console.log(user)
         var apiOptions = {
             method: 'GET',
             url: `${API_URL}/users?email=${user.email}`,
@@ -36,16 +33,12 @@ export default function SettingsPage() {
                 'Authorisation': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
-        }
-        //console.log("geeting user")
+        };
         let res = await axios.request(apiOptions)
         .catch(function (err) {
             console.error("Failed to get User with: ", err)
         });
         if (res.status == 200) {
-            //console.log(res)
-            //console.log(res.data.users[0])
-            //res.data.users[0]
             setProjMatchUser(res.data.users[0])
         } else {
             throw `Status ${res.status}, ${res.statusText}`
@@ -60,7 +53,6 @@ export default function SettingsPage() {
             var formData = new FormData()
             formData.append("files", data.profileBanner)
             formData.append("files", data.profilePic)
-            console.log(data.profilePic[0])
             formData.append("creatorUserID", user._id)
 
             let axiosAPIOptions = {
@@ -76,7 +68,6 @@ export default function SettingsPage() {
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
                     const imageURL = res.data.imageURL
-                    console.log(imageURL)
                     const bannerURL = imageURL[0]
                     const profilePicURL = imageURL[1]
 
@@ -87,20 +78,7 @@ export default function SettingsPage() {
                             "profilePic": profilePicURL
                         }
                     }
-                    console.log("updating user after creating image urls")
                     updateUser(authToken, tempData, user)
-                       //setUserData({
-                        //...userData,
-//"profileBanner": bannerURL,
-//"profilePic": profilePicURL
-//})
-                    //.log("updating user after creating image urls")
-                    //(authToken, userData, projMatchUser)
-                    // const id = resp.data.insertedProjectWithID
-
-                    // if (id !== undefined || id !== "") {
-                    //     router.push(`http://localhost:3000/ProjectPage?id=${id}`)
-                    // }
                     return imageURL
                 } else {
                     throw `Status ${res.status}, ${res.statusText}`
@@ -112,7 +90,6 @@ export default function SettingsPage() {
     }, [])
 
     const updateUser = useCallback(async (authToken, updateUser, user) => {
-        console.log("calling user update api")
         const API_URL = process.env.API_URL
         const options = {
             method: 'PUT',
@@ -125,10 +102,8 @@ export default function SettingsPage() {
                 "update": updateUser
             }
         }
-        console.log(options)
         axios.request(options).then(function (res) {
             if (res.status == 200) {
-                console.log(res)
                 router.push(`http://localhost:3000/ProfilePage?id=${user._id}`)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -151,10 +126,8 @@ export default function SettingsPage() {
 
         const userName = e.target.userName.value;
         const aboutMe = e.target.aboutMe.value;
-        const regEmail = e.target.regEmail.value;
         const rlName = e.target.rlName.value;
         const contactLink = e.target.contactLink.value;
-        //const regPhone = e.target.regPhone.value;
         const profileBanner = e.target.profileBannerInput.files[0];
         const profilePic = e.target.profilePicInput.files[0];
 
@@ -162,10 +135,8 @@ export default function SettingsPage() {
             ...userData,
             "username": userName,
             "aboutMe": aboutMe,
-            "regEmail": regEmail,
             "rlName": rlName,
             "contactLink": contactLink,
-            //"regPhone": regPhone,
             "profileBanner": profileBanner,
             "profilePic": profilePic
         })
@@ -183,10 +154,8 @@ export default function SettingsPage() {
             return
         }
         if (profileBanner || profilePic) {
-            console.log("creating images")
             createS3Images(authToken, UpdatedData, projMatchUser)
         } else {
-            console.log("updating user")
             updateUser(authToken, UpdatedData, projMatchUser)
         }
 
@@ -228,23 +197,20 @@ export default function SettingsPage() {
             "text": `From: ${email}\n\n${message}`
         }
 
-        // const API_URL = process.env.API_URL
-        // const options = {
-        //     method: 'POST',
-        //     url: `${API_URL}/email`,
-        //     data: emailData
-        // }
-        // axios.request(options).then(function (res) {
-        //     if (res.status == 200) {
-        //         console.log(res)
-        //     } else {
-        //         throw `Status ${res.status}, ${res.statusText}`
-        //     }
-        // }).catch(function (err) {
-        //     console.error("Failed to get User with: ", err)
-        // })
-
-        console.log(emailData)
+        const API_URL = process.env.API_URL
+        const options = {
+            method: 'POST',
+            url: `${API_URL}/email`,
+            data: emailData
+        }
+        axios.request(options).then(function (res) {
+            if (res.status == 200) {
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
 
         setPopupDisplay(true)
 
@@ -260,10 +226,9 @@ export default function SettingsPage() {
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
-            console.log("No token found")
+            console.error("No token found")
         }
         if (user !== null && user !== undefined) {
-            //console.log(user)
             getUserWithEmail(authToken, user);
         }
     }, [user])
@@ -273,7 +238,6 @@ export default function SettingsPage() {
             setUserData({
                 "aboutMe": projMatchUser.aboutMe,
                 "regEmail": projMatchUser.regEmail,
-                //"regPhone": projMatchUser.regPhone,
                 "contactLink": projMatchUser.contactLink,
                 "rlName": projMatchUser.rlName,
                 "profileBanner": projMatchUser.userDat.profileBanner,
@@ -282,10 +246,6 @@ export default function SettingsPage() {
             })
         }
     }, [projMatchUser])
-    
-    useEffect(() => {
-        console.log(userData)
-    }, [userData])
 
 
     const tabs = [
@@ -302,21 +262,12 @@ export default function SettingsPage() {
                     <input type="text" name="rlName" defaultValue={userData.rlName !== "Loading..." ? userData.rlName : ""} placeholder="New Name" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
 
                     <h1 className="text-2xl font-bold mt-6">Email</h1>
-                    <p className="text-lg text-[#636363]">example.email@gmail.com</p>
+                    <p className="text-lg text-[#636363]"><i>This input will not update your email yet</i></p>
                     <div className="w-[70%] h-fit flex flex-row justify-between">
                         <input type="text" name="regEmail" defaultValue={userData.regEmail !== "Loading..." ? userData.regEmail : ""} placeholder="New Email" className="w-full h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                        {/* <input type="text" name="regEmailOTP" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/> */}
                     </div>
-                    {/* <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input> */}
-                    
-                    {/* <h1 className="text-2xl font-bold mt-6">Phone</h1>
-                    <p className="text-lg text-[#636363]">+65 9888 0000</p>
-                    <div className="w-[70%] h-fit flex flex-row justify-between">
-                        <input type="text" name="regPhone" defaultValue={userData.regPhone !== "Loading..." ? userData.regPhone : ""} placeholder="New Phone Number" className="w-[80%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                        <input type="text" name="regPhoneOTP" placeholder="OTP" className="w-[19%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                    </div>
-                    <input type="submit" value="Get OTP" className="w-[70%] h-11 rounded-md bg-logo-blue text-white text-xl mt-1"></input>
-                     */}
+
+
                     <h1 className="text-2xl font-bold mt-6">Contact Link</h1>
                     <input type="text" name="contactLink" defaultValue={userData.contactLink !== "Loading..." ? userData.contactLink : ""} placeholder="Add Contact Link" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
 
@@ -337,15 +288,6 @@ export default function SettingsPage() {
                         <input type="file" id="profileBannerInput" name="profilePic" className="hidden" onChange={handlePicImageChange}/>
                     </div>
                     
-                    {/*
-                    <h1 className="text-2xl font-bold mt-6">Languages</h1>
-                    <p className="text-lg text-[#636363]">Specify the programming languages you are familliar with</p>
-                    <input type="text" name="projectName" placeholder="Click to select the languages" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                    
-                    <h1 className="text-2xl font-bold mt-6">Contact Link</h1>
-                    <p className="text-lg text-[#636363]">Place a link people can contact you at</p>
-                    <input type="text" name="projectName" placeholder="Click to edit link" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 mt-1"/>
-                    */}
                     <input type="submit" value="Update!" className="w-[30%] h-11 rounded-lg bg-logo-blue text-white text-xl mt-10 mb-20"></input>
                 </form>
 
@@ -459,7 +401,6 @@ export default function SettingsPage() {
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">
                 <div id="pfp-name" className="flex flex-row w-full h-full ">
                     {userData.profilePic !== "" && userData.profilePic !== "Loading..." ? <img src={userData.profilePic} className="rounded-full border-3 border-[#C7C7C7]"></img>:  <div className="rounded-full border-3 border-[#C7C7C7]"></div>}
-                    {/* <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img> */}
                     <div className="flex flex-col justify-end items-start h-[90%] ml-5">
                         <h1 className="text-4xl font-bold text-black">Settings</h1>
                         <h3 className="text-xl text-logo-blue">John_Doe</h3>
