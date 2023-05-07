@@ -5,6 +5,8 @@ import { use, useCallback, useEffect, useState } from "react"
 import { get } from "animejs";
 import { useRouter } from "next/router";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
+import Filter from "bad-words"
+import approvedTags from "../test.json";
 
 export default function CreateProject() {
     const router = useRouter()
@@ -17,6 +19,7 @@ export default function CreateProject() {
     const [ newProject, setNewProject ] = useState({})
     const [ newProjID, setNewProjID ] = useState("")
     const [ projectImages, setProjectImages] = useState([])
+    const [ tagError, setTagError ] = useState("")
 
     // API Req
     const getUserWithID = useCallback(async (authToken, user) => {
@@ -175,6 +178,11 @@ export default function CreateProject() {
         const projectTags = event.target.projectTags.value.replace(/\s/g, '').split(',')
         const projectTech = event.target.projectTech.value.replace(/\s/g, '').split(',')
 
+        if (tagError !== "") {
+            alert("Please enter a valid tag")
+            return
+        }
+
         setNewProject({
             "projectName": projectName,
             "projectDescription": projectDescription,
@@ -187,6 +195,19 @@ export default function CreateProject() {
 
     const dataFromPicker = (data) => {
         setProjectImages(data)
+    }
+
+    const handleTagChange = (event) => {
+
+        let filter = new Filter({emptyList: true})
+        filter.addWords(...approvedTags)
+
+        const tags = event.target.value.replace(/\s/g, '').split(',')
+        if (tags.filter((tag) => filter.isProfane(tag)).length !== tags.length) {
+            setTagError("Please enter a valid tag")
+        } else {
+            setTagError("")
+        }
     }
 
     return (
@@ -213,11 +234,13 @@ export default function CreateProject() {
 
                     <h2 className="text-3xl font-medium mt-10">Tags</h2>
                     <p className="text-lg mt-1">Add tags to help users find your project!</p>
-                    <input type="text" name="projectTags" id="projectTags" placeholder="Enter your project’s tags! e.g. Clicker, Game, Fun" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2"/>
-                
+                    <input type="text" name="projectTags" id="projectTags" placeholder="Enter your project’s tags! e.g. Clicker, Game, Fun" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2" onChange={handleTagChange}/>
+                    <p className="text-lg mt-1 text-[#ff0000]"><i>{tagError}</i></p>
+
                     <h2 className="text-3xl font-medium mt-10">Technologies</h2>
                     <p className="text-lg mt-1">Let users know what Programming Language/Framework you use!</p>
                     <input type="text" name="projectTech" id="projectTech" placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2"/>
+                    
 
                     <input type="submit" value="Create Project" className="w-[30%] h-11 rounded-full bg-logo-blue text-white text-2xl font-bold mt-10 mb-20"></input>
                 </form>
