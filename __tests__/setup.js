@@ -1,9 +1,5 @@
 import '@testing-library/jest-dom/extend-expect';
 
-import initFontAwesome from '../utils/initFontAwesome';
-
-initFontAwesome();
-
 afterEach(() => {
     jest.clearAllMocks();
     jest.restoreAllMocks();
@@ -11,9 +7,7 @@ afterEach(() => {
 });
 
 jest.mock('next/router', () => ({
-    useRouter: () => ({
-        asPath: '/'
-    })
+    userRouter: jest.fn()
 }));
 
 jest.mock('@auth0/nextjs-auth0', () => {

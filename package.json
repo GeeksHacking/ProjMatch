@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --watch"
+    "test": "jest tests --coverage --maxWorkers=10"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^2.3.1",
