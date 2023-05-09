@@ -6,7 +6,7 @@ import { get } from "animejs";
 import { useRouter } from "next/router";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words"
-import approvedTags from "../test.json";
+import approvedTags from "../tags.json";
 
 export default function CreateProject() {
     const router = useRouter()
@@ -135,6 +135,9 @@ export default function CreateProject() {
             console.error("Authorisation Token returned Undefined.")
         }
 
+        console.log(newProject)
+        return
+
         if (newProject !== {}) {
             getUserWithID(authToken, user).then((res) => {
                 console.log(res)
@@ -175,8 +178,8 @@ export default function CreateProject() {
         const projectName = event.target.projectName.value
         const projectDescription = event.target.projectDescription.value
         const projectContact = event.target.projectContact.value
-        const projectTags = event.target.projectTags.value.replace(/\s/g, '').split(',')
-        const projectTech = event.target.projectTech.value.replace(/\s/g, '').split(',')
+        const projectTags = event.target.projectTags.value.replace(/\s/g, '').toLowerCase().split(',')
+        const projectTech = event.target.projectTech.value.replace(/\s/g, '').toLowerCase().split(',')
 
         if (tagError !== "") {
             alert("Please enter a valid tag")
@@ -226,7 +229,7 @@ export default function CreateProject() {
                     
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
                     <ImagePicker images={[]} sendToParent={dataFromPicker} />
-                    <input id="projectImages" accept="image/*" type="file" name="projectImages" multiple></input>
+                    <input id="projectImages" accept="image/*" type="file" name="projectImages" hidden multiple></input>
 
                     <h2 className="text-3xl font-medium mt-10">Contact</h2>
                     <p className="text-lg mt-1">Insert links or emails to allow the user to contact you</p>
