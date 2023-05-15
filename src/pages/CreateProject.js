@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words"
 import approvedTags from "../tags.json";
+import { Combobox } from "@headlessui/react";
 
 export default function CreateProject() {
     const router = useRouter()
@@ -20,6 +21,9 @@ export default function CreateProject() {
     const [ newProjID, setNewProjID ] = useState("")
     const [ projectImages, setProjectImages] = useState([])
     const [ tagError, setTagError ] = useState("")
+    const [ selectedTags, setSelectedTags ] = useState([])
+    const [tagQuery, setTagQuery] = useState("")
+
 
     // API Req
     const getUserWithID = useCallback(async (authToken, user) => {
@@ -135,9 +139,6 @@ export default function CreateProject() {
             console.error("Authorisation Token returned Undefined.")
         }
 
-        console.log(newProject)
-        return
-
         if (newProject !== {}) {
             getUserWithID(authToken, user).then((res) => {
                 console.log(res)
@@ -178,7 +179,8 @@ export default function CreateProject() {
         const projectName = event.target.projectName.value
         const projectDescription = event.target.projectDescription.value
         const projectContact = event.target.projectContact.value
-        const projectTags = event.target.projectTags.value.replace(/\s/g, '').toLowerCase().split(',')
+        //const projectTags = event.target.projectTags.value.replace(/\s/g, '').toLowerCase().split(',')
+        const projectTags = selectedTags
         const projectTech = event.target.projectTech.value.replace(/\s/g, '').toLowerCase().split(',')
 
         if (tagError !== "") {
@@ -213,6 +215,11 @@ export default function CreateProject() {
         }
     }
 
+    const filteredTags = tagQuery === "" ? approvedTags 
+        : approvedTags.filter((tag) => tag.toLowerCase().includes(tagQuery.toLowerCase()))
+
+
+
     return (
         <div className='absolute flex w-full h-full flex-col justify-start items-center'>
             <SideNav/>
@@ -237,7 +244,38 @@ export default function CreateProject() {
 
                     <h2 className="text-3xl font-medium mt-10">Tags</h2>
                     <p className="text-lg mt-1">Add tags to help users find your project!</p>
-                    <input type="text" name="projectTags" id="projectTags" placeholder="Enter your project’s tags! e.g. Clicker, Game, Fun" className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2" onChange={handleTagChange}/>
+                    <Combobox value={selectedTags} onChange={setSelectedTags} multiple name="">
+                        <div className="w-[70%] h-11 rounded-lg border-2 border-[#D3D3D3] px-2 flex flex-row" >
+                            <ul className="flex flex-row justify-start items-center">
+                                {selectedTags.map((tag) => (
+                                    <li key={Math.random()} className="flex justify-between items-center h-7 w-fit bg-black rounded-full mx-1">
+                                        <span className="mx-4 text-white font-light text-base">{tag}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <Combobox.Input className="ml-2 w-full focus:outline-0" placeholder="Enter your project's tags!" onChange={(e) => setTagQuery(e.target.value)}/>
+                        </div>
+                        <div className="relative w-[70%]">
+                            <Combobox.Options className="absolute w-full bg-white mt-1 border-2 border-logo-blue rounded-lg">
+                                {filteredTags.length === 0 && tagQuery !== "" ? (
+                                    <p>Nothing found</p>
+                                ): (
+                                    filteredTags.map((tag) => (
+                                        (selectedTags.indexOf(tag) === -1 ) ? 
+                                            <Combobox.Option key={Math.random()} value={tag} className="rounded-lg p-2 h-8 bg-white flex flex-row items-center">
+                                                <span className="font-light text-base">{tag}</span>
+                                            </Combobox.Option>
+                                        : <Combobox.Option key={Math.random()} value={tag} className="p-2 h-8 bg-logo-blue flex flex-row items-center">
+                                                <span className="text-white font-bold text-base">{tag}</span>
+                                            </Combobox.Option>
+                                        
+                                    ))
+                                )}
+                                
+                            </Combobox.Options>
+                        </div>
+                        
+                    </Combobox>
                     <p className="text-lg mt-1 text-[#ff0000]"><i>{tagError}</i></p>
 
                     <h2 className="text-3xl font-medium mt-10">Technologies</h2>
