@@ -6,6 +6,7 @@ import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
 
+
 export default function ProjectPage() {
     const router = useRouter()
     const { id } = router.query
@@ -17,7 +18,7 @@ export default function ProjectPage() {
     const [ pmUser, setPMUser ] = useState({})
     const [ showShareToolTip, setShowShareToolTip ] = useState(false)
     const [ showPopup, setShowPopup ] = useState(false)
-    const [ showDoneReport, setShowDoneReport ] = useState(true)
+    const [ showDoneReport, setShowDoneReport ] = useState(false)
 
     const getUserFromEmail = useCallback(async (authToken, email) => {
         const API_URL = process.env.API_URL
@@ -132,6 +133,7 @@ export default function ProjectPage() {
                 "update": updateUser
             }
         }
+
         axios.request(options).then(function (res) {
             if (res.status == 200) {
                 getUserFromEmail(authToken, user.regEmail).then((user) => {
@@ -263,6 +265,7 @@ export default function ProjectPage() {
 
     const handleSavedClick = () => {
         const authToken = localStorage.getItem("authorisation_token")
+
 
         if (pmUser.savedPosts.includes(post._id)) {
             const savedPosts = pmUser.savedPosts.filter((savedPost) => savedPost !== post._id)
