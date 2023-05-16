@@ -147,7 +147,7 @@ export default function CreateProject() {
 
     useEffect(() => {
         if (newProjID !== "") {
-            router.push(`http://localhost:3000/ProjectPage?id=${newProjID}`)
+            router.push(`ProjectPage?id=${newProjID}`)
         }
     }, [newProjID])
 

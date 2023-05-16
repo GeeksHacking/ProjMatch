@@ -104,7 +104,7 @@ export default function SettingsPage() {
         }
         axios.request(options).then(function (res) {
             if (res.status == 200) {
-                router.push(`http://localhost:3000/ProfilePage?id=${user._id}`)
+                router.push(`ProfilePage?id=${user._id}`)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
             }
@@ -119,7 +119,7 @@ export default function SettingsPage() {
     const handleSignOut = (e) => {
         e.preventDefault();
         localStorage.removeItem('authorisation_token');
-        router.push('http://localhost:3000/api/auth/logout');
+        router.push('api/auth/logout');
     }
     const handleSubmit = (e) => {
         e.preventDefault();
