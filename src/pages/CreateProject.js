@@ -37,13 +37,11 @@ export default function CreateProject() {
             },
             data: new URLSearchParams({ })
         }
-        console.log("geeting user")
         let res = await axios.request(apiOptions)
         .catch(function (err) {
             console.error("Failed to get User with: ", err)
         });
         if (res.status == 200) {
-            console.log(res)
             return res.data.users[0]
         } else {
             throw `Status ${res.status}, ${res.statusText}`
@@ -77,7 +75,6 @@ export default function CreateProject() {
         }).then(() => {   
             axios.request(axiosAPIOptions).then(function (res) {
                 if (res.status == 200) {
-                    console.log(res)
                     setNewProjID(res.data.insertedProjectWithID)
                     return res
                 } else {
@@ -141,7 +138,6 @@ export default function CreateProject() {
 
         if (newProject !== {}) {
             getUserWithID(authToken, user).then((res) => {
-                console.log(res)
                 if (res !== {} || res !== undefined) {
                     createS3Images(authToken, newProject, res)
                 } else {
@@ -167,7 +163,6 @@ export default function CreateProject() {
 
         if (user !== undefined) {
             getUserWithID(authToken, user).then((res) => {
-                // console.log(res)
                 setProjMatchUser(res) })
         }
     }, [user])

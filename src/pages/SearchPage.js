@@ -27,7 +27,6 @@ export default function SearchPage() {
 
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                //console.log(res.data.posts)
                 setPosts(res.data.posts)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -46,7 +45,6 @@ export default function SearchPage() {
     const handleSearch = (e) => {
         e.preventDefault()
         setSearch(e.target.value)
-        //console.log(e.target.value)
     }
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -55,10 +53,7 @@ export default function SearchPage() {
 
     useEffect(() => {
 
-        console.log(tagsFilter)
-
         if (tagsFilter.length !== 0) {
-            console.log("Filtering")
             setFilteredPosts(posts.filter((post) => {
                 for (let i = 0; i < tagsFilter.length; i++) {
                     if (post.tags.indexOf(tagsFilter[i]) !== -1) {
@@ -80,10 +75,6 @@ export default function SearchPage() {
             setFilteredPosts(posts)
         }
     }, [posts])
-
-    useEffect(() => {
-        console.log(filteredPosts)
-    }, [filteredPosts])
 
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>{error.message}</div>

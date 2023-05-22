@@ -26,7 +26,6 @@ export default function ProfilePage() {
 
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                //console.log(res.data.posts)
                 setPosts(res.data.posts)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -85,7 +84,6 @@ export default function ProfilePage() {
                 })
             }
         }
-        //console.log(posts)
     }, [profileUser])
 
     if (isLoading) return <div>Loading...</div>;
@@ -171,7 +169,6 @@ function Stars({rating}){
     for (let i = 0; i < rating; i++ ) {
         stars[i] = 1
     }
-    // console.log(stars)
     
     return (
         <div className="flex flex-row">
@@ -200,7 +197,6 @@ function Star({value}) {
 }
 
 export function Project({post}) {
-    //console.log(post)
     let tagString = ''
     if (post.tags.length !== 0) {
         tagString += post.tags[0]
