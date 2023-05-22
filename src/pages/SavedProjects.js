@@ -23,15 +23,11 @@ export default function SavedProjects() {
             },
             data: new URLSearchParams({ })
         }
-        //console.log("geeting user")
         let res = await axios.request(apiOptions)
         .catch(function (err) {
             console.error("Failed to get User with: ", err)
         });
         if (res.status == 200) {
-            //console.log(res)
-            //console.log(res.data.users[0])
-            //res.data.users[0]
             setProjMatchUser(res.data.users[0])
         } else {
             throw `Status ${res.status}, ${res.statusText}`
@@ -51,7 +47,6 @@ export default function SavedProjects() {
 
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                console.log(res.data.posts[0])
                 let temp = posts
                 temp.push(res.data.posts[0])
                 setPosts(temp)
@@ -68,7 +63,6 @@ export default function SavedProjects() {
         if (user === undefined) {
             return
         }
-        console.log(user)
         getUserWithEmail(authToken, user)
     }, [user])
 
@@ -77,9 +71,7 @@ export default function SavedProjects() {
         if (projMatchUser === null) {
             return
         }
-        console.log(projMatchUser)
         for (let i = 0; i < projMatchUser.savedPosts.length; i++) {
-            console.log(projMatchUser.savedPosts[i])
             getPostsViaID(authToken, projMatchUser.savedPosts[i])
         }
     }, [projMatchUser, posts])
