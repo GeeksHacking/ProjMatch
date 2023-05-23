@@ -89,18 +89,15 @@ export default function Home() {
     useEffect(() => {
         try {
             setPosts(postReq.data.posts)
-            console.log(postReq.data.posts)
             
             postReq.data.posts.map((post)=>{
-                console.log(usersid);
                 if (!(usersid.includes(post.creatorUserID ))){
                     usersid.push(post.creatorUserID)
                     getUserWithID(post._id,post.creatorUserID);
                 }
                 
             })
-            console.log(postReq.data.posts)
-        } catch (err) {console.log(err) }
+        } catch (err) {console.error(err) }
     }, [setPosts, postReq])
 
     return (
@@ -124,9 +121,6 @@ export default function Home() {
 }
 
 function Project({post,uss}) {
-    console.log(uss)
-    console.log(post.creatorUserID)
-    console.log(uss[post.creatorUserID])
     
     return (
         
