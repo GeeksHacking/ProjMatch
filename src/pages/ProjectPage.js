@@ -260,7 +260,7 @@ export default function ProjectPage() {
     const handleDelete = () => {
         const authToken = localStorage.getItem("authorisation_token")
         deleteProject(authToken, id)
-        router.push("http://localhost:3000/Home")
+        router.push("Home")
     }
 
     const handleSavedClick = () => {
@@ -292,7 +292,7 @@ export default function ProjectPage() {
 
     const handleToolTip = () => {
         setShowShareToolTip(true)
-        navigator.clipboard.writeText("http://localhost:3000/ProjectPage?id="+post._id)
+        navigator.clipboard.writeText(window.location.origin+"/ProjectPage?id="+post._id)
     }
 
     const handlePopup = () => {
@@ -354,7 +354,7 @@ export default function ProjectPage() {
                             {pmUser._id === postReq.data.posts[0].creatorUserID ? 
                             <div className="space-x-3">
                                 <button className="bg-delete-red text-white px-2 py-1 rounded-md" onClick={handleDelete}>Delete Project</button>
-                                <button className="bg-edit-green text-white px-2 py-1 rounded-md" onClick={() => router.push(`http://localhost:3000/EditProject?id=${post._id}`)}>Edit Project</button>
+                                <button className="bg-edit-green text-white px-2 py-1 rounded-md" onClick={() => router.push(`EditProject?id=${post._id}`)}>Edit Project</button>
                             </div>
                             : <></>}
 

@@ -82,47 +82,40 @@ export default function SettingsPage() {
 		}
 	}, []);
 
-	const updateUser = useCallback(async (authToken, updateUser, user) => {
-		const API_URL = process.env.API_URL;
-		const options = {
-			method: "PUT",
-			url: `${API_URL}/users`,
-			headers: {
-				Authorisation: `Bearer ${authToken}`,
-			},
-			data: {
-				id: user._id,
-				update: updateUser,
-			},
-		};
-		axios
-			.request(options)
-			.then(function (res) {
-				if (res.status == 200) {
-					router.push(`http://localhost:3000/ProfilePage?id=${user._id}`);
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get User with: ", err);
-			});
-	}, []);
+    const updateUser = useCallback(async (authToken, updateUser, user) => {
+        const API_URL = process.env.API_URL
+        const options = {
+            method: 'PUT',
+            url: `${API_URL}/users`,
+            headers: {
+                "Authorisation": `Bearer ${authToken}`,
+            },
+            data: {
+                "id": user._id,
+                "update": updateUser
+            }
+        }
+        axios.request(options).then(function (res) {
+            if (res.status == 200) {
+                router.push(`ProfilePage?id=${user._id}`)
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        })
+    }, [])
 
-	const handleTabClick = (e) => {
-		setCurrentTab(e.target.id);
-	};
-
-	const handleSignOut = (e) => {
-		e.preventDefault();
-		localStorage.removeItem("authorisation_token");
-		router.push("http://localhost:3000/api/auth/logout");
-	};
-
-	const handleSubmit = (e) => {
-		if (e !== undefined) {
-			e.preventDefault();
-		}
+    const handleTabClick = (e) => {
+        setCurrentTab(e.target.id);
+    }
+    const handleSignOut = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('authorisation_token');
+        router.push('api/auth/logout');
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
 		var updatedData = Object.keys(userData).reduce(function (filtered, key) {
 			if (key === "userDat") {
@@ -1122,4 +1115,15 @@ function TabButton(props) {
 			</div>
 		);
 	}
+}
+
+function Popup(props) {
+    return (props.trigger) ? (
+        <div className="w-full fixed top-0 left-0 h-full flex flex-col justify-center items-center bg-[#000000dd] z-[2000]">
+            <div className="w-[50%] h-[50%] bg-white flex flex-col justify-center items-center">
+                {props.children}
+                <button className="w-[30%] h-11 rounded-lg bg-logo-blue text-white text-xl mt-5 mb-20" onClick={() => props.setTrigger(false)}>Close</button>
+            </div>
+        </div>
+    ) : "";
 }
