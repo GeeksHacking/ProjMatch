@@ -48,7 +48,9 @@ export default function SavedProjects() {
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
                 let temp = posts
-                temp.push(res.data.posts[0])
+                if (res.data.posts[0] !== undefined) {
+                    temp.push(res.data.posts[0])
+                }
                 setPosts(temp)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -81,6 +83,8 @@ export default function SavedProjects() {
     if (error) return <div>{error.message}</div>;
     if (!user) return <div>Not logged in</div>;
 
+    console.log(posts)
+
     return (
         <div className='absolute flex w-full h-full flex-col justify-start items-center'>
             <SideNav/>
@@ -109,7 +113,7 @@ export function Project({post}) {
     }
 
     return (
-        <a className="z-10 relative w-full aspect-[4/3] flex flex-col justify-center items-center rounded-lg" href={"/ProjectPage/?id="+post._id}>
+        <a className="z-10 relative w-full aspect-[4/3] flex flex-col justify-center items-center rounded-lg" href={"/Project/ProjectPage/?id="+post._id}>
             <div className="z-10 absolute bg-white/[0.5] w-full h-1/4 bottom-0 rounded-b-lg px-4 flex flex-col justify-center items-start">
                 <h3 className="text-xl font-semibold">{post.projectName}</h3>
                 <p className="text-lg font-light">{tagString}</p>

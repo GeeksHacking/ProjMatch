@@ -52,11 +52,11 @@ const MaxSideNav = () => {
     }, [user, setUserInfo])
 
     // Navigation Data
-    const navOptions = [{"Page": "Home", "IconPath": "/NavBarIcons/IconsHome.svg", "PageLink": "/Home"},
-                        {"Page": "Search", "IconPath": "/NavBarIcons/IconsSearch.svg", "PageLink": "/SearchPage"},
-                        {"Page": "Saved", "IconPath": "/NavBarIcons/IconsSaved.svg", "PageLink": "/SavedProjects"},
-                        {"Page": "Settings", "IconPath": "/NavBarIcons/IconsSettings.svg", "PageLink": "/SettingsPage"},
-                        {"Page": "Create", "IconPath": "/NavBarIcons/IconsCreate.svg", "PageLink": "/CreateProject"}]
+    const navOptions = [{"Page": "Home", "IconPath": "/NavBarIcons/IconsHome.svg", "PageLink": "/Main/Home"},
+                        {"Page": "Search", "IconPath": "/NavBarIcons/IconsSearch.svg", "PageLink": "/Main/SearchPage"},
+                        {"Page": "Saved", "IconPath": "/NavBarIcons/IconsSaved.svg", "PageLink": "/Users/SavedProjects"},
+                        {"Page": "Settings", "IconPath": "/NavBarIcons/IconsSettings.svg", "PageLink": "/Settings/SettingsPage"},
+                        {"Page": "Create", "IconPath": "/NavBarIcons/IconsCreate.svg", "PageLink": "/Project/CreateProject"}]
 
     // State Variables
 
@@ -81,12 +81,12 @@ const MaxSideNav = () => {
                 </div>
                 
                 <div className={`mt-auto space-y-6 p-3`}>
-                    <Link className={`flex items-center space-x-4 text-light-blue bg-logo-blue ${styles.create_button} h-fit rounded-lg`} href="/CreateProject">
+                    <Link className={`flex items-center space-x-4 text-light-blue bg-logo-blue ${styles.create_button} h-fit rounded-lg`} href="/Project/CreateProject">
                         <img src="/NavBarIcons/IconsCreate.svg" alt="logo" className='w-8 h-8 flex-shrink-0 ml-[0.6875rem] my-2'></img>
                         <span className={`${styles.SideNavTxt} font-bold text-xl flex items-center pb-0.5`}> Create </span>
                     </Link>
 
-                    <Link className={`flex items-center flex-row space-x-2`} href={"/ProfilePage?id=" + userInfo._id}>
+                    <Link className={`flex items-center flex-row space-x-2`} href={"/Users/ProfilePage?id=" + userInfo._id}>
                         <img src={userInfo.userDat.profilePic} alt="logo" className='w-14 h-14 flex-shrink-0 rounded-full border-2 border-logo-blue'></img>
                         <div className="flex items-start flex-col">
                             <span className={`${styles.SideNavTxt} font-bold text-lg text-logo-blue translate-y-0.5`}> {userInfo.username} </span>
