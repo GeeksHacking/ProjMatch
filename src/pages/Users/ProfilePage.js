@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import UserCreation from "@/components/UserCreation/UserCreation"
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
@@ -93,6 +94,7 @@ export default function ProfilePage() {
 
     return (
         <div className='absolute flex w-full h-full flex-col'>
+            <UserCreation/>
             <SideNav/>
             {profileUser.userDat.profileBanner !== "" ? <img src={profileUser.userDat.profileBanner} id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></img> : <div className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></div>}
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">

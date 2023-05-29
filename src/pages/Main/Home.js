@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import UserCreation from "@/components/UserCreation/UserCreation"
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
@@ -74,75 +75,6 @@ export default function Home() {
         })
     })
 
-    const checkUserExistWithEmail = useCallback(async (authToken, email) => {
-        const API_URL = process.env.API_URL
-
-        var apiOptions = {
-            method: 'GET',
-            url: `${API_URL}/users?email=${email}`,
-            headers: {
-                'Authorisation': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
-        }
-
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                console.log(res.data)
-                const responseData = res.data
-                if (responseData.users.length === 0) { // No user with email found, hence create user
-                    createUserWithEmail(authToken, user)
-                }
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get User Existance with: ", err)
-        })
-    })
-
-    const createUserWithEmail = async (authToken, user) => {
-        const API_URL = process.env.API_URL
-
-        var apiOptions = {
-            method: 'POST',
-            url: `${API_URL}/users`,
-            headers: {
-                'Authorisation': `Bearer ${authToken}`,
-            },
-            data: {
-                "username": user.nickname,
-                "rlName": user.name,
-                "regEmail": user.email,
-                "regPhone": 0
-            }
-        }
-
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                return res
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Create User with: ", err)
-        })
-    }
-    
-    useEffect(() => {
-        // Check if the user exists. If not, create a new user for this user
-        const authToken = localStorage.getItem("authorisation_token")
-
-        if (authToken === undefined) {
-            console.error("Authorisation Token returned Undefined.")
-        }
-
-        if (user !== undefined) {
-            checkUserExistWithEmail(authToken, user.email).then((res) => {
-            })
-        }
-    }, [checkUserExistWithEmail])
-
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
 
@@ -170,6 +102,7 @@ export default function Home() {
 
     return (
         <main className='relative w-full h-full flex flex-row'>
+            <UserCreation/>
             <div className="h-screen fixed z-20">
                 <SideNav />
             </div>
@@ -190,6 +123,7 @@ export default function Home() {
 function Project({post,uss}) {
     
     return (
+        
         <div id='project-container' className="flex relative w-3/5 h-[70%] my-10 flex-col">
             <div id="owner-profile" className="flex justify-start items-center absolute bg-logo-blue/[0.6] w-fit h-[12%] bottom-[30.7%] z-10 rounded-tr-2xl rounded-bl-2xl">
                 <a className={`ml-4 flex items-center flex-row space-x-2`}>
