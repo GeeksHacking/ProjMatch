@@ -79,49 +79,13 @@ const Landing = () => {
 
 
 const LandingHeaderBar = () => {
-
-    const router = useRouter()
-
-    const storeAuthToken = async (accessToken) => {
-        var apiOptions = {
-            method: 'POST',
-            url: 'https://projmatch.us.auth0.com/oauth/token',
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded',
-            },
-            data: new URLSearchParams({
-                grant_type: 'authorization_code',
-                client_id: process.env.AUTH0_CLIENT_ID,
-                client_secret: process.env.AUTH0_CLIENT_SECRET,
-                code: accessToken,
-                audience: process.env.AUTH0_AUDIENCE,
-                redirect_uri: "http://localhost:3000/Home"
-            })
-        };
-
-        axios.request(apiOptions).then(function (res) {
-            const responseBody = res.data
-            localStorage.setItem("authorisation_token", responseBody["access_token"])
-        }).catch(function (err) {
-            console.error("Failed to get API Authentication Token with: ", err)
-        })
-    }
-
-    useEffect(() => {
-        if(!router.isReady) return;
-        const query = router.query
-        if (query != undefined) {
-            storeAuthToken(query.code)
-        }
-    }, [router.isReady, router.query]);
-
     return (
         <div className="flex flex-row relative w-full p-2">
             <Link href="/Home" className="hover:scale-105 duration-500">
                 <span className="font-bold text-2xl text-logo-blue">ProjMatch</span>
             </Link>
             <div className="ml-auto space-x-3">
-                <Link href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=http://localhost:3000/Home`} className="">
+                <Link href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Home`} className="">
                     <button className="bg-blue px-4 pt-1 pb-2 rounded-full text-white font-bold text-center hover:scale-105 duration-500">
                         Log In
                     </button>
