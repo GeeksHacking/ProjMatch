@@ -17,7 +17,9 @@ export default function Home() {
     const [ postReq, setPostReq ] = useState([]);
     //const [ users, setUsers ] = useState({});
     const [ memusers, setMemUsers ] = useState({});
+    const [ authToken, setAuthToken ] = useState("")
     let usersid=[]
+    const router = useRouter()
     
     const getPosts = useCallback(async (authToken) => {
         const API_URL = process.env.API_URL
@@ -26,7 +28,7 @@ export default function Home() {
             method: 'GET',
             url: `${API_URL}/posts`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`, // this comment is here to remind myself i took 3 days + forever just because i spelled it with an 's'
             },
             data: new URLSearchParams({ })
         };
@@ -54,7 +56,7 @@ export default function Home() {
             method: 'GET',
             url: `${API_URL}/users/?id=${uid}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -101,8 +103,6 @@ export default function Home() {
         } catch (err) {console.error(err) }
     }, [setPosts, postReq])
 
-    const router = useRouter()
-
     const storeAuthToken = async (accessToken) => {
         var apiOptions = {
             method: 'POST',
@@ -121,7 +121,13 @@ export default function Home() {
         axios.request(apiOptions).then(function (res) {
             const responseBody = res.data
             localStorage.setItem("authorisation_token", responseBody["access_token"])
-            console.log(res.data)
+            
+            // Once Token has been retrieved, get data
+            if (posts !== []) {
+                getPosts(responseBody["access_token"])
+                .catch(console.error)
+            }
+
         }).catch(function (err) {
             console.error("Failed to get API Authentication Token with: ", err)
         })
@@ -130,7 +136,7 @@ export default function Home() {
     useEffect(() => {
         if(!router.isReady) return;
         const query = router.query
-        if (query != undefined) {
+        if (query != undefined && localStorage.getItem('authorisation_token') !== undefined) {
             storeAuthToken(query.code)
         }
     }, [router.isReady, router.query]);
