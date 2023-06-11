@@ -8,6 +8,7 @@ import { use, useCallback, useEffect, useState } from "react"
 
 // Dev Imports
 import { tagColors } from "@/tagColors"
+import { useRouter } from "next/router"
 
 export default function Home() {
 
@@ -99,6 +100,40 @@ export default function Home() {
             })
         } catch (err) {console.error(err) }
     }, [setPosts, postReq])
+
+    const router = useRouter()
+
+    const storeAuthToken = async (accessToken) => {
+        var apiOptions = {
+            method: 'POST',
+            url: 'https://projmatch.us.auth0.com/oauth/token',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+            data: new URLSearchParams({
+                grant_type: 'client_credentials',
+                client_id: process.env.OAUTH_ID,
+                client_secret: process.env.OAUTH_SECRET,
+                audience: process.env.AUTH0_AUDIENCE,
+            })
+        };
+
+        axios.request(apiOptions).then(function (res) {
+            const responseBody = res.data
+            localStorage.setItem("authorisation_token", responseBody["access_token"])
+            console.log(res.data)
+        }).catch(function (err) {
+            console.error("Failed to get API Authentication Token with: ", err)
+        })
+    }
+
+    useEffect(() => {
+        if(!router.isReady) return;
+        const query = router.query
+        if (query != undefined) {
+            storeAuthToken(query.code)
+        }
+    }, [router.isReady, router.query]);
 
     return (
         <main className='relative w-full h-full flex flex-row'>
