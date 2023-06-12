@@ -19,7 +19,7 @@ const MaxSideNav = () => {
             method: 'GET',
             url: `${API_URL}/users?email=${user.email}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -69,7 +69,7 @@ const MaxSideNav = () => {
         <div className={`fixed z-0 top-0 left-0 h-full w-fit`}>
             <div className={`${styles.SideNav} bg-light-blue h-full w-fit flex flex-col items-left pt-3 pb-3`}>
                 <Link className={`flex items-center space-x-2 text-logo-blue pl-3 pr-3`} href="/">
-                    <img src="/logo.svg" alt="logo" className='w-12 h-12 flex-shrink-0'></img>
+                    <img src="/logo/Final.svg" alt="logo" className='w-12 h-12 flex-shrink-0 rounded-md'></img>
                     <span className={`${styles.SideNavTxt} font-bold text-xl`}> ProjMatch </span>
                 </Link>
                 <div className={`mt-10 space-y-4`}>

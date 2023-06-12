@@ -39,7 +39,7 @@ export default function EditProject() {
             method: 'GET',
             url: `${API_URL}/posts/?id=${id}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         };
@@ -64,7 +64,7 @@ export default function EditProject() {
             method: 'PUT',
             url: `${API_URL}/posts`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: {
                 "id": id,
@@ -74,7 +74,7 @@ export default function EditProject() {
 
         axios.request(options).then(function (res) {
             if (res.status == 200) {
-                router.push(`http://localhost:3000/ProjectPage?id=${id}`)
+                router.push(`ProjectPage?id=${id}`)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
             }
@@ -168,16 +168,6 @@ export default function EditProject() {
                     <textarea defaultValue={post.description} name="projectDescription" className="w-[70%] h-32 rounded-lg border-2 border-[#D3D3D3] px-2 py-1"></textarea>
 
                     <h2 className="text-3xl font-medium mt-10">Add Images</h2>
-                    {/* <div id="image-control-container" className="flex flex-row w-[70%] h-[15%]">
-                        <img src="http://placekitten.com/g/600/800" className="w-[70%] h-full inline-block object-cover border-4 border-logo-blue"/>
-                        <div className="flex flex-col w-[30%] h-full justify-around items-center">
-                            <button className="flex justify-center align-center w-[70%] bg-[#25ff25]">Add</button>
-                            <button className="flex justify-center align-center w-[70%] bg-[#ff2525]">Delete</button>
-                            <button className="flex justify-center align-center w-[70%] bg-[#2525ff]">Next</button>
-                            <button className="flex justify-center align-center w-[70%] bg-[#25ffff]">Previous</button>
-                        </div>
-                    </div> */}
-                    {/* <input type="file" name="projectImages"></input> */}
                     <ImagePicker images={post.images} sendToParent={dataFromPicker} />
 
                     <h2 className="text-3xl font-medium mt-10">Contact</h2>

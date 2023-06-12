@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import UserCreation from "@/components/UserCreation/UserCreation"
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
@@ -19,14 +20,13 @@ export default function ProfilePage() {
             method: 'GET',
             url: `${API_URL}/posts?userID=${uid}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
 
         axios.request(apiOptions).then(function (res) {
             if (res.status == 200) {
-                //console.log(res.data.posts)
                 setPosts(res.data.posts)
             } else {
                 throw `Status ${res.status}, ${res.statusText}`
@@ -48,7 +48,7 @@ export default function ProfilePage() {
             method: 'GET',
             url: `${API_URL}/users/?id=${uid}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -85,7 +85,6 @@ export default function ProfilePage() {
                 })
             }
         }
-        //console.log(posts)
     }, [profileUser])
 
     if (isLoading) return <div>Loading...</div>;
@@ -95,6 +94,7 @@ export default function ProfilePage() {
 
     return (
         <div className='absolute flex w-full h-full flex-col'>
+            <UserCreation/>
             <SideNav/>
             {profileUser.userDat.profileBanner !== "" ? <img src={profileUser.userDat.profileBanner} id="image-banner" className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></img> : <div className="z-[-1] absolute w-full h-[20%] bg-logo-blue object-cover border-b-2 border-[#C7C7C7]"></div>}
             <div className="z-[-1] absolute flex w-[70%] h-[20%] flex-col left-[14%] top-[10%]">
@@ -171,7 +171,6 @@ function Stars({rating}){
     for (let i = 0; i < rating; i++ ) {
         stars[i] = 1
     }
-    // console.log(stars)
     
     return (
         <div className="flex flex-row">
@@ -200,7 +199,6 @@ function Star({value}) {
 }
 
 export function Project({post}) {
-    //console.log(post)
     let tagString = ''
     if (post.tags.length !== 0) {
         tagString += post.tags[0]
