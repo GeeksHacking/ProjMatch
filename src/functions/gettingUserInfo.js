@@ -11,13 +11,5 @@ export const getUserDetailsFromEmail = async (authToken, email) => {
         data: new URLSearchParams({}),
     };
 
-    await axios.request(apiOptions).catch(function (err) {
-        console.error("Failed to get User with: ", err);
-    }.then((res) => {
-        if (res.status == 200) {
-            return res.data.users[0];
-        } else {
-            throw `Status ${res.status}, ${res.statusText}`;
-        }
-    }));
+    return axios.request(apiOptions)
 };

@@ -42,6 +42,7 @@ const MaxSideNav = () => {
         
             console.error("Authorisation Token returned Undefined.")
         }
+        console.log(authToken)
         if (user !== undefined) {
             const API_URL = process.env.API_URL
             getUserFromEmail(authToken, user).then((res) => {

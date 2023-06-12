@@ -13,26 +13,6 @@ export default function SettingsPage() {
 	const [popupDisplay, setPopupDisplay] = useState(false);
 	const [userData, setUserData] = useState({});
 
-	const getUserWithEmail = useCallback(async (authToken, user) => {
-		const API_URL = process.env.API_URL;
-		var apiOptions = {
-			method: "GET",
-			url: `${API_URL}/users?email=${user.email}`,
-			headers: {
-				Authorisation: `Bearer ${authToken}`,
-			},
-			data: new URLSearchParams({}),
-		};
-		let res = await axios.request(apiOptions).catch(function (err) {
-			console.error("Failed to get User with: ", err);
-		});
-		if (res.status == 200) {
-			setProjMatchUser(res.data.users[0]);
-		} else {
-			throw `Status ${res.status}, ${res.statusText}`;
-		}
-	}, []);
-
 	const createS3Images = useCallback((authToken, data, user) => {
 		const API_URL = process.env.API_URL;
 
@@ -212,8 +192,9 @@ export default function SettingsPage() {
 			console.error("No token found");
 		}
 		if (user !== null && user !== undefined) {
-			console.log(getUserDetailsFromEmail(authToken, user.email))
-			setProjMatchUser(getUserDetailsFromEmail(authToken, user.email));
+			getUserDetailsFromEmail(authToken, user.email).then((res) => {
+				setProjMatchUser(res.data.users[0]);
+			});
 		}
 	}, [user]);
 
@@ -224,10 +205,6 @@ export default function SettingsPage() {
 			});
 		}
 	}, [projMatchUser]);
-
-	useEffect(() => {
-		console.log(userData);
-	}, [userData]);
 
 	return (
 		<div className="absolute flex h-full w-full flex-col">
