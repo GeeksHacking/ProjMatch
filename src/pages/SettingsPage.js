@@ -22,7 +22,7 @@ export default function SettingsPage() {
 			method: "GET",
 			url: `${API_URL}/users?email=${user.email}`,
 			headers: {
-				Authorisation: `Bearer ${authToken}`,
+				"Authorization": `Bearer ${authToken}`,
 			},
 			data: new URLSearchParams({}),
 		};
@@ -49,7 +49,7 @@ export default function SettingsPage() {
 				method: "POST",
 				url: `${API_URL}/images`,
 				headers: {
-					Authorisation: `Bearer ${authToken}`,
+					"Authorization": `Bearer ${authToken}`,
 					"Content-Type": "multipart/form-data",
 				},
 				data: formData,
@@ -88,7 +88,7 @@ export default function SettingsPage() {
             method: 'PUT',
             url: `${API_URL}/users`,
             headers: {
-                "Authorisation": `Bearer ${authToken}`,
+                "Authorization": `Bearer ${authToken}`,
             },
             data: {
                 "id": user._id,

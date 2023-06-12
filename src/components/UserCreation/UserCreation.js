@@ -10,7 +10,7 @@ const UserCreation = () => {
             method: 'GET',
             url: `${API_URL}/users?email=${email}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -37,7 +37,7 @@ const UserCreation = () => {
             method: 'POST',
             url: `${API_URL}/users`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: {
                 "username": user.nickname,
