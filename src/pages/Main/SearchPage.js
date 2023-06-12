@@ -20,7 +20,7 @@ export default function SearchPage() {
             method: 'GET',
             url: `${API_URL}/posts?search=${search}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }

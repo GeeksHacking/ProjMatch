@@ -33,7 +33,7 @@ export default function CreateProject() {
             method: 'GET',
             url: `${API_URL}/users?email=${user.email}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -60,7 +60,7 @@ export default function CreateProject() {
                 method: 'POST',
                 url: `${API_URL}/posts`,
                 headers: {
-                    'Authorisation': `Bearer ${authToken}`,
+                    'Authorization': `Bearer ${authToken}`,
                 },
                 data: {
                     "projectName": project.projectName,
@@ -105,7 +105,7 @@ export default function CreateProject() {
                 method: 'POST',
                 url: `${API_URL}/images`,
                 headers: {
-                    'Authorisation': `Bearer ${authToken}`,
+                    'Authorization': `Bearer ${authToken}`,
                     "Content-Type": "multipart/form-data"
                 },
                 data: formData

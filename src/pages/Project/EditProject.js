@@ -39,7 +39,7 @@ export default function EditProject() {
             method: 'GET',
             url: `${API_URL}/posts/?id=${id}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         };
@@ -64,7 +64,7 @@ export default function EditProject() {
             method: 'PUT',
             url: `${API_URL}/posts`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: {
                 "id": id,

@@ -26,7 +26,7 @@ export default function ProjectPage() {
             method: 'GET',
             url: `${API_URL}/users?email=${email}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -51,7 +51,7 @@ export default function ProjectPage() {
             method: 'GET',
             url: `${API_URL}/posts/?id=${id}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         };
@@ -79,7 +79,7 @@ export default function ProjectPage() {
             method: 'GET',
             url: `${API_URL}/users/?id=${uid}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -101,7 +101,7 @@ export default function ProjectPage() {
             method: 'GET',
             url: `${API_URL}/users?email=${email}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             
         }
@@ -126,7 +126,7 @@ export default function ProjectPage() {
             method: 'PUT',
             url: `${API_URL}/users`,
             headers: {
-                "Authorisation": `Bearer ${authToken}`,
+                "Authorization": `Bearer ${authToken}`,
             },
             data: {
                 "id": user._id,
@@ -155,7 +155,7 @@ export default function ProjectPage() {
             method: 'POST',
             url: `${API_URL}/users`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: {
                 "username": user.nickname,
@@ -240,7 +240,7 @@ export default function ProjectPage() {
             method: 'DELETE',
             url: `${API_URL}/posts`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: {
                 "id": id

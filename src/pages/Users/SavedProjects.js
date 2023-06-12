@@ -19,7 +19,7 @@ export default function SavedProjects() {
             method: 'GET',
             url: `${API_URL}/users?email=${user.email}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -40,7 +40,7 @@ export default function SavedProjects() {
             method: 'GET',
             url: `${API_URL}/posts/?id=${id}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }

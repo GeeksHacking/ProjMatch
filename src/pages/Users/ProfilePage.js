@@ -20,7 +20,7 @@ export default function ProfilePage() {
             method: 'GET',
             url: `${API_URL}/posts?userID=${uid}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
@@ -48,7 +48,7 @@ export default function ProfilePage() {
             method: 'GET',
             url: `${API_URL}/users/?id=${uid}`,
             headers: {
-                'Authorisation': `Bearer ${authToken}`,
+                'Authorization': `Bearer ${authToken}`,
             },
             data: new URLSearchParams({ })
         }
