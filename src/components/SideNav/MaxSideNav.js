@@ -19,7 +19,7 @@ const MaxSideNav = () => {
 			method: "GET",
 			url: `${API_URL}/users?email=${user.email}`,
 			headers: {
-				Authorisation: `Bearer ${authToken}`,
+				Authorization: `Bearer ${authToken}`,
 			},
 			data: new URLSearchParams({}),
 		};
