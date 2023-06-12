@@ -1,10 +1,14 @@
 import SideNav from "@/components/SideNav/SideNav";
-import {useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Switch, Dialog, Tab } from "@headlessui/react";
-import { getUserDetailsFromEmail } from "@/functions/gettingUserInfo";
+import {
+	getUserDetailsFromEmail,
+	updateUserDetailsFromID,
+} from "@/functions/handleUsers";
+import { createS3Images } from "@/functions/handlePostsImages";
 
 export default function SettingsPage() {
 	const { user, error, isLoading } = useUser();
@@ -12,79 +16,6 @@ export default function SettingsPage() {
 	const router = useRouter();
 	const [popupDisplay, setPopupDisplay] = useState(false);
 	const [userData, setUserData] = useState({});
-
-	const createS3Images = useCallback((authToken, data, user) => {
-		const API_URL = process.env.API_URL;
-
-		if (user !== undefined) {
-			var formData = new FormData();
-			formData.append("files", data.profileBanner);
-			formData.append("files", data.profilePic);
-			formData.append("creatorUserID", user._id);
-
-			let axiosAPIOptions = {
-				method: "POST",
-				url: `${API_URL}/images`,
-				headers: {
-					Authorisation: `Bearer ${authToken}`,
-					"Content-Type": "multipart/form-data",
-				},
-				data: formData,
-			};
-
-			axios
-				.request(axiosAPIOptions)
-				.then(function (res) {
-					if (res.status == 200) {
-						const imageURL = res.data.imageURL;
-						const bannerURL = imageURL[0];
-						const profilePicURL = imageURL[1];
-
-						const tempData = {
-							...data,
-							userDat: {
-								profileBanner: bannerURL,
-								profilePic: profilePicURL,
-							},
-						};
-						updateUser(authToken, tempData, user);
-						return imageURL;
-					} else {
-						throw `Status ${res.status}, ${res.statusText}`;
-					}
-				})
-				.catch(function (err) {
-					console.error("Failed to get Posts with: ", err);
-				});
-		}
-	}, []);
-
-	const updateUser = useCallback(async (authToken, updateUser, user) => {
-		const API_URL = process.env.API_URL;
-		const options = {
-			method: "PUT",
-			url: `${API_URL}/users`,
-			headers: {
-				Authorisation: `Bearer ${authToken}`,
-			},
-			data: {
-				id: user._id,
-				update: updateUser,
-			},
-		};
-		axios
-			.request(options)
-			.then(function (res) {
-				if (res.status == 200) {
-					router.push(`http://localhost:3000/Users/ProfilePage?id=${user._id}`);
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get User with: ", err);
-			});
-	}, []);
 
 	const handleSignOut = (e) => {
 		e.preventDefault();
@@ -126,9 +57,76 @@ export default function SettingsPage() {
 			return;
 		}
 		if (updatedData.userDat !== undefined) {
-			createS3Images(authToken, updatedData, projMatchUser);
+			let formData = new FormData();
+			formData.append(
+				"files",
+				updatedData.userDat.profileBanner == undefined
+					? ""
+					: updatedData.userDat.profileBanner
+			);
+			formData.append(
+				"files",
+				updatedData.userDat.profilePic == undefined
+					? ""
+					: updatedData.userDat.profilePic
+			);
+			formData.append("creatorUserID", projMatchUser._id);
+
+			console.log(formData);
+
+			createS3Images(authToken, formData).then((res) => {
+				if (res.status == 200) {
+					const imageURL = res.data.imageURL;
+					let bannerURL, profilePicURL;
+					if (imageURL.length == 2) {
+						bannerURL = imageURL[0];
+						profilePicURL = imageURL[1];
+					} else if (imageURL.length == 1) {
+						if (updatedData.userDat.profileBanner !== undefined) {
+							bannerURL = imageURL[0];
+							profilePicURL = projMatchUser.userDat.profilePic;
+						} else {
+							bannerURL = projMatchUser.userDat.profileBanner;
+							profilePicURL = imageURL[0];
+						}
+					}
+
+					const tempData = {
+						...updatedData,
+						userDat: {
+							profileBanner: bannerURL,
+							profilePic: profilePicURL,
+						},
+					};
+					updateUserDetailsFromID(authToken, tempData, projMatchUser)
+						.then((res) => {
+							if (res.status == 200) {
+								router.push(
+									`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+								);
+							} else {
+								throw `Status ${res.status}, ${res.statusText}`;
+							}
+						})
+						.catch(function (err) {
+							console.error("Failed to get User with: ", err);
+						});
+				}
+			});
 		} else {
-			updateUser(authToken, updatedData, projMatchUser);
+			updateUserDetailsFromID(authToken, updatedData, projMatchUser)
+				.then((res) => {
+					if (res.status == 200) {
+						router.push(
+							`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+						);
+					} else {
+						throw `Status ${res.status}, ${res.statusText}`;
+					}
+				})
+				.catch(function (err) {
+					console.error("Failed to get User with: ", err);
+				});
 		}
 	};
 
@@ -251,34 +249,34 @@ export default function SettingsPage() {
 					<Tab.Group>
 						<Tab.List className="flex h-[3rem] w-full flex-row items-center justify-start">
 							<Tab className="relative z-10 mr-10 flex h-full w-fit flex-row items-center justify-start">
-                                <p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
-                                    My Profile
-                                </p>
-                                <hr className="absolute bottom-0 h-1 w-full bg-logo-blue hidden ui-selected:block"/> 
+								<p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
+									My Profile
+								</p>
+								<hr className="absolute bottom-0 hidden h-1 w-full bg-logo-blue ui-selected:block" />
 							</Tab>
 							<Tab className="relative z-10 mr-10 flex h-full w-fit flex-row items-center justify-start">
-                                <p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
-                                    Web Settings
-                                </p>
-                                <hr className="absolute bottom-0 h-1 w-full bg-logo-blue hidden ui-selected:block"/> 
+								<p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
+									Web Settings
+								</p>
+								<hr className="absolute bottom-0 hidden h-1 w-full bg-logo-blue ui-selected:block" />
 							</Tab>
 							<Tab className="relative z-10 mr-10 flex h-full w-fit flex-row items-center justify-start">
-                                <p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
-                                    Privacy
-                                </p>
-                                <hr className="absolute bottom-0 h-1 w-full bg-logo-blue hidden ui-selected:block"/> 
+								<p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
+									Privacy
+								</p>
+								<hr className="absolute bottom-0 hidden h-1 w-full bg-logo-blue ui-selected:block" />
 							</Tab>
 							<Tab className="relative z-10 mr-10 flex h-full w-fit flex-row items-center justify-start">
-                                <p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
-                                    Security
-                                </p>
-                                <hr className="absolute bottom-0 h-1 w-full bg-logo-blue hidden ui-selected:block"/> 
+								<p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
+									Security
+								</p>
+								<hr className="absolute bottom-0 hidden h-1 w-full bg-logo-blue ui-selected:block" />
 							</Tab>
 							<Tab className="relative z-10 mr-10 flex h-full w-fit flex-row items-center justify-start">
-                                <p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
-                                    Support
-                                </p>
-                                <hr className="absolute bottom-0 h-1 w-full bg-logo-blue hidden ui-selected:block"/> 
+								<p className="mx-1 text-xl text-[#B5B4B4] ui-selected:text-black">
+									Support
+								</p>
+								<hr className="absolute bottom-0 hidden h-1 w-full bg-logo-blue ui-selected:block" />
 							</Tab>
 						</Tab.List>
 						<Tab.Panels className="relative mt-4 h-[95%] w-full">
@@ -390,7 +388,7 @@ export default function SettingsPage() {
 										)}
 										<button
 											id="profilePic"
-											className="mt-1 ml-4 h-11 w-32 rounded-md bg-logo-blue text-xl text-white"
+											className="ml-4 mt-1 h-11 w-32 rounded-md bg-logo-blue text-xl text-white"
 											onClick={handleImageButton}
 										>
 											Add images
@@ -417,7 +415,7 @@ export default function SettingsPage() {
 													typeof userData.userDat.profileBanner == "object"
 														? URL.createObjectURL(
 																userData.userDat.profileBanner
-														)
+														  )
 														: userData.userDat.profileBanner
 												}
 												className="mt-2 h-36 w-full border-3 border-[#C7C7C7] object-cover object-center"
@@ -449,7 +447,7 @@ export default function SettingsPage() {
 									<input
 										type="submit"
 										value="Update!"
-										className="mt-10 mb-20 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+										className="mb-20 mt-10 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
 									></input>
 								</form>
 							</Tab.Panel>
@@ -552,7 +550,7 @@ export default function SettingsPage() {
 									<input
 										type="submit"
 										value="Update!"
-										className="mt-10 mb-20 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+										className="mb-20 mt-10 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
 										onClick={handleSubmit}
 									></input>
 								</div>
@@ -584,7 +582,7 @@ export default function SettingsPage() {
 									<input
 										type="submit"
 										value="Update!"
-										className="mt-1 mb-20 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+										className="mb-20 mt-1 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
 									></input>
 
 									<input
@@ -595,7 +593,7 @@ export default function SettingsPage() {
 									<input
 										type="submit"
 										value="Sign Out On All Devices"
-										className="mt-2 mb-10 h-11 w-[30%] rounded-full bg-[#ED5A5A] text-xl text-white"
+										className="mb-10 mt-2 h-11 w-[30%] rounded-full bg-[#ED5A5A] text-xl text-white"
 									></input>
 								</div>
 							</Tab.Panel>
@@ -650,13 +648,13 @@ export default function SettingsPage() {
 										<input
 											type="submit"
 											value="Send Email"
-											className="mt-5 mb-20 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+											className="mb-20 mt-5 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
 										></input>
 									</form>
 									<Dialog
 										open={popupDisplay}
 										onClose={() => setPopupDisplay(false)}
-										className="fixed top-0 left-0 z-[2000] flex h-full w-full flex-col items-center justify-center bg-[#000000] bg-opacity-25"
+										className="fixed left-0 top-0 z-[2000] flex h-full w-full flex-col items-center justify-center bg-[#000000] bg-opacity-25"
 									>
 										<Dialog.Panel className="flex h-fit w-[50%] flex-col bg-white p-8">
 											<Dialog.Title className="mb-0 text-xl font-bold">
@@ -686,4 +684,3 @@ export default function SettingsPage() {
 		</div>
 	);
 }
-
