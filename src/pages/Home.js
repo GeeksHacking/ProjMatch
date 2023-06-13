@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import PMApi from "@/components/PMApi/PMApi"
 import UserCreation from "@/components/UserCreation/UserCreation"
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
@@ -9,94 +10,46 @@ import { use, useCallback, useEffect, useState } from "react"
 // Dev Imports
 import { tagColors } from "@/tagColors"
 import { useRouter } from "next/router"
-
+let api=0
 export default function Home() {
 
     const { user, error, isLoading } = useUser();
     const [ posts, setPosts ] = useState([]);
-    const [ postReq, setPostReq ] = useState([]);
+    const [ postReq, setPostReq ] = useState({posts:[]});
     //const [ users, setUsers ] = useState({});
     const [ memusers, setMemUsers ] = useState({});
     const [ authToken, setAuthToken ] = useState("")
     let usersid=[]
     const router = useRouter()
-    
-    const getPosts = useCallback(async (authToken) => {
-        const API_URL = process.env.API_URL
-    
-        var axiosAPIOptions = {
-            method: 'GET',
-            url: `${API_URL}/posts`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`, // this comment is here to remind myself i took 3 days + forever just because i spelled it with an 's'
-            },
-            data: new URLSearchParams({ })
-        };
-    
-        axios.request(axiosAPIOptions).then(function (res) {
-            if (res.status == 200) {
-                setPostReq(res)
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
-        })
-    }, [])
-
-    const getUserWithID = useCallback(async (pid,uid) => {
-        const authToken = localStorage.getItem("authorisation_token")
-
-        if (authToken === undefined) {
-            console.error("Authorisation Token returned Undefined.")
-        }
-        const API_URL = process.env.API_URL
-
-        var apiOptions = {
-            method: 'GET',
-            url: `${API_URL}/users/?id=${uid}`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
-        }
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                let temp;
-                temp=memusers
-                temp[uid]=res.data.users[0];
-                setMemUsers({...temp})
-                
-                
-            } else {
-            
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-            
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
-        })
-    })
 
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
             console.error("Authorisation Token returned Undefined.")
+        }else{
+        api=new PMApi(authToken)
+        console.log('second')
+        api.getPosts().then(function (res){setPostReq(res)})
         }
-
-        getPosts(authToken)
-        .catch(console.error)
-    }, [getPosts])
+    }, [])
         
     useEffect(() => {
         try {
-            setPosts(postReq.data.posts)
+            setPosts(postReq.posts)
             
-            postReq.data.posts.map((post)=>{
+            postReq.posts.map((post)=>{
                 if (!(usersid.includes(post.creatorUserID ))){
                     usersid.push(post.creatorUserID)
-                    getUserWithID(post._id,post.creatorUserID);
+                    api.getUsers({"id":post.creatorUserID}).then(function (res) {
+                        if (res != -1){
+                            let temp;
+                            temp=memusers
+                            temp[post.creatorUserID]=res.users[0];
+                            setMemUsers({...temp})
+                        }
+                    })
+                    
                 }
                 
             })
@@ -124,8 +77,11 @@ export default function Home() {
             
             // Once Token has been retrieved, get data
             if (posts !== []) {
-                getPosts(responseBody["access_token"])
-                .catch(console.error)
+                console.log('first!')
+                //getPosts(responseBody["access_token"])
+                api=new PMApi(responseBody['access_token'])
+                api.getPosts().then(function (res){setPostReq(res)})
+                //.catch(console.error)
             }
 
         }).catch(function (err) {
