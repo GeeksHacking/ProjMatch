@@ -6,7 +6,7 @@ import { get } from "animejs";
 import { useRouter } from "next/router";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words"
-import approvedTags from "../tags.json";
+import approvedTags from "src/tags.json";
 import { Combobox } from "@headlessui/react";
 
 export default function CreateProject() {
@@ -150,7 +150,7 @@ export default function CreateProject() {
 
     useEffect(() => {
         if (newProjID !== "") {
-            router.push(`ProjectPage?id=${newProjID}`)
+            router.push(`http://localhost:3000/Project/ProjectPage?id=${newProjID}`)
         }
     }, [newProjID])
 
