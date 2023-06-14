@@ -111,10 +111,12 @@ export default function Home() {
                 'content-type': 'application/x-www-form-urlencoded',
             },
             data: new URLSearchParams({
-                grant_type: 'client_credentials',
+                grant_type: 'authorization_code',
                 client_id: process.env.OAUTH_ID,
                 client_secret: process.env.OAUTH_SECRET,
                 audience: process.env.AUTH0_AUDIENCE,
+                code: accessToken,
+                redirect_uri: `${process.env.AUTH0_BASE_URL}/callback`
             })
         };
 
