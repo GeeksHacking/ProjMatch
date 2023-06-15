@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import PMApi from "@/components/PMApi/PMApi"
 import ImagePicker from "@/components/ImagePicker/ImagePicker"
 
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
@@ -7,7 +8,7 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
-
+let api=0
 export default function EditProject() {
     const router = useRouter()
     const { id } = router.query
@@ -24,75 +25,26 @@ export default function EditProject() {
             "isArchived": false
         }
     );
-    const [ changedProj, setChangedProj ] = useState({})
     const [ imagesData, setImagesData ] = useState()
 
     const { user, error, isLoading } = useUser();
-    
-    // API Requests
-    const getPosts = useCallback(async (authToken) => {
-        const API_URL = process.env.API_URL
-        if (id === undefined) {
-            return
-        }
-        var axiosAPIOptions = {
-            method: 'GET',
-            url: `${API_URL}/posts/?id=${id}`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
-        };
-        axios.request(axiosAPIOptions).then(function (res) {
-            if (res.status == 200) {
-                setPost(res.data.posts[0])
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
-        })
-
-    }, [id])
-
-    const updatePosts = useCallback(async (authToken, updatedProj) => {
-        const API_URL = process.env.API_URL
-        if (id === undefined) {
-            return
-        }
-        const options = {
-            method: 'PUT',
-            url: `${API_URL}/posts`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: {
-                "id": id,
-                "update": updatedProj
-            }
-        }
-
-        axios.request(options).then(function (res) {
-            if (res.status == 200) {
-                router.push(`ProjectPage?id=${id}`)
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
-        })
-    }, [id])
-
+    useEffect(()=>{
+	const authToken=localStorage.getItem("authorisation_token")
+	if (authToken!==undefined){
+		api=new PMApi(authToken)
+	}else{
+		console.error
+	}
+    },[])
     useEffect(() => {
-        const authToken = localStorage.getItem("authorisation_token")
-
-        if (authToken === undefined) {
-            console.error("Authorisation Token returned Undefined.")
-        }
-        
-        getPosts(authToken)
-        .catch(console.error)
-    }, [getPosts])
+	if (id!==undefined){
+	api.getPosts({"id":id}).then(function (res){
+		if ( res !== -1){
+			setPost(res.posts[0])
+		}
+	})
+	}else{console.error}
+    }, [id])
 
     // Handle Form Submission
     const handleSubmission = (event) => {
@@ -130,14 +82,13 @@ export default function EditProject() {
                 }
             }
         }
-        setChangedProj(tempUpdatedProj)
-        const authToken = localStorage.getItem("authorisation_token")
-
-        if (authToken === undefined) {
-            console.error("Authorisation Token returned Undefined.")
-        }
-
-        updatePosts(authToken, tempUpdatedProj)
+	if (id!==undefined){
+		api.updatePost(id,tempUpdatedProj).then(function (res){
+			if (res!=-1){
+				router.push(`ProjectPage?id=${id}`)
+			}
+		})
+	}
     }
 
     if (isLoading) return <div>Loading...</div>
