@@ -1,16 +1,16 @@
-import SideNav from "@/components/SideNav/SideNav"
-import PMApi from "@/components/PMApi/PMApi"
-import UserCreation from "@/components/UserCreation/UserCreation"
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
-import Link from "next/link"
-import {useUser} from "@auth0/nextjs-auth0/client"
-import axios from "axios"
-import { use, useCallback, useEffect, useState } from "react"
+import SideNav from "@/components/SideNav/SideNav";
+import PMApi from "@/components/PMApi/PMApi";
+import UserCreation from "@/components/UserCreation/UserCreation";
+import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
+import Link from "next/link";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import axios from "axios";
+import { use, useCallback, useEffect, useState } from "react";
 
 // Dev Imports
-import { tagColors } from "@/tagColors"
-import { useRouter } from "next/router"
-let api = 0
+import { tagColors } from "@/tagColors";
+import { useRouter } from "next/router";
+let api = 0;
 
 export default function Home() {
 	const { user, error, isLoading } = useUser();
@@ -22,82 +22,51 @@ export default function Home() {
 	let usersid = [];
 	const router = useRouter();
 
-    const { user, error, isLoading } = useUser();
-    const [ posts, setPosts ] = useState([]);
-    const [ postReq, setPostReq ] = useState({posts:[]});
-    //const [ users, setUsers ] = useState({});
-    const [ memusers, setMemUsers ] = useState({});
-    const [ authToken, setAuthToken ] = useState("")
-    let usersid=[]
-    const router = useRouter()
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		}
-		const API_URL = process.env.API_URL;
-
-        if (authToken === undefined) {
-            console.error("Authorisation Token returned Undefined.")
-        }else{
-        api=new PMApi(authToken)
-        console.log('second')
-        api.getPosts().then(function (res){setPostReq(res)})
-        }
-    }, [])
-        
-    useEffect(() => {
-        try {
-            setPosts(postReq.posts)
-            
-            postReq.posts.map((post)=>{
-                if (!(usersid.includes(post.creatorUserID ))){
-                    usersid.push(post.creatorUserID)
-                    api.getUsers({"id":post.creatorUserID}).then(function (res) {
-                        if (res != -1){
-                            let temp;
-                            temp=memusers
-                            temp[post.creatorUserID]=res.users[0];
-                            setMemUsers({...temp})
-                        }
-                    })
-                    
-                }
-                
-            })
-        } catch (err) {console.error(err) }
-    }, [setPosts, postReq])
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		}
-
-        axios.request(apiOptions).then(function (res) {
-            const responseBody = res.data
-            localStorage.setItem("authorisation_token", responseBody["access_token"])
-            
-            // Once Token has been retrieved, get data
-            if (posts !== []) {
-                console.log('first!')
-                //getPosts(responseBody["access_token"])
-                api=new PMApi(responseBody['access_token'])
-                api.getPosts().then(function (res){setPostReq(res)})
-                //.catch(console.error)
-            }
-
 	useEffect(() => {
 		try {
-			setPosts(postReq.data.posts);
+			setPosts(postReq.posts);
 
-			postReq.data.posts.map((post) => {
+			postReq.posts.map((post) => {
 				if (!usersid.includes(post.creatorUserID)) {
 					usersid.push(post.creatorUserID);
-					getUserWithID(post._id, post.creatorUserID);
+					api.getUsers({ id: post.creatorUserID }).then(function (res) {
+						if (res != -1) {
+							let temp;
+							temp = memusers;
+							temp[post.creatorUserID] = res.users[0];
+							setMemUsers({ ...temp });
+						}
+					});
 				}
 			});
 		} catch (err) {
 			console.error(err);
 		}
 	}, [setPosts, postReq]);
+
+	useEffect(() => {
+		const authToken = localStorage.getItem("authorisation_token");
+
+		if (authToken === undefined) {
+			console.error("Authorisation Token returned Undefined.");
+		}
+		axios.request(apiOptions).then(function (res) {
+			const responseBody = res.data;
+			localStorage.setItem("authorisation_token", responseBody["access_token"]);
+
+			// Once Token has been retrieved, get data
+			if (posts !== []) {
+				console.log("first!");
+				//getPosts(responseBody["access_token"])
+				api = new PMApi(responseBody["access_token"]);
+				api.getPosts().then(function (res) {
+					setPostReq(res);
+				});
+				//.catch(console.error)
+			}
+			getPosts(authToken).catch(console.error);
+		});
+	}, [getPosts]);
 
 	const storeAuthToken = async (accessToken) => {
 		var apiOptions = {
@@ -245,6 +214,7 @@ function Project({ post, uss }) {
 		</div>
 	);
 }
+
 function Tag({ tag }) {
 	return (
 		<div

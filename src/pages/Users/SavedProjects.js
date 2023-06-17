@@ -12,10 +12,6 @@ export default function SavedProjects() {
 	const { user, error, isLoading } = useUser();
 	const [projMatchUser, setProjMatchUser] = useState(null);
 	const [posts, setPosts] = useState([]);
-
-	const { user, error, isLoading } = useUser();
-	const [projMatchUser, setProjMatchUser] = useState(null);
-	const [posts, setPosts] = useState([]);
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		if (!(authToken === undefined)) {
