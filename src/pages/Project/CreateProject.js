@@ -7,7 +7,7 @@ import { get } from "animejs";
 import { useRouter } from "next/router";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words"
-import approvedTags from "../tags.json";
+import approvedTags from "src/tags.json";
 import { Combobox } from "@headlessui/react";
 let api=0
 export default function CreateProject() {
