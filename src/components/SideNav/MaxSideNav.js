@@ -1,5 +1,36 @@
 // Components Import
 import { useEffect, useState, useCallback } from "react";
+<<<<<<< HEAD
+import PMApi from "@/components/PMApi/PMApi"
+import Logo from "./Logo"
+import styles from './SideNav.module.css'
+import { useUser } from '@auth0/nextjs-auth0/client';
+import Link from 'next/link'
+import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
+import axios from "axios"
+import { useRouter } from 'next/router'
+let api=0
+const MaxSideNav = () => {
+    const { user, error, isLoading } = useUser();
+    const [userInfo, setUserInfo] = useState(null)
+    useEffect(() => {
+        const authToken = localStorage.getItem("authorisation_token")
+        if (authToken === undefined) {
+        
+            console.error("Authorisation Token returned Undefined.")
+	}else if (user !== undefined) {
+	    api=new PMApi(authToken)
+            const API_URL = process.env.API_URL
+            api.getUsers({"email":user.email}).then((res) => {
+		if (res!=-1){
+			console.log(res)
+                	setUserInfo(res.users[0])
+		}
+            })
+        }
+        
+    }, [user, setUserInfo])
+=======
 import Logo from "./Logo";
 import styles from "./SideNav.module.css";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -36,6 +67,7 @@ const MaxSideNav = () => {
 
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
+>>>>>>> 459d5b8fc4d9df769d5a9e8afeaab61fdfb7df69
 
 		if (authToken === undefined) {
 			console.error("Authorisation Token returned Undefined.");

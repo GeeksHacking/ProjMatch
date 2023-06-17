@@ -1,5 +1,6 @@
 import SideNav from "@/components/SideNav/SideNav";
 import axios from "axios"
+import PMApi from "@/components/PMApi/PMApi";
 import {useUser} from "@auth0/nextjs-auth0/client"
 import { use, useCallback, useEffect, useState } from "react"
 import { get } from "animejs";
@@ -8,7 +9,7 @@ import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words"
 import approvedTags from "src/tags.json";
 import { Combobox } from "@headlessui/react";
-
+let api=0
 export default function CreateProject() {
     const router = useRouter()
 
@@ -23,74 +24,14 @@ export default function CreateProject() {
     const [ tagError, setTagError ] = useState("")
     const [ selectedTags, setSelectedTags ] = useState([])
     const [tagQuery, setTagQuery] = useState("")
-
+    useEffect(()=>{
+        api=new PMApi
+    },[])
 
     // API Req
-    const getUserWithID = useCallback(async (authToken, user) => {
-        const API_URL = process.env.API_URL
-
-        var apiOptions = {
-            method: 'GET',
-            url: `${API_URL}/users?email=${user.email}`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
-        }
-        let res = await axios.request(apiOptions)
-        .catch(function (err) {
-            console.error("Failed to get User with: ", err)
-        });
-        if (res.status == 200) {
-            return res.data.users[0]
-        } else {
-            throw `Status ${res.status}, ${res.statusText}`
-        }
-    }, [projMatchUser, setProjMatchUser, setNewProject, newProject])
-
-    const createProject = useCallback((authToken, project, projuser, imageURL) => {
-        const API_URL = process.env.API_URL
-        var uId;
-        var axiosAPIOptions;
-
-        getUserWithID(authToken, user).then((res) => {
-            uId = res
-        }).then(() => {
-            axiosAPIOptions = {
-                method: 'POST',
-                url: `${API_URL}/posts`,
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                },
-                data: {
-                    "projectName": project.projectName,
-                    "description": project.projectDescription,
-                    "creatorUserID": String(uId._id),
-                    "contact": project.projectContact,
-                    "tags": project.projectTags,
-                    "technologies": project.projectTech,
-                    "images": imageURL,
-                }
-            };
-        }).then(() => {   
-            axios.request(axiosAPIOptions).then(function (res) {
-                if (res.status == 200) {
-                    setNewProjID(res.data.insertedProjectWithID)
-                    return res
-                } else {
-                    throw `Status ${res.status}, ${res.statusText}`
-                }
-            }).catch(function (err) {
-                console.error("Failed to get Posts with: ", err)
-            })
-        })
-    }, [])
-
-    const createS3Images = useCallback((authToken, newProject, user) => {
-        const API_URL = process.env.API_URL
-
+    const createProj=useCallback((newProject,user)=>{
+        
         if (user !== undefined && newProject !== {}) {
-
             var formData = new FormData()
             if (!newProject.projectImages) {
                 return
@@ -100,71 +41,59 @@ export default function CreateProject() {
             }
             formData.append("projectName", newProject.projectName)
             formData.append("creatorUserID", user._id)
-
-            let axiosAPIOptions = {
-                method: 'POST',
-                url: `${API_URL}/images`,
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    "Content-Type": "multipart/form-data"
-                },
-                data: formData
-            };
-
-            axios.request(axiosAPIOptions).then(function (res) {
-                if (res.status == 200) {
-                    const imageURL = res.data.imageURL
-                    createProject(authToken, newProject, projMatchUser, imageURL)
-                    // const id = resp.data.insertedProjectWithID
-
-                    // if (id !== undefined || id !== "") {
-                    //     router.push(`http://localhost:3000/ProjectPage?id=${id}`)
-                    // }
-                } else {
-                    throw `Status ${res.status}, ${res.statusText}`
+            api.createImgUrl(formData).then(function(res){
+                if (res!=-1){
+                    const imageURL = res.imageURL
+                    api.createPost(
+                        newProject.projectName,
+                        newProject.projectDescription,
+                        user._id,
+                        newProject.projectContact,
+                        newProject.projectTags,
+                        newProject.projectTech,
+                        imageURL
+                    ).then(function (res){
+                        
+                        if (res!=-1 && res.insertedProjectWithID !== "") {
+                            router.push(`ProjectPage?id=${ res.insertedProjectWithID}`)
+                        }
+                    })
                 }
-            }).catch(function (err) {
-                console.error("Failed to get Posts with: ", err)
             })
         }
-    }, [])
+    },[])
 
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
             console.error("Authorisation Token returned Undefined.")
-        }
-
-        if (newProject !== {}) {
-            getUserWithID(authToken, user).then((res) => {
-                if (res !== {} || res !== undefined) {
-                    createS3Images(authToken, newProject, res)
-                } else {
-                    console.error("ProjMatch User call returned empty or undefined")
-                }
-            })
-        }
+        }else{
+            api=new PMApi(authToken)
+            if (newProject !== {}) {
+                api.getUsers({"email":user.email}).then((res) => {
+                    if (res !== -1) {
+                        createProj(newProject, res.users[0])
+                    } else {
+                        console.error("ProjMatch User call returned empty or undefined")
+                    }
+                })
+            }
+        }   
 
     }, [newProject])
 
     useEffect(() => {
-        if (newProjID !== "") {
-            router.push(`http://localhost:3000/Project/ProjectPage?id=${newProjID}`)
-        }
-    }, [newProjID])
-
-    useEffect(() => {
+        
         const authToken = localStorage.getItem("authorisation_token")
 
         if (authToken === undefined) {
             console.error("Authorisation Token returned Undefined.")
-        }
-
-        if (user !== undefined) {
-            getUserWithID(authToken, user).then((res) => {
+        }else{
+            api.getUsers({email:user.email}).then((res) => {
                 setProjMatchUser(res) })
-        }
+            
+        }   
     }, [user])
 
     // Handle Form Submission

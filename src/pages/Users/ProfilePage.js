@@ -1,4 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav"
+import PMApi from "@/components/PMApi/PMApi"
 import UserCreation from "@/components/UserCreation/UserCreation"
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
@@ -6,7 +7,7 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
-
+let api=0
 export default function ProfilePage() {
     const router = useRouter()
     const { id } = router.query
@@ -14,65 +15,26 @@ export default function ProfilePage() {
     const { user, error, isLoading } = useUser()
     const [profileUser, setProfileUser] = useState(null)
 
-    const getPostsWithCreatorID = useCallback(async (authToken, uid) => {
-        const API_URL = process.env.API_URL
-        var apiOptions = {
-            method: 'GET',
-            url: `${API_URL}/posts?userID=${uid}`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
-        }
-
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                setPosts(res.data.posts)
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
-        })
-    }, [])
-
-    const getUserWithID = useCallback(async (uid) => {
-        const authToken = localStorage.getItem("authorisation_token")
-
-        if (authToken === undefined) {
-            console.error("Authorisation Token returned Undefined.")
-        }
-        const API_URL = process.env.API_URL
-
-        var apiOptions = {
-            method: 'GET',
-            url: `${API_URL}/users/?id=${uid}`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
-        }
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                setProfileUser(res.data.users[0])
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
-            }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
-        })
-    })
-
+    useEffect(()=>{
+	const authToken = localStorage.getItem("authorisation_token")
+	if (!(authToken===undefined)){
+		api=new PMApi(authToken)
+	}
+    },[])
     useEffect(() => {
         if (id !== undefined) {
-            getUserWithID(id)
+	    api.getUsers({"id":id}).then(function (res){
+		setProfileUser(res.users[0])
+	    })
         }
 
     }, [id])
 
     useEffect(() => {
         if (profileUser !== null) {
-            getPostsWithCreatorID(localStorage.getItem("authorisation_token"), profileUser._id)
+	    api.getPosts({"userID":profileUser._id}).then(function (res){
+                setPosts(res.posts)
+	    })
             if (String(profileUser.contactLink).match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
                 setProfileUser({
                     ...profileUser,

@@ -1,44 +1,38 @@
 import SideNav from "@/components/SideNav/SideNav";
+import PMApi from "@/components/PMApi/PMApi";
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0"
 import Link from "next/link"
 import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { Listbox } from "@headlessui/react";
-import approvedTags from "src/tags.json";
-
+import approvedTags from "../tags.json";
+let api=0
 export default function SearchPage() {
     const { user, error, isLoading } = useUser()
     const [ posts, setPosts ] = useState([])
     const [ search, setSearch ] = useState("")
     const [ tagsFilter, setTagsFilter ] = useState([])
     const [ filteredPosts, setFilteredPosts ] = useState([])
-
-    const getPostsWithSearch = useCallback(async (authToken, search) => {
-        const API_URL = process.env.API_URL
-        var apiOptions = {
-            method: 'GET',
-            url: `${API_URL}/posts?search=${search}`,
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-            },
-            data: new URLSearchParams({ })
+    useEffect(()=>{
+        const authToken = localStorage.getItem("authorisation_token")
+        if (!(authToken===undefined)){
+            api=new PMApi(authToken)
         }
-
-        axios.request(apiOptions).then(function (res) {
-            if (res.status == 200) {
-                setPosts(res.data.posts)
-            } else {
-                throw `Status ${res.status}, ${res.statusText}`
+    },[])
+    
+    const getPostsWithSearch = useCallback(async (search) => {
+        api.getPosts({"search":search}).then(function (res){
+            if (res!=-1){
+                setPosts(res.posts)
             }
-        }).catch(function (err) {
-            console.error("Failed to get Posts with: ", err)
         })
     }, [])
 
     useEffect(() => {
         if (search === "") {
-            getPostsWithSearch(localStorage.getItem("authorisation_token"), search)
+            
+            getPostsWithSearch(search)
         }
     }, [search])
 
@@ -48,7 +42,8 @@ export default function SearchPage() {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        getPostsWithSearch(localStorage.getItem("authorisation_token"), search)
+        
+        getPostsWithSearch(search)
     }
 
     useEffect(() => {
