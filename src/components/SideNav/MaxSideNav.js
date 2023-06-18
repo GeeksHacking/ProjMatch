@@ -8,11 +8,11 @@ import Link from "next/link";
 import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
 import axios from "axios";
 import { useRouter } from "next/router";
-let api = 0;
 
 const MaxSideNav = () => {
 	const { user, error, isLoading } = useUser();
 	const [userInfo, setUserInfo] = useState(null);
+
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		if (authToken === undefined) {
