@@ -1,78 +1,69 @@
 import SideNav from "@/components/SideNav/SideNav"
-import PMApi from "@/components/PMApi/PMApi";
 import { useCallback, useEffect, useState } from "react"
 import Switch from "react-switch";
 import Link from "next/link";
 import axios from "axios"
 import { useRouter } from 'next/router'
 import {useUser} from "@auth0/nextjs-auth0/client"
-let api=0
+
 
 export default function SavedProjects() {
 
     const { user, error, isLoading } = useUser();
     const [ projMatchUser, setProjMatchUser ] = useState(null)
     const [ posts, setPosts ] = useState([])
-    useEffect(()=>{
-        const authToken = localStorage.getItem("authorisation_token")
-        if (!(authToken===undefined)){
-            api=new PMApi(authToken)
+
+    const getUserWithEmail = useCallback(async (authToken, user) => {
+        const API_URL = process.env.API_URL
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/users?email=${user.email}`,
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
         }
-    },[])
-    // const getUserWithEmail = useCallback(async (authToken, user) => {
-    //     const API_URL = process.env.API_URL
-    //     var apiOptions = {
-    //         method: 'GET',
-    //         url: `${API_URL}/users?email=${user.email}`,
-    //         headers: {
-    //             'Authorization': `Bearer ${authToken}`,
-    //         },
-    //         data: new URLSearchParams({ })
-    //     }
-    //     let res = await axios.request(apiOptions)
-    //     .catch(function (err) {
-    //         console.error("Failed to get User with: ", err)
-    //     });
-    //     if (res.status == 200) {
-    //         setProjMatchUser(res.data.users[0])
-    //     } else {
-    //         throw `Status ${res.status}, ${res.statusText}`
-    //     }
-    // }, [])
+        let res = await axios.request(apiOptions)
+        .catch(function (err) {
+            console.error("Failed to get User with: ", err)
+        });
+        if (res.status == 200) {
+            setProjMatchUser(res.data.users[0])
+        } else {
+            throw `Status ${res.status}, ${res.statusText}`
+        }
+    }, [])
 
-    // const getPostsViaID = useCallback(async (authToken, id) => {
-    //     const API_URL = process.env.API_URL
-    //     var apiOptions = {
-    //         method: 'GET',
-    //         url: `${API_URL}/posts/?id=${id}`,
-    //         headers: {
-    //             'Authorization': `Bearer ${authToken}`,
-    //         },
-    //         data: new URLSearchParams({ })
-    //     }
+    const getPostsViaID = useCallback(async (authToken, id) => {
+        const API_URL = process.env.API_URL
+        var apiOptions = {
+            method: 'GET',
+            url: `${API_URL}/posts/?id=${id}`,
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+            },
+            data: new URLSearchParams({ })
+        }
 
-    //     axios.request(apiOptions).then(function (res) {
-    //         if (res.status == 200) {
-    //             let temp = posts
-    //             temp.push(res.data.posts[0])
-    //             setPosts(temp)
-    //         } else {
-    //             throw `Status ${res.status}, ${res.statusText}`
-    //         }
-    //     }).catch(function (err) {
-    //         console.error("Failed to get Posts with: ", err)
-    //     })
-    // }, [])
+        axios.request(apiOptions).then(function (res) {
+            if (res.status == 200) {
+                let temp = posts
+                temp.push(res.data.posts[0])
+                setPosts(temp)
+            } else {
+                throw `Status ${res.status}, ${res.statusText}`
+            }
+        }).catch(function (err) {
+            console.error("Failed to get Posts with: ", err)
+        })
+    }, [])
 
     useEffect(() => {
+        const authToken = localStorage.getItem("authorisation_token")
         if (user === undefined) {
             return
         }
-        api.getUsers({"email":user.email}).then(function (res){
-            if (res!=-1){
-                setProjMatchUser(res.users[0])
-            }
-        })
+        getUserWithEmail(authToken, user)
     }, [user])
 
     useEffect(() => {
@@ -81,13 +72,7 @@ export default function SavedProjects() {
             return
         }
         for (let i = 0; i < projMatchUser.savedPosts.length; i++) {
-            api.getPosts({"id":projMatchUser.savedPosts[i]}).then(function(res){
-                if (res!=0){
-                    let temp=posts
-                    temp.push(res.posts[0])
-                }
-            })
-            //getPostsViaID(authToken, projMatchUser.savedPosts[i])
+            getPostsViaID(authToken, projMatchUser.savedPosts[i])
         }
     }, [projMatchUser, posts])
 
