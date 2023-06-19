@@ -415,7 +415,7 @@ export default function SettingsPage() {
 													typeof userData.userDat.profileBanner == "object"
 														? URL.createObjectURL(
 																userData.userDat.profileBanner
-														  )
+														)
 														: userData.userDat.profileBanner
 												}
 												className="mt-2 h-36 w-full border-3 border-[#C7C7C7] object-cover object-center"
