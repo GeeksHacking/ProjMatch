@@ -11,16 +11,29 @@ import { use, useCallback, useEffect, useState } from "react";
 import { tagColors } from "@/tagColors";
 import { useRouter } from "next/router";
 let api = 0;
-
 export default function Home() {
 	const { user, error, isLoading } = useUser();
 	const [posts, setPosts] = useState([]);
-	const [postReq, setPostReq] = useState([]);
+	const [postReq, setPostReq] = useState({ posts: [] });
 	//const [ users, setUsers ] = useState({});
 	const [memusers, setMemUsers] = useState({});
 	const [authToken, setAuthToken] = useState("");
 	let usersid = [];
 	const router = useRouter();
+
+	useEffect(() => {
+		const authToken = localStorage.getItem("authorisation_token");
+
+		if (authToken === undefined) {
+			console.error("Authorisation Token returned Undefined.");
+		} else {
+			api = new PMApi(authToken);
+			console.log("second");
+			api.getPosts().then(function (res) {
+				setPostReq(res);
+			});
+		}
+	}, []);
 
 	useEffect(() => {
 		try {
@@ -44,30 +57,6 @@ export default function Home() {
 		}
 	}, [setPosts, postReq]);
 
-	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		}
-		axios.request(apiOptions).then(function (res) {
-			const responseBody = res.data;
-			localStorage.setItem("authorisation_token", responseBody["access_token"]);
-
-			// Once Token has been retrieved, get data
-			if (posts !== []) {
-				console.log("first!");
-				//getPosts(responseBody["access_token"])
-				api = new PMApi(responseBody["access_token"]);
-				api.getPosts().then(function (res) {
-					setPostReq(res);
-				});
-				//.catch(console.error)
-			}
-			getPosts(authToken).catch(console.error);
-		});
-	}, [getPosts]);
-
 	const storeAuthToken = async (accessToken) => {
 		var apiOptions = {
 			method: "POST",
@@ -76,10 +65,12 @@ export default function Home() {
 				"content-type": "application/x-www-form-urlencoded",
 			},
 			data: new URLSearchParams({
-				grant_type: "client_credentials",
+				grant_type: "authorization_code",
 				client_id: process.env.OAUTH_ID,
 				client_secret: process.env.OAUTH_SECRET,
 				audience: process.env.AUTH0_AUDIENCE,
+				code: accessToken,
+				redirect_uri: `${process.env.AUTH0_BASE_URL}/callback`,
 			}),
 		};
 
@@ -94,7 +85,13 @@ export default function Home() {
 
 				// Once Token has been retrieved, get data
 				if (posts !== []) {
-					getPosts(responseBody["access_token"]).catch(console.error);
+					console.log("first!");
+					//getPosts(responseBody["access_token"])
+					api = new PMApi(responseBody["access_token"]);
+					api.getPosts().then(function (res) {
+						setPostReq(res);
+					});
+					//.catch(console.error)
 				}
 			})
 			.catch(function (err) {
@@ -187,7 +184,7 @@ function Project({ post, uss }) {
 					<h1 className="text-3xl font-bold text-black">{post.projectName}</h1>
 					<div id="Menu" className="flex grow flex-row justify-end">
 						<img
-							src="/IconsMenuDots.svg"
+							src="IconsMenuDots.svg"
 							alt="logo"
 							className="mt-2 h-6 w-6 flex-shrink-0"
 						></img>
@@ -206,7 +203,7 @@ function Project({ post, uss }) {
 				</div>
 				<Link
 					className="flex grow items-center justify-center rounded-md border-2 border-[#D3D3D3] text-xl"
-					href={"/Project/ProjectPage/?id=" + post._id}
+					href={"/ProjectPage/?id=" + post._id}
 				>
 					<div>Find out more!</div>
 				</Link>
@@ -214,7 +211,6 @@ function Project({ post, uss }) {
 		</div>
 	);
 }
-
 function Tag({ tag }) {
 	return (
 		<div
@@ -244,7 +240,7 @@ function Star({ value }) {
 		return (
 			<div className="flex flex-row items-center justify-center">
 				<img
-					src="/IconsStarFill.svg"
+					src="IconsStarFill.svg"
 					alt="logo"
 					className="h-6 w-6 flex-shrink-0"
 				></img>
@@ -254,7 +250,7 @@ function Star({ value }) {
 	return (
 		<div className="flex flex-row items-center justify-center">
 			<img
-				src="/IconsStar.svg"
+				src="IconsStar.svg"
 				alt="logo"
 				className="h-6 w-6 flex-shrink-0"
 			></img>
