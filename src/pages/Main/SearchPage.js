@@ -6,7 +6,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import axios from "axios";
 import { use, useCallback, useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
-import approvedTags from ".../tags.json";
+import approvedTags from "src/tags.json";
 let api = 0;
 export default function SearchPage() {
 	const { user, error, isLoading } = useUser();
