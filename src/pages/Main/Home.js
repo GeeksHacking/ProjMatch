@@ -23,7 +23,6 @@ export default function Home() {
 
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
-		console.log(authToken);
 		if (authToken === null)
 			return console.error("Authorisation Token returned Null.");
 		if (authToken === undefined) {
@@ -71,7 +70,7 @@ export default function Home() {
 				client_secret: process.env.OAUTH_SECRET,
 				audience: process.env.AUTH0_AUDIENCE,
 				code: accessToken,
-				redirect_uri: `${process.env.AUTH0_BASE_URL}/callback`,
+				redirect_uri: `${process.env.AUTH0_BASE_URL}/Main/Home`,
 			}),
 		};
 
