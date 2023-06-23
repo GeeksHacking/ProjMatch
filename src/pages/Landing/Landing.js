@@ -100,7 +100,7 @@ const LandingHeaderBar = () => {
 				client_secret: process.env.AUTH0_CLIENT_SECRET,
 				code: accessToken,
 				audience: process.env.AUTH0_AUDIENCE,
-				redirect_uri: "http://localhost:3000/Main/Home",
+				redirect_uri: process.env.AUTH0_BASE_URL + "/Main/Home",
 			}),
 		};
 
@@ -133,7 +133,7 @@ const LandingHeaderBar = () => {
 			</Link>
 			<div className="ml-auto space-x-3">
 				<Link
-					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=http://localhost:3000/Main/Home`}
+					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Main/Home`}
 					className=""
 				>
 					<button className="rounded-full bg-blue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">
