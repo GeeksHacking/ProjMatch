@@ -24,6 +24,8 @@ export default function Home() {
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		console.log(authToken);
+		if (authToken === null)
+			return console.error("Authorisation Token returned Null.");
 		if (authToken === undefined) {
 			console.error("Authorisation Token returned Undefined.");
 		} else {
