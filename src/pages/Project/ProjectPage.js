@@ -5,6 +5,7 @@ import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
 import axios from "axios";
 import { use, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import PMApi from "@/components/PMApi/PMApi";
 
 export default function ProjectPage() {
 	const router = useRouter();
@@ -19,200 +20,19 @@ export default function ProjectPage() {
 	const [showPopup, setShowPopup] = useState(false);
 	const [showDoneReport, setShowDoneReport] = useState(false);
 
-	const getUserFromEmail = useCallback(async (authToken, email) => {
-		const API_URL = process.env.API_URL;
-		var apiOptions = {
-			method: "GET",
-			url: `${API_URL}/users?email=${email}`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-			data: new URLSearchParams({}),
-		};
+	useEffect(() => {
+		const authToken = localStorage.getItem("authorisation_token");
 
-		let res = await axios.request(apiOptions).catch(function (err) {
-			console.error("Failed to get User with: ", err);
+		if (authToken === undefined) {
+			return console.error("Authorisation Token returned Undefined.");
+		}
+
+		let api = new PMApi(authToken);
+
+		api.getPost({ id: id }).then((res) => {
+			setPostReq(res);
 		});
-		if (res.status == 200) {
-			return res.data.users[0];
-		} else {
-			throw `Status ${res.status}, ${res.statusText}`;
-		}
 	}, []);
-
-	const getPosts = useCallback(
-		async (authToken) => {
-			const API_URL = process.env.API_URL;
-			if (id === undefined) {
-				return;
-			}
-			var axiosAPIOptions = {
-				method: "GET",
-				url: `${API_URL}/posts/?id=${id}`,
-				headers: {
-					Authorization: `Bearer ${authToken}`,
-				},
-				data: new URLSearchParams({}),
-			};
-
-			axios
-				.request(axiosAPIOptions)
-				.then(function (res) {
-					if (res.status == 200) {
-						setPostReq(res);
-					} else {
-						throw `Status ${res.status}, ${res.statusText}`;
-					}
-				})
-				.catch(function (err) {
-					console.error("Failed to get Posts with: ", err);
-				});
-		},
-		[id]
-	);
-
-	const getUserWithID = useCallback(async (uid) => {
-		const authToken = localStorage.getItem("authorisation_token");
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		}
-		const API_URL = process.env.API_URL;
-
-		var apiOptions = {
-			method: "GET",
-			url: `${API_URL}/users/?id=${uid}`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-			data: new URLSearchParams({}),
-		};
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				if (res.status == 200) {
-					setUser(res.data.users[0]);
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get Posts with: ", err);
-			});
-	});
-
-	const checkUserExistWithEmail = useCallback(async (authToken, email) => {
-		const API_URL = process.env.API_URL;
-
-		var apiOptions = {
-			method: "GET",
-			url: `${API_URL}/users?email=${email}`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-		};
-
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				if (res.status == 200) {
-					const responseData = res.data;
-					if (responseData.users.length === 0) {
-						// No user with email found, hence create user
-						createUserWithEmail(authToken, user);
-					}
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get User Existance with: ", err);
-			});
-	});
-
-	const updateUser = useCallback(async (authToken, updateUser, user) => {
-		const API_URL = process.env.API_URL;
-		const options = {
-			method: "PUT",
-			url: `${API_URL}/users`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-			data: {
-				id: user._id,
-				update: updateUser,
-			},
-		};
-
-		axios
-			.request(options)
-			.then(function (res) {
-				if (res.status == 200) {
-					getUserFromEmail(authToken, user.regEmail).then((user) => {
-						setPMUser(user);
-					});
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get User with: ", err);
-			});
-	}, []);
-
-	const createUserWithEmail = async (authToken, user) => {
-		const API_URL = process.env.API_URL;
-
-		var apiOptions = {
-			method: "POST",
-			url: `${API_URL}/users`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-			data: {
-				username: user.nickname,
-				rlName: user.name,
-				regEmail: user.email,
-				regPhone: 0,
-			},
-		};
-
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				if (res.status == 200) {
-					return res;
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get Create User with: ", err);
-			});
-	};
-
-	useEffect(() => {
-		// Check if the user exists. If not, create a new user for this user
-		const authToken = localStorage.getItem("authorisation_token");
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		}
-
-		if (user !== undefined) {
-			checkUserExistWithEmail(authToken, user.email).then((res) => {});
-		}
-	}, [checkUserExistWithEmail]);
-
-	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		}
-
-		getPosts(authToken).catch(console.error);
-	}, [getPosts]);
 
 	useEffect(() => {
 		if (user === undefined) {
@@ -224,11 +44,16 @@ export default function ProjectPage() {
 			if (authToken === undefined) {
 				console.error("Authorisation Token returned Undefined.");
 			}
-			getUserFromEmail(authToken, user.email).then((res) => {
-				setPMUser(res);
+			api.getUser({ email: user.email }).then((data) => {
+				setPMUser(data.users[0]);
 			});
-			getUserWithID(postReq.data.posts[0].creatorUserID);
-			setPost(postReq.data.posts[0]);
+
+			api.getUser({ id: postReq.posts[0].creatorUserID }).then((data) => {
+				setUser(data.users[0]);
+			});
+
+			setPost(postReq.posts[0]);
+
 			if (post.contact !== undefined) {
 				if (
 					String(post.contact).match(
@@ -276,8 +101,7 @@ export default function ProjectPage() {
 	};
 
 	const handleDelete = () => {
-		const authToken = localStorage.getItem("authorisation_token");
-		deleteProject(authToken, id);
+		api.deletePosts(id);
 		router.push("http://localhost:3000/Main/Home");
 	};
 
@@ -291,7 +115,7 @@ export default function ProjectPage() {
 			const updateData = {
 				savedPosts: savedPosts,
 			};
-			updateUser(authToken, updateData, pmUser);
+			api.updateUser(updateData, pmUser._id);
 		} else {
 			const savedPosts = [];
 			if (pmUser.savedPosts !== undefined) {
@@ -303,7 +127,7 @@ export default function ProjectPage() {
 			const updateData = {
 				savedPosts: savedPosts,
 			};
-			updateUser(authToken, updateData, pmUser);
+			api.updateUser(updateData, pmUser._id);
 		}
 	};
 
