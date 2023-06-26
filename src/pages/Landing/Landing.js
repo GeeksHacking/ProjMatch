@@ -128,7 +128,7 @@ const LandingHeaderBar = () => {
 
 	return (
 		<div className="relative flex w-full flex-row p-2">
-			<Link href="/Home" className="duration-500 hover:scale-105">
+			<Link href="/Main/Home" className="duration-500 hover:scale-105">
 				<span className="text-2xl font-bold text-logo-blue">ProjMatch</span>
 			</Link>
 			<div className="ml-auto space-x-3">
@@ -140,7 +140,7 @@ const LandingHeaderBar = () => {
 						Log In
 					</button>
 				</Link>
-				<Link href="/SignUp">
+				<Link href="/Main/SignUp">
 					<button className="rounded-full bg-logo-blue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">
 						Sign Up
 					</button>
