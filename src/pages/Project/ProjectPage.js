@@ -6,6 +6,7 @@ import axios from "axios";
 import { use, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PMApi from "@/components/PMApi/PMApi";
+let api = 0;
 
 export default function ProjectPage() {
 	const router = useRouter();
@@ -27,12 +28,14 @@ export default function ProjectPage() {
 			return console.error("Authorisation Token returned Undefined.");
 		}
 
-		let api = new PMApi(authToken);
+		if (id === undefined) return console.error("ID returned Undefined.");
 
-		api.getPost({ id: id }).then((res) => {
+		api = new PMApi(authToken);
+
+		api.getPosts({ id: id }).then((res) => {
 			setPostReq(res);
 		});
-	}, []);
+	}, [router.query]);
 
 	useEffect(() => {
 		if (user === undefined) {
@@ -44,11 +47,12 @@ export default function ProjectPage() {
 			if (authToken === undefined) {
 				console.error("Authorisation Token returned Undefined.");
 			}
-			api.getUser({ email: user.email }).then((data) => {
+
+			api.getUsers({ email: user.email }).then((data) => {
 				setPMUser(data.users[0]);
 			});
 
-			api.getUser({ id: postReq.posts[0].creatorUserID }).then((data) => {
+			api.getUsers({ id: postReq.posts[0].creatorUserID }).then((data) => {
 				setUser(data.users[0]);
 			});
 
@@ -67,7 +71,9 @@ export default function ProjectPage() {
 					setUserContact(post.contact);
 				}
 			}
-		} catch (err) {}
+		} catch (err) {
+			console.error(err);
+		}
 	}, [postReq]);
 
 	if (post.length === 0) {
@@ -220,7 +226,7 @@ export default function ProjectPage() {
 							id="menu-container"
 							className="flex h-full w-[60%] flex-row items-center justify-end space-x-3"
 						>
-							{pmUser._id === postReq.data.posts[0].creatorUserID ? (
+							{pmUser._id === postReq.posts[0].creatorUserID ? (
 								<div className="space-x-3">
 									<button
 										className="rounded-md bg-delete-red px-2 py-1 text-white"
