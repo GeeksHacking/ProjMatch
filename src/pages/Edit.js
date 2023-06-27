@@ -1,14 +1,11 @@
 import SideNav from "@/components/SideNav/SideNav";
 import PMApi from "@/components/PMApi/PMApi";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
-
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
-import Link from "next/link";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 let api = 0;
+
 export default function EditProject() {
 	const router = useRouter();
 	const { id } = router.query;
@@ -34,6 +31,7 @@ export default function EditProject() {
 			console.error;
 		}
 	}, []);
+
 	useEffect(() => {
 		if (id !== undefined) {
 			api.getPosts({ id: id }).then(function (res) {

@@ -1,16 +1,16 @@
 import SideNav from "@/components/SideNav/SideNav";
 import PMApi from "@/components/PMApi/PMApi";
 import UserCreation from "@/components/UserCreation/UserCreation";
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Dev Imports
-import { tagColors } from "@/tagColors";
 import { useRouter } from "next/router";
 let api = 0;
+
 export default function Home() {
 	const { user, error, isLoading } = useUser();
 	const [posts, setPosts] = useState([]);

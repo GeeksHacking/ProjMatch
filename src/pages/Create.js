@@ -1,12 +1,9 @@
 import SideNav from "@/components/SideNav/SideNav";
-import axios from "axios";
 import PMApi from "@/components/PMApi/PMApi";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { use, useCallback, useEffect, useState } from "react";
-import { get } from "animejs";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ImagePicker from "@/components/ImagePicker/ImagePicker";
-import Filter from "bad-words";
 import approvedTags from "src/tags.json";
 import { Combobox } from "@headlessui/react";
 

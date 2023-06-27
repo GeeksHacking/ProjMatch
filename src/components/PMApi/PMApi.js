@@ -86,6 +86,7 @@ class PMApi {
 			return -1;
 		}
 	}
+
 	async updateUser(userId, updatedUser) {
 		try {
 			await axios.put(`${this.baseUrl}/users`, {
@@ -119,6 +120,15 @@ class PMApi {
 			return data;
 		} catch (err) {
 			console.log(`failed to create img with err:\n${err}`);
+			return -1;
+		}
+	}
+	async postEmail(email) {
+		try {
+			const { res } = await axios.post(`${this.baseUrl}/email`, email);
+			return res;
+		} catch (err) {
+			console.log(`failed to post email with err:\n${err}`);
 			return -1;
 		}
 	}

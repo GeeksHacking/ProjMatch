@@ -1,9 +1,8 @@
 import SideNav from "@/components/SideNav/SideNav";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
 import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PMApi from "@/components/PMApi/PMApi";
 let api = 0;
@@ -136,14 +135,7 @@ export default function ProjectPage() {
 			text: `Reporter Name: ${reporterName}\nReporter ID: ${reporterID}\nProject ID: ${projectID}\n\nReport: \n${reportData}`,
 		};
 
-		const API_URL = process.env.API_URL;
-		var apiOptions = {
-			method: "POST",
-			url: `${API_URL}/email`,
-			data: emailData,
-		};
-
-		axios.request(apiOptions).then(function (res) {
+		api.postEmail(emailData).then(function (res) {
 			if (res.status == 200) {
 				setShowPopup(false);
 				setShowDoneReport(true);

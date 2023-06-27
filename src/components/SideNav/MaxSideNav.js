@@ -23,7 +23,6 @@ const MaxSideNav = () => {
 			const API_URL = process.env.API_URL;
 			api.getUsers({ email: user.email }).then((res) => {
 				if (res != -1) {
-					console.log(res);
 					setUserInfo(res.users[0]);
 				}
 			});
@@ -86,15 +85,15 @@ const MaxSideNav = () => {
 					</span>
 				</Link>
 				<div className={`mt-10 space-y-4`}>
-					<ul className={`space-y-4`} key={Math.random()}>
-						{navOptions.map((option) =>
+					<div className={`space-y-4`}>
+						{navOptions.map((option, index) =>
 							option.Page != "Create" ? (
-								<SideNavOptn option={option} key={Math.random()} />
+								<SideNavOptn option={option} key={index} />
 							) : (
 								<></>
 							)
 						)}
-					</ul>
+					</div>
 				</div>
 
 				<div className={`mt-auto space-y-6 p-3`}>
