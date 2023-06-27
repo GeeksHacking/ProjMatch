@@ -4,11 +4,9 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Switch, Dialog, Tab } from "@headlessui/react";
-import {
-	getUserDetailsFromEmail,
-	updateUserDetailsFromID,
-} from "@/functions/handleUsers";
-import { createS3Images } from "@/functions/handlePostsImages";
+
+import PMApi from "@/components/PMApi/PMApi";
+let api = 0;
 
 export default function SettingsPage() {
 	const { user, error, isLoading } = useUser();
@@ -72,49 +70,47 @@ export default function SettingsPage() {
 			);
 			formData.append("creatorUserID", projMatchUser._id);
 
-			console.log(formData);
-
-			createS3Images(authToken, formData).then((res) => {
-				if (res.status == 200) {
-					const imageURL = res.data.imageURL;
-					let bannerURL, profilePicURL;
-					if (imageURL.length == 2) {
+			api.createImgUrl(formData).then((res) => {
+				const imageURL = res.data.imageURL;
+				let bannerURL, profilePicURL;
+				if (imageURL.length == 2) {
+					bannerURL = imageURL[0];
+					profilePicURL = imageURL[1];
+				} else if (imageURL.length == 1) {
+					if (updatedData.userDat.profileBanner !== undefined) {
 						bannerURL = imageURL[0];
-						profilePicURL = imageURL[1];
-					} else if (imageURL.length == 1) {
-						if (updatedData.userDat.profileBanner !== undefined) {
-							bannerURL = imageURL[0];
-							profilePicURL = projMatchUser.userDat.profilePic;
-						} else {
-							bannerURL = projMatchUser.userDat.profileBanner;
-							profilePicURL = imageURL[0];
-						}
+						profilePicURL = projMatchUser.userDat.profilePic;
+					} else {
+						bannerURL = projMatchUser.userDat.profileBanner;
+						profilePicURL = imageURL[0];
 					}
-
-					const tempData = {
-						...updatedData,
-						userDat: {
-							profileBanner: bannerURL,
-							profilePic: profilePicURL,
-						},
-					};
-					updateUserDetailsFromID(authToken, tempData, projMatchUser)
-						.then((res) => {
-							if (res.status == 200) {
-								router.push(
-									`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
-								);
-							} else {
-								throw `Status ${res.status}, ${res.statusText}`;
-							}
-						})
-						.catch(function (err) {
-							console.error("Failed to get User with: ", err);
-						});
 				}
+
+				const tempData = {
+					...updatedData,
+					userDat: {
+						profileBanner: bannerURL,
+						profilePic: profilePicURL,
+					},
+				};
+				api
+					.updateUser(projMatchUser._id, tempData)
+					.then((res) => {
+						if (res.status == 200) {
+							router.push(
+								`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+							);
+						} else {
+							throw `Status ${res.status}, ${res.statusText}`;
+						}
+					})
+					.catch(function (err) {
+						console.error("Failed to get User with: ", err);
+					});
 			});
 		} else {
-			updateUserDetailsFromID(authToken, updatedData, projMatchUser)
+			api
+				.updateUser(projMatchUser._id, updatedData)
 				.then((res) => {
 					if (res.status == 200) {
 						router.push(
@@ -187,13 +183,16 @@ export default function SettingsPage() {
 		const authToken = localStorage.getItem("authorisation_token");
 
 		if (authToken === undefined) {
-			console.error("No token found");
+			return console.error("No token found");
 		}
-		if (user !== null && user !== undefined) {
-			getUserDetailsFromEmail(authToken, user.email).then((res) => {
-				setProjMatchUser(res.data.users[0]);
-			});
-		}
+
+		api = new PMApi(authToken);
+	}, []);
+
+	useEffect(() => {
+		api.getUsers({ email: user.email }).then((data) => {
+			setProjMatchUser(data.users[0]);
+		});
 	}, [user]);
 
 	useEffect(() => {
@@ -415,7 +414,7 @@ export default function SettingsPage() {
 													typeof userData.userDat.profileBanner == "object"
 														? URL.createObjectURL(
 																userData.userDat.profileBanner
-														)
+														  )
 														: userData.userDat.profileBanner
 												}
 												className="mt-2 h-36 w-full border-3 border-[#C7C7C7] object-cover object-center"
