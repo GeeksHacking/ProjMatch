@@ -1,6 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav";
-import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Switch, Dialog, Tab } from "@headlessui/react";

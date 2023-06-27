@@ -1,7 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import Link from "next/link";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PMApi from "@/components/PMApi/PMApi";

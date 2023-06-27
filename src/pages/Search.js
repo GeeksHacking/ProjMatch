@@ -1,10 +1,7 @@
 import SideNav from "@/components/SideNav/SideNav";
 import PMApi from "@/components/PMApi/PMApi";
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
-import Link from "next/link";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
 import approvedTags from "src/tags.json";
 let api = 0;
