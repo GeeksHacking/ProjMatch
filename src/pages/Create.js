@@ -9,12 +9,12 @@ import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words";
 import approvedTags from "src/tags.json";
 import { Combobox } from "@headlessui/react";
+
 let api = 0;
 export default function CreateProject() {
 	const router = useRouter();
 
 	const { user, error, isLoading } = useUser();
-	if (isLoading) return <div>Loading...</div>;
 	const [projMatchUser, setProjMatchUser] = useState({});
 
 	// State Variables
@@ -89,6 +89,7 @@ export default function CreateProject() {
 		if (authToken === undefined) {
 			console.error("Authorisation Token returned Undefined.");
 		} else {
+			api = new PMApi(authToken);
 			api.getUsers({ email: user.email }).then((res) => {
 				setProjMatchUser(res);
 			});
@@ -126,18 +127,6 @@ export default function CreateProject() {
 
 	const dataFromPicker = (data) => {
 		setProjectImages(data);
-	};
-
-	const handleTagChange = (event) => {
-		let filter = new Filter({ emptyList: true });
-		filter.addWords(...approvedTags);
-
-		const tags = event.target.value.replace(/\s/g, "").split(",");
-		if (tags.filter((tag) => filter.isProfane(tag)).length !== tags.length) {
-			setTagError("Please enter a valid tag");
-		} else {
-			setTagError("");
-		}
 	};
 
 	const filteredTags =

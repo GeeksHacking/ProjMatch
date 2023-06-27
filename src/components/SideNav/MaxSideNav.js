@@ -35,27 +35,27 @@ const MaxSideNav = () => {
 		{
 			Page: "Home",
 			IconPath: "/NavBarIcons/IconsHome.svg",
-			PageLink: "/Main/Home",
+			PageLink: "/Home",
 		},
 		{
 			Page: "Search",
 			IconPath: "/NavBarIcons/IconsSearch.svg",
-			PageLink: "/Main/SearchPage",
+			PageLink: "/Search",
 		},
 		{
 			Page: "Saved",
 			IconPath: "/NavBarIcons/IconsSaved.svg",
-			PageLink: "/Users/SavedProjects",
+			PageLink: "/Saved",
 		},
 		{
 			Page: "Settings",
 			IconPath: "/NavBarIcons/IconsSettings.svg",
-			PageLink: "/Settings/SettingsPage",
+			PageLink: "/Settings",
 		},
 		{
 			Page: "Create",
 			IconPath: "/NavBarIcons/IconsCreate.svg",
-			PageLink: "/Project/CreateProject",
+			PageLink: "/CreateProject",
 		},
 	];
 
