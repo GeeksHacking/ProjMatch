@@ -18,50 +18,6 @@ export default function SavedProjects() {
 			api = new PMApi(authToken);
 		}
 	}, []);
-	// const getUserWithEmail = useCallback(async (authToken, user) => {
-	//     const API_URL = process.env.API_URL
-	//     var apiOptions = {
-	//         method: 'GET',
-	//         url: `${API_URL}/users?email=${user.email}`,
-	//         headers: {
-	//             'Authorization': `Bearer ${authToken}`,
-	//         },
-	//         data: new URLSearchParams({ })
-	//     }
-	//     let res = await axios.request(apiOptions)
-	//     .catch(function (err) {
-	//         console.error("Failed to get User with: ", err)
-	//     });
-	//     if (res.status == 200) {
-	//         setProjMatchUser(res.data.users[0])
-	//     } else {
-	//         throw `Status ${res.status}, ${res.statusText}`
-	//     }
-	// }, [])
-
-	// const getPostsViaID = useCallback(async (authToken, id) => {
-	//     const API_URL = process.env.API_URL
-	//     var apiOptions = {
-	//         method: 'GET',
-	//         url: `${API_URL}/posts/?id=${id}`,
-	//         headers: {
-	//             'Authorization': `Bearer ${authToken}`,
-	//         },
-	//         data: new URLSearchParams({ })
-	//     }
-
-	//     axios.request(apiOptions).then(function (res) {
-	//         if (res.status == 200) {
-	//             let temp = posts
-	//             temp.push(res.data.posts[0])
-	//             setPosts(temp)
-	//         } else {
-	//             throw `Status ${res.status}, ${res.statusText}`
-	//         }
-	//     }).catch(function (err) {
-	//         console.error("Failed to get Posts with: ", err)
-	//     })
-	// }, [])
 
 	useEffect(() => {
 		if (user === undefined) {
@@ -121,7 +77,7 @@ export function Project({ post }) {
 	return (
 		<a
 			className="relative z-10 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-lg"
-			href={"/Project/ProjectPage/?id=" + post._id}
+			href={"/Project/ProjectPage?id=" + post._id}
 		>
 			<div className="absolute bottom-0 z-10 flex h-1/4 w-full flex-col items-start justify-center rounded-b-lg bg-white/[0.5] px-4">
 				<h3 className="text-xl font-semibold">{post.projectName}</h3>
