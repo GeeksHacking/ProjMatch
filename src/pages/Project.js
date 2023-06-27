@@ -80,33 +80,8 @@ export default function ProjectPage() {
 		return <></>;
 	}
 
-	const deleteProject = async (authToken, id) => {
-		const API_URL = process.env.API_URL;
-		var apiOptions = {
-			method: "DELETE",
-			url: `${API_URL}/posts`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-			data: {
-				id: id,
-			},
-		};
-
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				if (res.status == 200) {
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get User Existance with: ", err);
-			});
-	};
-
 	const handleDelete = () => {
+		console.log(id);
 		api.deletePosts(id);
 		router.push(`
 		/Home`);
@@ -141,7 +116,7 @@ export default function ProjectPage() {
 	const handleToolTip = () => {
 		setShowShareToolTip(true);
 		navigator.clipboard.writeText(
-			"http://localhost:3000/Project/ProjectPage?id=" + post._id
+			`${process.env.AUTH0_BASE_URL}/Project?id=${post._id}`
 		);
 	};
 

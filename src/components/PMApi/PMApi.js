@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import axios from "axios";
 class PMApi {
 	constructor(authToken) {
@@ -64,9 +65,7 @@ class PMApi {
 	}
 	async deletePosts(postId) {
 		try {
-			await axios.delete(`${this.baseUrl}/posts`, {
-				id: postId,
-			});
+			await axios.delete(`${this.baseUrl}/posts`, { data: { id: postId } });
 		} catch (err) {
 			throw new Error(`failed to delete posts with err:\n${err}`);
 			return -1;
