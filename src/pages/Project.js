@@ -108,7 +108,8 @@ export default function ProjectPage() {
 
 	const handleDelete = () => {
 		api.deletePosts(id);
-		router.push("http://localhost:3000/Main/Home");
+		router.push(`
+		/Home`);
 	};
 
 	const handleSavedClick = () => {
@@ -238,7 +239,7 @@ export default function ProjectPage() {
 										className="rounded-md bg-edit-green px-2 py-1 text-white"
 										onClick={() =>
 											router.push(
-												`http://localhost:3000/Project/EditProject?id=${post._id}`
+												`${process.env.AUTH0_BASE_URL}/Edit?id=${post._id}`
 											)
 										}
 									>

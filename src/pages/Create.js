@@ -56,7 +56,7 @@ export default function CreateProject() {
 						)
 						.then(function (res) {
 							if (res != -1 && res.insertedProjectWithID !== "") {
-								router.push(`ProjectPage?id=${res.insertedProjectWithID}`);
+								router.push(`Project?id=${res.insertedProjectWithID}`);
 							}
 						});
 				}

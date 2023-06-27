@@ -100,7 +100,7 @@ const MaxSideNav = () => {
 				<div className={`mt-auto space-y-6 p-3`}>
 					<Link
 						className={`flex items-center space-x-4 bg-logo-blue text-light-blue ${styles.create_button} h-fit rounded-lg`}
-						href="/Project/CreateProject"
+						href="/Create"
 					>
 						<img
 							src="/NavBarIcons/IconsCreate.svg"
@@ -117,7 +117,7 @@ const MaxSideNav = () => {
 
 					<Link
 						className={`flex flex-row items-center space-x-2`}
-						href={"/Users/ProfilePage?id=" + userInfo._id}
+						href={"/Profile?id=" + userInfo._id}
 					>
 						<img
 							src={userInfo.userDat.profilePic}

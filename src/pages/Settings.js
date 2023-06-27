@@ -18,7 +18,7 @@ export default function SettingsPage() {
 	const handleSignOut = (e) => {
 		e.preventDefault();
 		localStorage.removeItem("authorisation_token");
-		router.push("http://localhost:3000/api/auth/logout");
+		router.push(`${process.env.AUTH0_BASE_URL}/api/auth/logout`);
 	};
 
 	const handleSubmit = (e) => {
@@ -98,7 +98,7 @@ export default function SettingsPage() {
 					.then((res) => {
 						if (res.status == 200) {
 							router.push(
-								`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+								`${process.env.AUTH0_BASE_URL}/Profile?id=${projMatchUser._id}`
 							);
 						} else {
 							throw `Status ${res.status}, ${res.statusText}`;
@@ -114,7 +114,7 @@ export default function SettingsPage() {
 				.then((res) => {
 					if (res.status == 200) {
 						router.push(
-							`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+							`${process.env.AUTH0_BASE_URL}Profile?id=${projMatchUser._id}`
 						);
 					} else {
 						throw `Status ${res.status}, ${res.statusText}`;

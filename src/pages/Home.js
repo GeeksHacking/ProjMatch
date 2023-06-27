@@ -203,7 +203,7 @@ function Project({ post, uss }) {
 				</div>
 				<Link
 					className="flex grow items-center justify-center rounded-md border-2 border-[#D3D3D3] text-xl"
-					href={"/Project/ProjectPage?id=" + post._id}
+					href={"/Project?id=" + post._id}
 				>
 					<div>Find out more!</div>
 				</Link>

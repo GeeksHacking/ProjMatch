@@ -155,7 +155,7 @@ export function Project({ post }) {
 	return (
 		<a
 			className="relative z-10 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-lg"
-			href={"/Project/ProjectPage?id=" + post._id}
+			href={"/Project?id=" + post._id}
 		>
 			<div className="absolute bottom-0 z-10 flex h-1/4 w-full flex-col items-start justify-center rounded-b-lg bg-white/[0.5] px-4">
 				<h3 className="text-xl font-semibold">{post.projectName}</h3>
