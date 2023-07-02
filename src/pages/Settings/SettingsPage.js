@@ -146,17 +146,8 @@ export default function SettingsPage() {
 			subject: `[ProjMatch] Feedback from ${name}`,
 			text: `From: ${email}\n\n${message}`,
 		};
-
-		const API_URL = process.env.API_URL;
-		const options = {
-			method: "POST",
-			url: `${API_URL}/email`,
-			data: emailData,
-		};
-		axios
-			.request(options)
-			.then(function (res) {
-				if (res.status == 200) {
+		api.sendEmail(emailData.subject,emailData.text).then(function (data) {
+				if (data==0) {
 				} else {
 					throw `Status ${res.status}, ${res.statusText}`;
 				}
