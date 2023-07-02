@@ -32,6 +32,7 @@ class PMApi {
 				id: postId,
 				update: updatedProj,
 			});
+			return 0
 		} catch (err) {
 			throw new Error(`failed to update posts with err:\n${err}`);
 			return -1;
@@ -67,6 +68,7 @@ class PMApi {
 			await axios.delete(`${this.baseUrl}/posts`, {
 				id: postId,
 			});
+			return 0
 		} catch (err) {
 			throw new Error(`failed to delete posts with err:\n${err}`);
 			return -1;
@@ -93,6 +95,7 @@ class PMApi {
 				id: userId,
 				update: updatedUser,
 			});
+			return 0
 		} catch (err) {
 			console.log(`failed to update users with err:\n${err}`);
 			return -1;
@@ -118,6 +121,18 @@ class PMApi {
 				"Content-Type": "multipart/form-data",
 			});
 			return data;
+		} catch (err) {
+			console.log(`failed to create img with err:\n${err}`);
+			return -1;
+		}
+	}
+	async sendEmail(subject,content) {
+		try {
+			await axios.post(`${this.baseUrl}/email`, {
+				subject: subject,
+				text: content,
+			});
+			return 0;
 		} catch (err) {
 			console.log(`failed to create img with err:\n${err}`);
 			return -1;

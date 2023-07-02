@@ -160,16 +160,8 @@ export default function ProjectPage() {
 			subject: `[ProjMatch] Report on Project '${post.projectName}'`,
 			text: `Reporter Name: ${reporterName}\nReporter ID: ${reporterID}\nProject ID: ${projectID}\n\nReport: \n${reportData}`,
 		};
-
-		const API_URL = process.env.API_URL;
-		var apiOptions = {
-			method: "POST",
-			url: `${API_URL}/email`,
-			data: emailData,
-		};
-
-		axios.request(apiOptions).then(function (res) {
-			if (res.status == 200) {
+		api.sendEmail(emailData.subject,emailData.text).then(function (data) {
+			if (data == 0) {
 				setShowPopup(false);
 				setShowDoneReport(true);
 			} else {
