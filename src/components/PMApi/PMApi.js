@@ -48,16 +48,6 @@ class PMApi {
 		projImg
 	) {
 		try {
-			const temp = {
-				"projectName": projName,
-				"description": projDesc,
-				"creatorUserID": projMakerId,
-				"contact": projContact,
-				"tags": projTags,
-				"technologies": projTech,
-				"images": projImg,
-			}
-			console.log(temp)
 			const res = await axios.post(`${this.baseUrl}/posts`, {
 				projectName: projName,
 				description: projDesc,
@@ -67,7 +57,6 @@ class PMApi {
 				technologies: projTech,
 				images: projImg,
 			});
-			console.log(res)
 			return res.data;
 		} catch (err) {
 			throw new Error(`failed to create posts with err:\n${err}`);
