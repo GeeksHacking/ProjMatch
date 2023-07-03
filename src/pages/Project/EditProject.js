@@ -8,7 +8,9 @@ import {useUser} from "@auth0/nextjs-auth0/client"
 import axios from "axios"
 import { use, useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/router'
+
 let api=0
+
 export default function EditProject() {
     const router = useRouter()
     const { id } = router.query
@@ -28,22 +30,26 @@ export default function EditProject() {
     const [ imagesData, setImagesData ] = useState()
 
     const { user, error, isLoading } = useUser();
+
     useEffect(()=>{
-	const authToken=localStorage.getItem("authorisation_token")
-	if (authToken!==undefined){
-		api=new PMApi(authToken)
-	}else{
-		console.error
-	}
+        const authToken=localStorage.getItem("authorisation_token")
+        if (authToken!==undefined){
+            api = new PMApi(authToken)
+        } else {
+            console.error("Could not initialise API Wrapper")
+        }
     },[])
+
     useEffect(() => {
-	if (id!==undefined){
-	api.getPosts({"id":id}).then(function (res){
-		if ( res !== -1){
-			setPost(res.posts[0])
-		}
-	})
-	}else{console.error}
+        if (id!==undefined){
+            api.getPosts({"id":id}).then(function (res){
+                if ( res !== -1){
+                    setPost(res.posts[0])
+                }
+            })
+        } else { 
+            console.error
+        }
     }, [id])
 
     // Handle Form Submission

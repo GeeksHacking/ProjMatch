@@ -9,125 +9,44 @@ import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import Filter from "bad-words";
 import approvedTags from "src/tags.json";
 import { Combobox } from "@headlessui/react";
+import autoprefixer from "autoprefixer";
 let api = 0;
 export default function CreateProject() {
 	const router = useRouter();
 
-	const { user, error, isLoading } = useUser();
-	if (isLoading) return <div>Loading...</div>;
-	const [projMatchUser, setProjMatchUser] = useState({});
-
 	// State Variables
-	const [newProject, setNewProject] = useState({});
-	const [newProjID, setNewProjID] = useState("");
+	const { user, error, isLoading } = useUser(); // Auth0 User
+	if (isLoading) return <div>Loading...</div>; // Check if data is still being loaded
+	
+	const [ pmUser, setPMUser ] = useState({})
 	const [projectImages, setProjectImages] = useState([]);
 	const [tagError, setTagError] = useState("");
 	const [selectedTags, setSelectedTags] = useState([]);
 	const [tagQuery, setTagQuery] = useState("");
 
+	// Initialise new API Object
+	useEffect(()=>{
+        const authToken = localStorage.getItem("authorisation_token")
+        if (authToken !== undefined){
+            api = new PMApi(authToken)
+        } else {
+            console.error("Could not initialise API Wrapper, Auth Token returned undefined")
+        }
+    },[])
+
+	// Get user information
 	useEffect(() => {
-		api = new PMApi();
-	}, []);
-
-	// API Req
-	const createProj = useCallback((newProject, user) => {
-		if (user !== undefined && newProject !== {}) {
-			var formData = new FormData();
-			if (!newProject.projectImages) {
-				return;
-			}
-			for (let i = 0; i < newProject.projectImages.length; i++) {
-				formData.append("files", newProject.projectImages[i]);
-			}
-			formData.append("projectName", newProject.projectName);
-			formData.append("creatorUserID", user._id);
-			api.createImgUrl(formData).then(function (res) {
-				if (res != -1) {
-					const imageURL = res.imageURL;
-					api
-						.createPost(
-							newProject.projectName,
-							newProject.projectDescription,
-							user._id,
-							newProject.projectContact,
-							newProject.projectTags,
-							newProject.projectTech,
-							imageURL
-						)
-						.then(function (res) {
-							if (res != -1 && res.insertedProjectWithID !== "") {
-								router.push(`ProjectPage?id=${res.insertedProjectWithID}`);
-							}
-						});
-				}
-			});
-		}
-	}, []);
-
-	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		} else {
-			api = new PMApi(authToken);
-			if (newProject !== {}) {
-				api.getUsers({ email: user.email }).then((res) => {
-					if (res !== -1) {
-						createProj(newProject, res.users[0]);
-					} else {
-						console.error("ProjMatch User call returned empty or undefined");
-					}
-				});
-			}
-		}
-	}, [newProject]);
-
-	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
-
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		} else {
-			api.getUsers({ email: user.email }).then((res) => {
-				setProjMatchUser(res);
-			});
-		}
-	}, [user]);
-
-	// Handle Form Submission
-	const handleSubmission = (event) => {
-		event.preventDefault();
-
-		const projectName = event.target.projectName.value;
-		const projectDescription = event.target.projectDescription.value;
-		const projectContact = event.target.projectContact.value;
-		//const projectTags = event.target.projectTags.value.replace(/\s/g, '').toLowerCase().split(',')
-		const projectTags = selectedTags;
-		const projectTech = event.target.projectTech.value
-			.replace(/\s/g, "")
-			.toLowerCase()
-			.split(",");
-
-		if (tagError !== "") {
-			alert("Please enter a valid tag");
-			return;
-		}
-
-		setNewProject({
-			projectName: projectName,
-			projectDescription: projectDescription,
-			projectContact: projectContact,
-			projectTags: projectTags,
-			projectImages: projectImages,
-			projectTech: projectTech,
-		});
-	};
-
+		api.getUsers({ email: user.email }).then((res) => {
+			setPMUser(res.users[0])
+		})
+	}, [user])
+	
+	// Grab Data from Image Picker
 	const dataFromPicker = (data) => {
 		setProjectImages(data);
 	};
 
+	// Tag Picker Changes
 	const handleTagChange = (event) => {
 		let filter = new Filter({ emptyList: true });
 		filter.addWords(...approvedTags);
@@ -145,7 +64,31 @@ export default function CreateProject() {
 			? approvedTags
 			: approvedTags.filter((tag) =>
 					tag.toLowerCase().includes(tagQuery.toLowerCase())
-			  );
+			);
+
+	// Process and Send Data
+	const handleSubmission = (event) => {
+		event.preventDefault()
+        
+		if (localStorage.getItem("authorisation_token") !== undefined) {
+			const project = {
+				"projectName": event.target.projectName.value,
+				"description": event.target.projectDescription.value,
+				"creatorUserID": pmUser._id,
+				"tags": selectedTags,
+				"technologies": event.target.projectTech.value.replace(/\s/g, '').split(','),
+				"images": projectImages,
+				"contact": event.target.projectContact.value,
+			}
+
+			api.createPost(project.projectName, project.description, project.creatorUserID, project.contact, project.tags, project.technologies, project.images)
+				.then((res) => {
+					if (res != -1 && res.insertedProjectWithID !== "") {
+						router.push(`ProjectPage?id=${res.insertedProjectWithID}`)
+					}
+				})
+		}
+	}
 
 	return (
 		<div className="absolute flex h-full w-full flex-col items-center justify-start">
@@ -172,7 +115,8 @@ export default function CreateProject() {
 					<p className="mt-1 text-lg">
 						Include important details about what your project is about and more!
 					</p>
-					<textarea
+					<input
+						type="text"
 						id="projectDescription"
 						name="projectDescription"
 						placeholder="Enter your project’s description!"
