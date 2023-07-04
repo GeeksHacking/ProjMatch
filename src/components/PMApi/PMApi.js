@@ -33,6 +33,7 @@ class PMApi {
 				id: postId,
 				update: updatedProj,
 			});
+			return 0
 		} catch (err) {
 			throw new Error(`failed to update posts with err:\n${err}`);
 			return -1;
@@ -48,7 +49,7 @@ class PMApi {
 		projImg
 	) {
 		try {
-			const { data } = await axios.post(`${this.baseUrl}/posts`, {
+			const res = await axios.post(`${this.baseUrl}/posts`, {
 				projectName: projName,
 				description: projDesc,
 				creatorUserID: projMakerId,
@@ -57,7 +58,7 @@ class PMApi {
 				technologies: projTech,
 				images: projImg,
 			});
-			return data;
+			return res.data;
 		} catch (err) {
 			throw new Error(`failed to create posts with err:\n${err}`);
 			return -1;
@@ -65,7 +66,10 @@ class PMApi {
 	}
 	async deletePosts(postId) {
 		try {
-			await axios.delete(`${this.baseUrl}/posts`, { data: { id: postId } });
+			await axios.delete(`${this.baseUrl}/posts`, {
+				id: postId,
+			});
+			return 0
 		} catch (err) {
 			throw new Error(`failed to delete posts with err:\n${err}`);
 			return -1;
@@ -93,6 +97,7 @@ class PMApi {
 				id: userId,
 				update: updatedUser,
 			});
+			return 0
 		} catch (err) {
 			console.log(`failed to update users with err:\n${err}`);
 			return -1;
