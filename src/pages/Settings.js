@@ -1,6 +1,5 @@
 import SideNav from "@/components/SideNav/SideNav";
-import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Switch, Dialog, Tab } from "@headlessui/react";
@@ -18,7 +17,7 @@ export default function SettingsPage() {
 	const handleSignOut = (e) => {
 		e.preventDefault();
 		localStorage.removeItem("authorisation_token");
-		router.push("http://localhost:3000/api/auth/logout");
+		router.push(`${process.env.AUTH0_BASE_URL}/api/auth/logout`);
 	};
 
 	const handleSubmit = (e) => {
@@ -98,7 +97,7 @@ export default function SettingsPage() {
 					.then((res) => {
 						if (res.status == 200) {
 							router.push(
-								`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+								`${process.env.AUTH0_BASE_URL}/Profile?id=${projMatchUser._id}`
 							);
 						} else {
 							throw `Status ${res.status}, ${res.statusText}`;
@@ -114,7 +113,7 @@ export default function SettingsPage() {
 				.then((res) => {
 					if (res.status == 200) {
 						router.push(
-							`http://localhost:3000/Users/ProfilePage?id=${projMatchUser._id}`
+							`${process.env.AUTH0_BASE_URL}Profile?id=${projMatchUser._id}`
 						);
 					} else {
 						throw `Status ${res.status}, ${res.statusText}`;
@@ -146,14 +145,17 @@ export default function SettingsPage() {
 			subject: `[ProjMatch] Feedback from ${name}`,
 			text: `From: ${email}\n\n${message}`,
 		};
-		api.sendEmail(emailData.subject,emailData.text).then(function (data) {
-				if (data==0) {
+
+		api
+			.sendEmail(emailData)
+			.then((res) => {
+				if (res.status == 200) {
 				} else {
 					throw `Status ${res.status}, ${res.statusText}`;
 				}
 			})
 			.catch(function (err) {
-				console.error("Failed to get User with: ", err);
+				console.error("Failed to send email with: ", err);
 			});
 
 		setPopupDisplay(true);

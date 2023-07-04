@@ -84,7 +84,7 @@ export default function CreateProject() {
 			api.createPost(project.projectName, project.description, project.creatorUserID, project.contact, project.tags, project.technologies, project.images)
 				.then((res) => {
 					if (res != -1 && res.insertedProjectWithID !== "") {
-						router.push(`ProjectPage?id=${res.insertedProjectWithID}`)
+						router.push(`Project?id=${res.insertedProjectWithID}`)
 					}
 				})
 		}
