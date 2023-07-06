@@ -1,9 +1,10 @@
-#PMApi Wrapper  
+# PMApi Wrapper  
+
 Api calls are repetative and long, hence I have siplified it to help readability and ease of calling api  
 
----
+***
 
-#General Usage
+# General Usage
 To use the API wrapper you need to import it first  
   
 
@@ -75,7 +76,7 @@ export default function Page{
 # Endpoints
 
 ## Posts
-In general endpoints will return -1 if it fails and the requested data or 0 if pass
+In general endpoints will return `-1` if it fails and the requested data or `0` if pass
 ## Get Posts
 ```jsx
 async getPosts(options:object = false) -> Object
@@ -91,40 +92,30 @@ async getPosts(options:object = false) -> Object
 Outputs the data portion of the api call which should be in the format below
 ```json
 {
-    filters: filters given
-    ​
-    page: current page
-    ​
-    posts: array with more post objects
-        Post{
-            id: String of project id
-​​​
-            contact: String of contact link
-            ​​​
-            creatorUserID: String of creator's uID
-            ​​​
-            description: String of description text
-            ​​​
-            images: Array of Strings containing links to each image
-            ​​​
-            isArchived: null if is archived
-            ​​​
-            projectName: String of project name
-            ​​​
-            ratings: Integer of ratings from 0-5
-            ​​​
-            tags: Array of strings of where each string is a tag
-            ​​​
-            technologies: Array of strings of where each string is a technology
-        }
-    ​
-    postsPerPage: max posts sent in this req
-    ​
-    totalPosts: total amount of posts
+    "filters": "filters given",
+    "page": "current page",
+    "posts": ["array with more post objects"],
+    "postsPerPage": "max posts sent in this req",
+    "totalPosts": "total amount of posts"
 }
 ```
-**however outputs -1 if fails**
+**however outputs -1 if fails**  
 
+Post object:
+```json 
+{
+    "id": "String of project id",​
+    "contact": "String of contact link",
+    "creatorUserID": "String of creator's uID",
+    "description": "String of description text",
+    "images": "Array of Strings containing links to each image",
+    "isArchived": "null if is not archived",
+    "projectName": "String of project name",
+    "ratings": "Integer of ratings from 0-5",
+    "tags": "Array of strings of where each string is a tag",
+    "technologies": "Array of strings of where each string is a technology"
+}
+```
 
 
 
@@ -142,34 +133,10 @@ async updatePost(postId : String, updatedProj : Object) -> int
 
 - updatedProj:  
   >the entire project that has been updated  
-  >e.g:
-```
-        {
-            id: String of project id
-​​​
-            contact: String of contact link
-            ​​​
-            creatorUserID: String of creator's uID
-            ​​​
-            description: String of description text
-            ​​​
-            images: Array of Strings containing links to each image
-            ​​​
-            isArchived: null if is archived
-            ​​​
-            projectName: String of project name
-            ​​​
-            ratings: Integer of ratings from 0-5
-            ​​​
-            tags: Array of strings of where each string is a tag
-            ​​​
-            technologies: Array of strings of where each string is a technology
-        }
-```
 
 #### Outputs:  
-0   if request sent successfully  
--1  if request did not send successfully
+`0`   if request sent successfully  
+`-1`  if request did not send successfully
 
 
 
@@ -202,8 +169,117 @@ async createPost(projName : String, projDesc : String, projMakerId : String, pro
 Outputs the data portion of the api call which should be in the format below
 ```json
 {
-    status: String success or faliure
-    insertedProjectWithID: String of Uid of project
+    "status": "String success or faliure",
+    "insertedProjectWithID": "String of Uid of project"
 }
 ```
 
+
+### Delete Post
+```jsx
+async deletePosts(postId:String) -> Int
+```
+
+#### Parameters:  
+
+- postId: String  
+  Id of post want to delete  
+
+    
+
+#### Outputs:  
+returns  
+`0` is successfully deleted and   
+`-1` if failed
+
+
+
+### Get Users
+```jsx
+async getUsers(options: Object) -> Object
+```
+
+#### Parameters:  
+
+- options: Object  
+  the filters for the api call  
+  e.g `{email:"johndoe@example.com"}`  
+
+    
+
+#### Outputs:  
+returns  
+Object is successfully deleted and   
+`-1` if failed  
+Object returned:  
+**(TODO)**  
+
+
+### Update Posts
+```jsx
+async updateUser(userId: String, updatedUser: Object) -> int
+```
+
+#### Parameters:  
+
+- userId:  
+  >the Id of the user you want to update  
+  e.g `{email:"johndoe@example.com"}` 
+
+- updatedUser:  
+  >the entire user that has been updated  
+
+#### Outputs:  
+`0`   if request sent successfully  
+`-1`  if request did not send successfully
+
+
+
+### Create User
+```jsx
+async createUser(userNick, userName, userEmail) -> Object
+```
+
+#### Parameters:  
+
+- userNick: String  
+  Username of user
+
+- userName: String  
+  Actual name of user  
+
+- userEmail: String  
+  Email of user  
+
+
+#### Outputs:  
+(TODO!!)
+
+### Create Image Urls
+```jsx
+async createImgUrl(images:<Array>???) -> <Array>String
+```
+#### Parameters
+- images: <Array>???  
+  ????
+
+#### Output
+Array of String each containing the URL for the corresponding image
+
+
+
+
+
+### Send Email
+```jsx
+async sendEmail(email:Object) -> Int
+```
+
+#### Parameters:  
+
+- email: Object  
+  Object contaning 2 items: `subject` and `content` which are the respective subject and content for email that is sent to us
+
+#### Outputs:  
+`0` if successful
+`-1` if unsuccessful 
