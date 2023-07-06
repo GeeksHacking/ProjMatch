@@ -20,6 +20,7 @@ class PMApi {
 		}
 		try {
 			const { data } = await axios.get(`${this.baseUrl}/posts${querystr}`);
+	console.log(data)
 			return data;
 		} catch (err) {
 			throw new Error(`failed to get posts with err:\n${err}`);
@@ -57,6 +58,7 @@ class PMApi {
 				technologies: projTech,
 				images: projImg,
 			});
+	console.log(data)
 			return data;
 		} catch (err) {
 			throw new Error(`failed to create posts with err:\n${err}`);
@@ -81,6 +83,7 @@ class PMApi {
 		}
 		try {
 			const { data } = await axios.get(`${this.baseUrl}/users${querystr}`);
+	console.log(data)
 			return data;
 		} catch (err) {
 			console.log(
@@ -109,6 +112,7 @@ class PMApi {
 				regEmail: userEmail,
 				regPhone: 0,
 			});
+	console.log(data)
 			return data;
 		} catch (err) {
 			console.log(`failed to create user with err:\n${err}`);
@@ -120,6 +124,7 @@ class PMApi {
 			const { data } = await axios.post(`${this.baseUrl}/images`, images, {
 				"Content-Type": "multipart/form-data",
 			});
+	console.log(data)
 			return data;
 		} catch (err) {
 			console.log(`failed to create img with err:\n${err}`);

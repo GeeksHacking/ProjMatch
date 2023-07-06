@@ -46,11 +46,14 @@ export default function Page{
 Hence the entire code would look like so
 ```jsx
 import PMApi from "@/components/PMApi/PMApi";
+
+...
+
 let api;
 
 export default function Page{
 
-    (declarations)
+    # declarations
 
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token");
@@ -62,15 +65,21 @@ export default function Page{
             api = new PMApi(authToken);
         }
     }, []);getPosts
+    
+    # call the api anywhere
 
     ...
 }
 ```
 ***
 # Endpoints
+
+## Posts
 In general endpoints will return -1 if it fails and the requested data or 0 if pass
 ## Get Posts
-> `async getPosts(options:object = false) -> Object`  
+```jsx
+async getPosts(options:object = false) -> Object
+```  
 
 ### Parameters:  
 
@@ -81,22 +90,120 @@ In general endpoints will return -1 if it fails and the requested data or 0 if p
 ### Outputs:  
 Outputs the data portion of the api call which should be in the format below
 ```json
-(TODO)
+{
+    filters: filters given
+    ​
+    page: current page
+    ​
+    posts: array with more post objects
+        Post{
+            id: String of project id
+​​​
+            contact: String of contact link
+            ​​​
+            creatorUserID: String of creator's uID
+            ​​​
+            description: String of description text
+            ​​​
+            images: Array of Strings containing links to each image
+            ​​​
+            isArchived: null if is archived
+            ​​​
+            projectName: String of project name
+            ​​​
+            ratings: Integer of ratings from 0-5
+            ​​​
+            tags: Array of strings of where each string is a tag
+            ​​​
+            technologies: Array of strings of where each string is a technology
+        }
+    ​
+    postsPerPage: max posts sent in this req
+    ​
+    totalPosts: total amount of posts
+}
 ```
-## Update Posts
-> `async getPosts(options:object = false) -> Object`  
+**however outputs -1 if fails**
 
-### Parameters:  
 
-- options:  
-  the filters for the api call  
-  e.g `{email:"johndoe@example.com"}`  
 
-### Outputs:  
+
+
+### Update Posts
+```jsx
+async updatePost(postId : String, updatedProj : Object) -> int
+```
+
+#### Parameters:  
+
+- postId:  
+  >the Id of the post you want to update  
+  e.g `{email:"johndoe@example.com"}` 
+
+- updatedProj:  
+  >the entire project that has been updated  
+  >e.g:
+```
+        {
+            id: String of project id
+​​​
+            contact: String of contact link
+            ​​​
+            creatorUserID: String of creator's uID
+            ​​​
+            description: String of description text
+            ​​​
+            images: Array of Strings containing links to each image
+            ​​​
+            isArchived: null if is archived
+            ​​​
+            projectName: String of project name
+            ​​​
+            ratings: Integer of ratings from 0-5
+            ​​​
+            tags: Array of strings of where each string is a tag
+            ​​​
+            technologies: Array of strings of where each string is a technology
+        }
+```
+
+#### Outputs:  
+0   if request sent successfully  
+-1  if request did not send successfully
+
+
+
+
+### Create Posts
+```jsx
+async createPost(projName : String, projDesc : String, projMakerId : String, projContact : String, projTags : <Array> String, projTech : <Array>String, projImg : <Array>String) -> Object
+```
+
+#### Parameters:  
+
+- projName: String  
+  Name of the project  
+
+- projDesc: String  
+  Description of the project  
+
+- projMakerId: String  
+  uId of the creator of project  
+
+- projContact: String  
+  link to contact the person by
+
+- projTags : <Array> String  
+  link to contact the person by
+    
+    
+
+#### Outputs:  
 Outputs the data portion of the api call which should be in the format below
 ```json
-(TODO)
+{
+    status: String success or faliure
+    insertedProjectWithID: String of Uid of project
+}
 ```
-
-
 
