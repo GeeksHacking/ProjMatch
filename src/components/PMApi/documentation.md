@@ -44,6 +44,12 @@ export default function Page{
     ...
 }
 ```
+To call the api, you can use `.then()` to receive and use the data like so:
+```jsx
+    api.getPosts({email:"johnDoe@example.com"}).then(function (data){
+        // do things with data
+    })
+```  
 Hence the entire code would look like so
 ```jsx
 import PMApi from "@/components/PMApi/PMApi";
@@ -54,7 +60,7 @@ let api;
 
 export default function Page{
 
-    # declarations
+    // declarations
 
     useEffect(() => {
         const authToken = localStorage.getItem("authorisation_token");
@@ -65,18 +71,22 @@ export default function Page{
         } else {
             api = new PMApi(authToken);
         }
-    }, []);getPosts
+        // example api call
+        api.getPosts({email:"johnDoe@example.com"}).then(function (data){
+            setUser(data)
+        })
+    }, []);
     
-    # call the api anywhere
+    // call the api anywhere
 
     ...
 }
 ```
 ***
-# Endpoints
-
+# Endpoints  
+In general endpoints will return `-1` if it fails
 ## Posts
-In general endpoints will return `-1` if it fails and the requested data or `0` if pass
+
 ## Get Posts
 ```jsx
 async getPosts(options:object = false) -> Object
@@ -192,7 +202,8 @@ returns
 `0` is successfully deleted and   
 `-1` if failed
 
-
+***
+## Users
 
 ### Get Users
 ```jsx
@@ -215,7 +226,7 @@ Object returned:
 **(TODO)**  
 
 
-### Update Posts
+### Update User
 ```jsx
 async updateUser(userId: String, updatedUser: Object) -> int
 ```
@@ -268,7 +279,8 @@ Array of String each containing the URL for the corresponding image
 
 
 
-
+***
+## Email
 
 ### Send Email
 ```jsx
