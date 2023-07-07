@@ -23,7 +23,6 @@ const MaxSideNav = () => {
 			const API_URL = process.env.API_URL;
 			api.getUsers({ email: user.email }).then((res) => {
 				if (res != -1) {
-					console.log(res);
 					setUserInfo(res.users[0]);
 				}
 			});
@@ -35,27 +34,27 @@ const MaxSideNav = () => {
 		{
 			Page: "Home",
 			IconPath: "/NavBarIcons/IconsHome.svg",
-			PageLink: "/Main/Home",
+			PageLink: "/Home",
 		},
 		{
 			Page: "Search",
 			IconPath: "/NavBarIcons/IconsSearch.svg",
-			PageLink: "/Main/SearchPage",
+			PageLink: "/Search",
 		},
 		{
 			Page: "Saved",
 			IconPath: "/NavBarIcons/IconsSaved.svg",
-			PageLink: "/Users/SavedProjects",
+			PageLink: "/Saved",
 		},
 		{
 			Page: "Settings",
 			IconPath: "/NavBarIcons/IconsSettings.svg",
-			PageLink: "/Settings/SettingsPage",
+			PageLink: "/Settings",
 		},
 		{
 			Page: "Create",
 			IconPath: "/NavBarIcons/IconsCreate.svg",
-			PageLink: "/Project/CreateProject",
+			PageLink: "/CreateProject",
 		},
 	];
 
@@ -86,21 +85,21 @@ const MaxSideNav = () => {
 					</span>
 				</Link>
 				<div className={`mt-10 space-y-4`}>
-					<ul className={`space-y-4`} key={Math.random()}>
-						{navOptions.map((option) =>
+					<div className={`space-y-4`}>
+						{navOptions.map((option, index) =>
 							option.Page != "Create" ? (
-								<SideNavOptn option={option} key={Math.random()} />
+								<SideNavOptn option={option} key={index} />
 							) : (
 								<></>
 							)
 						)}
-					</ul>
+					</div>
 				</div>
 
 				<div className={`mt-auto space-y-6 p-3`}>
 					<Link
 						className={`flex items-center space-x-4 bg-logo-blue text-light-blue ${styles.create_button} h-fit rounded-lg`}
-						href="/Project/CreateProject"
+						href="/Create"
 					>
 						<img
 							src="/NavBarIcons/IconsCreate.svg"
@@ -117,7 +116,7 @@ const MaxSideNav = () => {
 
 					<Link
 						className={`flex flex-row items-center space-x-2`}
-						href={"/Users/ProfilePage?id=" + userInfo._id}
+						href={"/Profile?id=" + userInfo._id}
 					>
 						<img
 							src={userInfo.userDat.profilePic}

@@ -1,9 +1,6 @@
 import SideNav from "@/components/SideNav/SideNav";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import Link from "next/link";
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
-import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PMApi from "@/components/PMApi/PMApi";
 let api = 0;
@@ -80,35 +77,10 @@ export default function ProjectPage() {
 		return <></>;
 	}
 
-	const deleteProject = async (authToken, id) => {
-		const API_URL = process.env.API_URL;
-		var apiOptions = {
-			method: "DELETE",
-			url: `${API_URL}/posts`,
-			headers: {
-				Authorization: `Bearer ${authToken}`,
-			},
-			data: {
-				id: id,
-			},
-		};
-
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				if (res.status == 200) {
-				} else {
-					throw `Status ${res.status}, ${res.statusText}`;
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get User Existance with: ", err);
-			});
-	};
-
 	const handleDelete = () => {
 		api.deletePosts(id);
-		router.push("http://localhost:3000/Main/Home");
+		router.push(`
+		/Home`);
 	};
 
 	const handleSavedClick = () => {
@@ -140,7 +112,7 @@ export default function ProjectPage() {
 	const handleToolTip = () => {
 		setShowShareToolTip(true);
 		navigator.clipboard.writeText(
-			"http://localhost:3000/Project/ProjectPage?id=" + post._id
+			`${process.env.AUTH0_BASE_URL}/Project?id=${post._id}`
 		);
 	};
 
@@ -160,8 +132,9 @@ export default function ProjectPage() {
 			subject: `[ProjMatch] Report on Project '${post.projectName}'`,
 			text: `Reporter Name: ${reporterName}\nReporter ID: ${reporterID}\nProject ID: ${projectID}\n\nReport: \n${reportData}`,
 		};
-		api.sendEmail(emailData.subject,emailData.text).then(function (data) {
-			if (data == 0) {
+
+		api.postEmail(emailData).then(function (res) {
+			if (res.status == 200) {
 				setShowPopup(false);
 				setShowDoneReport(true);
 			} else {
@@ -230,7 +203,7 @@ export default function ProjectPage() {
 										className="rounded-md bg-edit-green px-2 py-1 text-white"
 										onClick={() =>
 											router.push(
-												`http://localhost:3000/Project/EditProject?id=${post._id}`
+												`${process.env.AUTH0_BASE_URL}/Edit?id=${post._id}`
 											)
 										}
 									>

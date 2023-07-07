@@ -1,10 +1,7 @@
 import SideNav from "@/components/SideNav/SideNav";
 import PMApi from "@/components/PMApi/PMApi";
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
-import Link from "next/link";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
 import approvedTags from "src/tags.json";
 let api = 0;
@@ -155,7 +152,7 @@ export function Project({ post }) {
 	return (
 		<a
 			className="relative z-10 flex aspect-[4/3] w-full flex-col items-center justify-center rounded-lg"
-			href={"/Project/ProjectPage?id=" + post._id}
+			href={"/Project?id=" + post._id}
 		>
 			<div className="absolute bottom-0 z-10 flex h-1/4 w-full flex-col items-start justify-center rounded-b-lg bg-white/[0.5] px-4">
 				<h3 className="text-xl font-semibold">{post.projectName}</h3>
