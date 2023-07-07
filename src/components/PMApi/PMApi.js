@@ -1,4 +1,3 @@
-import { data } from "autoprefixer";
 import axios from "axios";
 class PMApi {
 	constructor(authToken) {
@@ -21,6 +20,7 @@ class PMApi {
 		}
 		try {
 			const { data } = await axios.get(`${this.baseUrl}/posts${querystr}`);
+	console.log(data)
 			return data;
 		} catch (err) {
 			throw new Error(`failed to get posts with err:\n${err}`);
@@ -49,7 +49,7 @@ class PMApi {
 		projImg
 	) {
 		try {
-			const res = await axios.post(`${this.baseUrl}/posts`, {
+			const { data } = await axios.post(`${this.baseUrl}/posts`, {
 				projectName: projName,
 				description: projDesc,
 				creatorUserID: projMakerId,
@@ -58,7 +58,8 @@ class PMApi {
 				technologies: projTech,
 				images: projImg,
 			});
-			return res.data;
+	console.log(data)
+			return data;
 		} catch (err) {
 			throw new Error(`failed to create posts with err:\n${err}`);
 			return -1;
@@ -82,6 +83,7 @@ class PMApi {
 		}
 		try {
 			const { data } = await axios.get(`${this.baseUrl}/users${querystr}`);
+	console.log(data)
 			return data;
 		} catch (err) {
 			console.log(
@@ -90,7 +92,6 @@ class PMApi {
 			return -1;
 		}
 	}
-
 	async updateUser(userId, updatedUser) {
 		try {
 			await axios.put(`${this.baseUrl}/users`, {
@@ -111,6 +112,7 @@ class PMApi {
 				regEmail: userEmail,
 				regPhone: 0,
 			});
+	console.log(data)
 			return data;
 		} catch (err) {
 			console.log(`failed to create user with err:\n${err}`);
@@ -122,18 +124,22 @@ class PMApi {
 			const { data } = await axios.post(`${this.baseUrl}/images`, images, {
 				"Content-Type": "multipart/form-data",
 			});
+	console.log(data)
 			return data;
 		} catch (err) {
 			console.log(`failed to create img with err:\n${err}`);
 			return -1;
 		}
 	}
-	async postEmail(email) {
+	async sendEmail(subject,content) {
 		try {
-			const { res } = await axios.post(`${this.baseUrl}/email`, email);
-			return res;
+			await axios.post(`${this.baseUrl}/email`, {
+				subject: subject,
+				text: content,
+			});
+			return 0;
 		} catch (err) {
-			console.log(`failed to post email with err:\n${err}`);
+			console.log(`failed to create img with err:\n${err}`);
 			return -1;
 		}
 	}
