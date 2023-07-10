@@ -100,7 +100,7 @@ const LandingHeaderBar = () => {
 				client_secret: process.env.AUTH0_CLIENT_SECRET,
 				code: accessToken,
 				audience: process.env.AUTH0_AUDIENCE,
-				redirect_uri: process.env.AUTH0_BASE_URL + "/Main/Home",
+				redirect_uri: process.env.AUTH0_BASE_URL + "/Home",
 			}),
 		};
 
