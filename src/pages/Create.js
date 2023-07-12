@@ -17,30 +17,32 @@ export default function CreateProject() {
 	// State Variables
 	const { user, error, isLoading } = useUser(); // Auth0 User
 	if (isLoading) return <div>Loading...</div>; // Check if data is still being loaded
-	
-	const [ pmUser, setPMUser ] = useState({})
+
+	const [pmUser, setPMUser] = useState({});
 	const [projectImages, setProjectImages] = useState([]);
 	const [tagError, setTagError] = useState("");
 	const [selectedTags, setSelectedTags] = useState([]);
 	const [tagQuery, setTagQuery] = useState("");
 
 	// Initialise new API Object
-	useEffect(()=>{
-        const authToken = localStorage.getItem("authorisation_token")
-        if (authToken !== undefined){
-            api = new PMApi(authToken)
-        } else {
-            console.error("Could not initialise API Wrapper, Auth Token returned undefined")
-        }
-    },[])
+	useEffect(() => {
+		const authToken = localStorage.getItem("authorisation_token");
+		if (authToken !== undefined) {
+			api = new PMApi(authToken);
+		} else {
+			console.error(
+				"Could not initialise API Wrapper, Auth Token returned undefined"
+			);
+		}
+	}, []);
 
 	// Get user information
 	useEffect(() => {
 		api.getUsers({ email: user.email }).then((res) => {
-			setPMUser(res.users[0])
-		})
-	}, [user])
-	
+			setPMUser(res.users[0]);
+		});
+	}, [user]);
+
 	// Grab Data from Image Picker
 	const dataFromPicker = (data) => {
 		setProjectImages(data);
@@ -64,31 +66,42 @@ export default function CreateProject() {
 			? approvedTags
 			: approvedTags.filter((tag) =>
 					tag.toLowerCase().includes(tagQuery.toLowerCase())
-			);
+			  );
 
 	// Process and Send Data
 	const handleSubmission = (event) => {
-		event.preventDefault()
-        
+		event.preventDefault();
+
 		if (localStorage.getItem("authorisation_token") !== undefined) {
 			const project = {
-				"projectName": event.target.projectName.value,
-				"description": event.target.projectDescription.value,
-				"creatorUserID": pmUser._id,
-				"tags": selectedTags,
-				"technologies": event.target.projectTech.value.replace(/\s/g, '').split(','),
-				"images": projectImages,
-				"contact": event.target.projectContact.value,
-			}
+				projectName: event.target.projectName.value,
+				description: event.target.projectDescription.value,
+				creatorUserID: pmUser._id,
+				tags: selectedTags,
+				technologies: event.target.projectTech.value
+					.replace(/\s/g, "")
+					.split(","),
+				images: projectImages,
+				contact: event.target.projectContact.value,
+			};
 
-			api.createPost(project.projectName, project.description, project.creatorUserID, project.contact, project.tags, project.technologies, project.images)
+			api
+				.createPost(
+					project.projectName,
+					project.description,
+					project.creatorUserID,
+					project.contact,
+					project.tags,
+					project.technologies,
+					project.images
+				)
 				.then((res) => {
 					if (res != -1 && res.insertedProjectWithID !== "") {
-						router.push(`Project?id=${res.insertedProjectWithID}`)
+						router.push(`Project?id=${res.insertedProjectWithID}`);
 					}
-				})
+				});
 		}
-	}
+	};
 
 	return (
 		<div className="absolute flex h-full w-full flex-col items-center justify-start">
@@ -115,12 +128,12 @@ export default function CreateProject() {
 					<p className="mt-1 text-lg">
 						Include important details about what your project is about and more!
 					</p>
-					<input
+					<textarea
 						type="text"
 						id="projectDescription"
 						name="projectDescription"
 						placeholder="Enter your project’s description!"
-						className="h-32 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
+						className="h-32 w-[70%] resize-none rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
 					/>
 
 					<h2 className="mt-10 text-3xl font-medium">Add Images</h2>
@@ -156,8 +169,8 @@ export default function CreateProject() {
 						multiple
 						name=""
 					>
-						<div className="flex h-11 w-[70%] flex-row rounded-lg border-2 border-[#D3D3D3] px-2">
-							<ul className="flex flex-row items-center justify-start">
+						<div className="flex h-auto w-[70%] flex-col gap-2 rounded-lg border-[#D3D3D3]">
+							<ul className="mt-1 flex flex-row items-center justify-start">
 								{selectedTags.map((tag) => (
 									<li
 										key={Math.random()}
@@ -170,13 +183,13 @@ export default function CreateProject() {
 								))}
 							</ul>
 							<Combobox.Input
-								className="ml-2 w-full focus:outline-0"
+								className="h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2 focus:outline-0"
 								placeholder="Enter your project's tags!"
 								onChange={(e) => setTagQuery(e.target.value)}
 							/>
 						</div>
 						<div className="relative w-[70%]">
-							<Combobox.Options className="absolute mt-1 w-full rounded-lg border-2 border-logo-blue bg-white">
+							<Combobox.Options className="absolute w-full rounded-lg border-2 border-logo-blue bg-white p-2">
 								{filteredTags.length === 0 && tagQuery !== "" ? (
 									<p>Nothing found</p>
 								) : (
@@ -185,7 +198,7 @@ export default function CreateProject() {
 											<Combobox.Option
 												key={Math.random()}
 												value={tag}
-												className="flex h-8 flex-row items-center rounded-lg bg-white p-2"
+												className="flex h-8 flex-row items-center rounded-lg bg-white"
 											>
 												<span className="text-base font-light">{tag}</span>
 											</Combobox.Option>

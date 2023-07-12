@@ -78,9 +78,9 @@ export default function ProjectPage() {
 	}
 
 	const handleDelete = () => {
+		console.log(id);
 		api.deletePosts(id);
-		router.push(`
-		/Home`);
+		router.push(`/Home`);
 	};
 
 	const handleSavedClick = () => {
