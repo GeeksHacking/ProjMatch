@@ -122,7 +122,7 @@ export default function EditProject() {
 			.split(",");
 
 		let projImages = [];
-		if (imagesData === undefined) {
+		if (imagesData === undefined || imagesData.length === 0) {
 			projImages = post.images;
 		} else {
 			projImages = imagesData;
