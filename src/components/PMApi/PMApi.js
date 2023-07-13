@@ -140,5 +140,19 @@ class PMApi {
 			return -1;
 		}
 	}
+
+	async deleteUsers(userId) {
+		try {
+			await axios.delete(`${this.baseUrl}/users`, {
+				data: {
+					id: userId,
+				},
+			});
+			return 0;
+		} catch (err) {
+			console.error(`failed to delete users with err:\n${err}`);
+			return -1;
+		}
+	}
 }
 export default PMApi;
