@@ -4,6 +4,7 @@ import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
 let api = 0;
 
 export default function EditProject() {
@@ -23,6 +24,7 @@ export default function EditProject() {
 	const [imagesData, setImagesData] = useState();
 
 	const { user, error, isLoading } = useUser();
+
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		if (authToken !== undefined) {
@@ -44,8 +46,71 @@ export default function EditProject() {
 		}
 	}, [id]);
 
+	// Send POST Request to store images
+	const createImageURL = async (project) => {
+		var formData = new FormData()
+		var proj = project
+
+		for (let i = 0; i < project.images.length; i++) {
+			try {
+				if (!project.images[i].includes("projmatch-images.s3.ap-southeast-1.amazonaws.com")) {
+					formData.append("files", project.images[i])
+					proj.images.splice(proj.images.indexOf(project.images[i]))
+				}
+			} catch (e) {}
+		}
+		formData.append("projectName", project.projectName)
+		formData.append("creatorUserID", user._id)
+
+		const apiOptions = {
+			method: "POST",
+			url: `${process.env.API_URL}/images`,
+			headers: {
+				"Authorization": `Bearer ${localStorage.getItem("authorisation_token")}`,
+				"Content-Type": "multipart/form-data"
+			},
+			data: formData
+		}
+
+		console.log(apiOptions)
+
+		axios.request(apiOptions).then(function (res) {
+			if (res.status == 200) {
+
+				const imageURLs = proj.images.concat(res.data.imageURL)
+				project.images = imageURLs
+
+				let tempUpdatedProj = {};
+				if (project !== undefined) {
+					const keys = [
+						"projectName",
+						"description",
+						"contact",
+						"tags",
+						"technologies",
+						"images",
+					];
+					for (let i = 0; i < keys.length; i++) {
+						if (JSON.stringify(post[keys[i]]) !== JSON.stringify(project[keys[i]])) {
+							tempUpdatedProj[keys[i]] = project[keys[i]];
+						}
+					}
+				}
+
+
+				if (id !== undefined) {
+					api.updatePost(id, tempUpdatedProj).then(function (res) {
+						if (res != -1) {
+							router.push(`Project?id=${id}`);
+						}
+					});
+				}
+			}
+		})
+	}
+
 	// Handle Form Submission
-	const handleSubmission = (event) => {
+	const handleSubmission = async (event) => {
 		event.preventDefault();
 
 		const projectName = event.target.projectName.value;
@@ -75,29 +140,7 @@ export default function EditProject() {
 			technologies: projectTech,
 		};
 
-		let tempUpdatedProj = {};
-		if (temp !== undefined) {
-			const keys = [
-				"projectName",
-				"description",
-				"contact",
-				"tags",
-				"technologies",
-				"images",
-			];
-			for (let i = 0; i < keys.length; i++) {
-				if (JSON.stringify(post[keys[i]]) !== JSON.stringify(temp[keys[i]])) {
-					tempUpdatedProj[keys[i]] = temp[keys[i]];
-				}
-			}
-		}
-		if (id !== undefined) {
-			api.updatePost(id, tempUpdatedProj).then(function (res) {
-				if (res != -1) {
-					router.push(`Project?id=${id}`);
-				}
-			});
-		}
+		await createImageURL(temp)
 	};
 
 	if (isLoading) return <div>Loading...</div>;
