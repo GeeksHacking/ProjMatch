@@ -478,7 +478,7 @@ export default function SettingsPage() {
 													userData.settings.web_settings.theme === "dark"
 														? "translate-x-9 bg-black"
 														: "translate-x-1 bg-white"
-												} inline-block flex h-6 w-6 transform items-center justify-center rounded-full transition`}
+												} flex h-6 w-6 transform items-center justify-center rounded-full transition`}
 											>
 												<img
 													className="h-1/2"

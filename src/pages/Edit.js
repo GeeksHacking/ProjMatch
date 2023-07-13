@@ -5,6 +5,8 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import approvedTags from "src/tags.json";
+import { Combobox } from "@headlessui/react";
 let api = 0;
 
 export default function EditProject() {
@@ -22,6 +24,8 @@ export default function EditProject() {
 		isArchived: false,
 	});
 	const [imagesData, setImagesData] = useState([]);
+	const [selectedTags, setSelectedTags] = useState([]);
+	const [tagQuery, setTagQuery] = useState("");
 
 	const { user, error, isLoading } = useUser();
 
@@ -35,6 +39,10 @@ export default function EditProject() {
 	}, []);
 
 	useEffect(() => {
+		setSelectedTags(post.tags);
+	}, [post]);
+
+	useEffect(() => {
 		if (id !== undefined) {
 			api.getPosts({ id: id }).then(function (res) {
 				if (res !== -1) {
@@ -45,6 +53,13 @@ export default function EditProject() {
 			console.error;
 		}
 	}, [id]);
+
+	const filteredTags =
+		tagQuery === ""
+			? approvedTags
+			: approvedTags.filter((tag) =>
+					tag.toLowerCase().includes(tagQuery.toLowerCase())
+			  );
 
 	// Send POST Request to store images
 	const createImageURL = async (project) => {
@@ -113,9 +128,7 @@ export default function EditProject() {
 		const projectName = event.target.projectName.value;
 		const projectDescription = event.target.projectDescription.value;
 		const projectContact = event.target.projectContact.value;
-		const projectTags = event.target.projectTags.value
-			.replace(/\s/g, "")
-			.split(",");
+		const projectTags = selectedTags;
 		//const projectImages = [...event.target.projectImages.files]
 		const projectTech = event.target.projectTech.value
 			.replace(/\s/g, "")
@@ -180,7 +193,7 @@ export default function EditProject() {
 					<textarea
 						defaultValue={post.description}
 						name="projectDescription"
-						className="h-32 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
+						className="h-32 w-[70%] resize-none rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
 					></textarea>
 
 					<h2 className="mt-10 text-3xl font-medium">Add Images</h2>
@@ -202,13 +215,73 @@ export default function EditProject() {
 					<p className="mt-1 text-lg">
 						Add tags to help users find your project!
 					</p>
-					<input
-						type="text"
-						disabled={post.tags.join(", ") === "Loading..." ? true : false}
-						name="projectTags"
-						defaultValue={`${post.tags.join(", ")}`}
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+
+					<Combobox
+						value={selectedTags}
+						onChange={setSelectedTags}
+						multiple
+						name=""
+					>
+						<div className="flex h-auto w-[70%] flex-col gap-1">
+							<ul className="flex h-auto flex-row items-center justify-start">
+								{selectedTags.map((tag) => (
+									<li
+										key={Math.random()}
+										className="mx-1 flex h-7 w-fit items-center justify-between gap-2 rounded-full bg-black px-4"
+									>
+										<span className="text-base font-light text-white">
+											{tag}
+										</span>
+										<button className="text-white" type="button">
+											<img
+												src="/IconsClose.svg"
+												onClick={() =>
+													setSelectedTags(selectedTags.filter((t) => t !== tag))
+												}
+											></img>
+										</button>
+									</li>
+								))}
+							</ul>
+							<Combobox.Input
+								className="h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2 focus:outline-0"
+								placeholder="Enter your project's tags!"
+								onChange={(e) => setTagQuery(e.target.value)}
+							/>
+						</div>
+
+						<div className="relative w-[70%]">
+							<Combobox.Options
+								className={`absolute top-0 mt-1 w-full rounded-lg border-2 border-logo-blue bg-white`}
+							>
+								{filteredTags.length === 0 && tagQuery !== "" ? (
+									<p className="p-2">Nothing found</p>
+								) : (
+									filteredTags.map((tag) =>
+										selectedTags.indexOf(tag) === -1 ? (
+											<Combobox.Option
+												key={Math.random()}
+												value={tag}
+												className="flex h-8 flex-row items-center rounded-lg bg-white p-2"
+											>
+												<span className="text-base font-light">{tag}</span>
+											</Combobox.Option>
+										) : (
+											<Combobox.Option
+												key={Math.random()}
+												value={tag}
+												className="flex h-8 flex-row items-center bg-logo-blue p-2"
+											>
+												<span className="text-base font-bold text-white">
+													{tag}
+												</span>
+											</Combobox.Option>
+										)
+									)
+								)}
+							</Combobox.Options>
+						</div>
+					</Combobox>
 
 					<h2 className="mt-10 text-3xl font-medium">Technologies</h2>
 					<p className="mt-1 text-lg">

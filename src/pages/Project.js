@@ -271,20 +271,20 @@ export default function ProjectPage() {
 										<img
 											src="/NavBarIcons/IconsSaved.svg"
 											alt="logo"
-											className="w-full w-full flex-shrink-0"
+											className="w-full flex-shrink-0"
 										></img>
 									) : (
 										<img
 											src="/NavBarIcons/IconsSaved.svg"
 											alt="logo"
-											className="w-full w-full flex-shrink-0 invert"
+											className="w-full flex-shrink-0 invert"
 										></img>
 									)
 								) : (
 									<img
 										src="/NavBarIcons/IconsSaved.svg"
 										alt="logo"
-										className="w-full w-full flex-shrink-0 invert"
+										className="w-full flex-shrink-0 invert"
 									></img>
 								)}
 							</button>
