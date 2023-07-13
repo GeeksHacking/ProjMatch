@@ -24,7 +24,7 @@ const ImagePicker = ({ images, sendToParent }) => {
 
         let temp = imgs.concat(fileURLs)
         setImgs(temp)
-        sendToParent(temp)
+        sendToParent(imgs.concat(rawFiles))
     }
 
     const deleteImage = (img) => {

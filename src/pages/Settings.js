@@ -13,11 +13,24 @@ export default function SettingsPage() {
 	const router = useRouter();
 	const [popupDisplay, setPopupDisplay] = useState(false);
 	const [userData, setUserData] = useState({});
+	const [showDeletePopup, setShowDeletePopup] = useState(false);
 
 	const handleSignOut = (e) => {
 		e.preventDefault();
 		localStorage.removeItem("authorisation_token");
 		router.push(`${process.env.AUTH0_BASE_URL}/api/auth/logout`);
+	};
+
+	const handleAccountDelete = (e) => {
+		e.preventDefault();
+
+		api.deleteUsers(projMatchUser._id).then((res) => {
+			if (res != -1) {
+				localStorage.removeItem("authorisation_token");
+			}
+		});
+
+		router.push(`/Landing`);
 	};
 
 	const handleSubmit = (e) => {
@@ -198,6 +211,40 @@ export default function SettingsPage() {
 
 	return (
 		<div className="absolute flex h-full w-full flex-col">
+			<Dialog
+				className="absolute left-1/2 top-1/2 z-10 flex h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 flex-col items-center bg-light-blue p-6 drop-shadow-lg"
+				open={showDeletePopup}
+				onClose={() => setShowDeletePopup(false)}
+			>
+				<Dialog.Panel class="flex h-full w-full flex-col items-center">
+					<Dialog.Title className="shrink text-center text-2xl">
+						Delete Account
+					</Dialog.Title>
+					<Dialog.Description className="texl-lg shrink text-center italic opacity-60">
+						This will permanently delete your account.
+					</Dialog.Description>
+
+					<p className="mb-auto flex w-10/12 grow items-center justify-center text-center">
+						Are you sure you want to delete your account? This action cannot be
+						undone. All of your data will be permanently deleted.
+					</p>
+
+					<div className="mb-0 flex h-fit w-full shrink flex-row justify-around">
+						<button
+							className="h-11 w-4/12 rounded-md bg-delete-red text-xl font-bold text-white drop-shadow-md"
+							onClick={(e) => handleAccountDelete(e)}
+						>
+							Delete
+						</button>
+						<button
+							className="h-11 w-4/12 rounded-md bg-logo-lblue text-xl font-bold text-white drop-shadow-md"
+							onClick={() => setShowDeletePopup(false)}
+						>
+							Cancel
+						</button>
+					</div>
+				</Dialog.Panel>
+			</Dialog>
 			<SideNav />
 			{Object.keys(projMatchUser).length !== 0 &&
 			projMatchUser.userDat.profileBanner !== "" ? (
@@ -478,7 +525,7 @@ export default function SettingsPage() {
 													userData.settings.web_settings.theme === "dark"
 														? "translate-x-9 bg-black"
 														: "translate-x-1 bg-white"
-												} inline-block flex h-6 w-6 transform items-center justify-center rounded-full transition`}
+												} flex h-6 w-6 transform items-center justify-center rounded-full transition`}
 											>
 												<img
 													className="h-1/2"
@@ -577,11 +624,12 @@ export default function SettingsPage() {
 										className="mb-20 mt-1 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
 									></input>
 
-									<input
-										type="submit"
-										value="Delete Account"
+									<button
 										className="mt-30 h-11 w-[30%] rounded-full bg-[#ED5A5A] text-xl text-white"
-									></input>
+										onClick={() => setShowDeletePopup(true)}
+									>
+										Delete Account
+									</button>
 									<input
 										type="submit"
 										value="Sign Out On All Devices"

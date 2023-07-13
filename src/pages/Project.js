@@ -3,6 +3,9 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PMApi from "@/components/PMApi/PMApi";
+import { Dialog } from "@headlessui/react";
+import { set } from "animejs";
+
 let api = 0;
 
 export default function ProjectPage() {
@@ -17,6 +20,7 @@ export default function ProjectPage() {
 	const [showShareToolTip, setShowShareToolTip] = useState(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const [showDoneReport, setShowDoneReport] = useState(false);
+	const [showDeletePopup, setShowDeletePopup] = useState(false);
 
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
@@ -78,9 +82,9 @@ export default function ProjectPage() {
 	}
 
 	const handleDelete = () => {
+		console.log(id);
 		api.deletePosts(id);
-		router.push(`
-		/Home`);
+		router.push(`/Home`);
 	};
 
 	const handleSavedClick = () => {
@@ -195,7 +199,7 @@ export default function ProjectPage() {
 								<div className="space-x-3">
 									<button
 										className="rounded-md bg-delete-red px-2 py-1 text-white"
-										onClick={handleDelete}
+										onClick={() => setShowDeletePopup(true)}
 									>
 										Delete Project
 									</button>
@@ -271,20 +275,20 @@ export default function ProjectPage() {
 										<img
 											src="/NavBarIcons/IconsSaved.svg"
 											alt="logo"
-											className="w-full w-full flex-shrink-0"
+											className="w-full flex-shrink-0"
 										></img>
 									) : (
 										<img
 											src="/NavBarIcons/IconsSaved.svg"
 											alt="logo"
-											className="w-full w-full flex-shrink-0 invert"
+											className="w-full flex-shrink-0 invert"
 										></img>
 									)
 								) : (
 									<img
 										src="/NavBarIcons/IconsSaved.svg"
 										alt="logo"
-										className="w-full w-full flex-shrink-0 invert"
+										className="w-full flex-shrink-0 invert"
 									></img>
 								)}
 							</button>
@@ -361,6 +365,40 @@ export default function ProjectPage() {
 					</div>
 				</div>
 			</div>
+			<Dialog
+				className="absolute left-1/2 top-1/2 z-10 flex h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 flex-col items-center bg-light-blue p-6 drop-shadow-lg"
+				open={showDeletePopup}
+				onClose={() => setShowDeletePopup(false)}
+			>
+				<Dialog.Panel class="flex h-full w-full flex-col items-center">
+					<Dialog.Title className="shrink text-center text-2xl">
+						Delete Project
+					</Dialog.Title>
+					<Dialog.Description className="texl-lg shrink text-center italic opacity-60">
+						This will permanently delete this project.
+					</Dialog.Description>
+
+					<p className="mb-auto flex w-10/12 grow items-center justify-center text-center">
+						Are you sure you want to delete this project? This action cannot be
+						undone. All of the data will be permanently deleted.
+					</p>
+
+					<div className="mb-0 flex h-fit w-full shrink flex-row justify-around">
+						<button
+							className="h-11 w-4/12 rounded-md bg-delete-red text-xl font-bold text-white drop-shadow-md"
+							onClick={() => handleDelete()}
+						>
+							Delete
+						</button>
+						<button
+							className="h-11 w-4/12 rounded-md bg-logo-lblue text-xl font-bold text-white drop-shadow-md"
+							onClick={() => setShowDeletePopup(false)}
+						>
+							Cancel
+						</button>
+					</div>
+				</Dialog.Panel>
+			</Dialog>
 		</main>
 	);
 }

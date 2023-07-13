@@ -4,6 +4,9 @@ import ImagePicker from "@/components/ImagePicker/ImagePicker";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
+import approvedTags from "src/tags.json";
+import { Combobox } from "@headlessui/react";
 let api = 0;
 
 export default function EditProject() {
@@ -20,9 +23,12 @@ export default function EditProject() {
 		contact: ["Loading..."],
 		isArchived: false,
 	});
-	const [imagesData, setImagesData] = useState();
+	const [imagesData, setImagesData] = useState([]);
+	const [selectedTags, setSelectedTags] = useState([]);
+	const [tagQuery, setTagQuery] = useState("");
 
 	const { user, error, isLoading } = useUser();
+
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		if (authToken !== undefined) {
@@ -31,6 +37,10 @@ export default function EditProject() {
 			console.error;
 		}
 	}, []);
+
+	useEffect(() => {
+		setSelectedTags(post.tags);
+	}, [post]);
 
 	useEffect(() => {
 		if (id !== undefined) {
@@ -44,23 +54,88 @@ export default function EditProject() {
 		}
 	}, [id]);
 
+	const filteredTags =
+		tagQuery === ""
+			? approvedTags
+			: approvedTags.filter((tag) =>
+					tag.toLowerCase().includes(tagQuery.toLowerCase())
+			  );
+
+	// Send POST Request to store images
+	const createImageURL = async (project) => {
+		var formData = new FormData();
+		var proj = JSON.parse(JSON.stringify(project));
+
+		for (let i = 0; i < project.images.length; i++) {
+			if (typeof project.images[i] !== "string") {
+				formData.append("files", project.images[i]);
+				proj.images.splice(proj.images.indexOf(project.images[i]));
+			}
+		}
+
+		formData.append("projectName", project.projectName);
+		formData.append("creatorUserID", user._id);
+
+		const apiOptions = {
+			method: "POST",
+			url: `${process.env.API_URL}/images`,
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("authorisation_token")}`,
+				"Content-Type": "multipart/form-data",
+			},
+			data: formData,
+		};
+
+		axios.request(apiOptions).then(function (res) {
+			if (res.status == 200) {
+				const imageURLs = proj.images.concat(res.data.imageURL);
+				project.images = imageURLs;
+
+				let tempUpdatedProj = {};
+				if (project !== undefined) {
+					const keys = [
+						"projectName",
+						"description",
+						"contact",
+						"tags",
+						"technologies",
+						"images",
+					];
+					for (let i = 0; i < keys.length; i++) {
+						if (
+							JSON.stringify(post[keys[i]]) !== JSON.stringify(project[keys[i]])
+						) {
+							tempUpdatedProj[keys[i]] = project[keys[i]];
+						}
+					}
+				}
+
+				if (id !== undefined) {
+					api.updatePost(id, tempUpdatedProj).then(function (res) {
+						if (res != -1) {
+							router.push(`Project?id=${id}`);
+						}
+					});
+				}
+			}
+		});
+	};
+
 	// Handle Form Submission
-	const handleSubmission = (event) => {
+	const handleSubmission = async (event) => {
 		event.preventDefault();
 
 		const projectName = event.target.projectName.value;
 		const projectDescription = event.target.projectDescription.value;
 		const projectContact = event.target.projectContact.value;
-		const projectTags = event.target.projectTags.value
-			.replace(/\s/g, "")
-			.split(",");
+		const projectTags = selectedTags;
 		//const projectImages = [...event.target.projectImages.files]
 		const projectTech = event.target.projectTech.value
 			.replace(/\s/g, "")
 			.split(",");
 
 		let projImages = [];
-		if (imagesData === undefined) {
+		if (imagesData === undefined || imagesData.length === 0) {
 			projImages = post.images;
 		} else {
 			projImages = imagesData;
@@ -75,29 +150,7 @@ export default function EditProject() {
 			technologies: projectTech,
 		};
 
-		let tempUpdatedProj = {};
-		if (temp !== undefined) {
-			const keys = [
-				"projectName",
-				"description",
-				"contact",
-				"tags",
-				"technologies",
-				"images",
-			];
-			for (let i = 0; i < keys.length; i++) {
-				if (JSON.stringify(post[keys[i]]) !== JSON.stringify(temp[keys[i]])) {
-					tempUpdatedProj[keys[i]] = temp[keys[i]];
-				}
-			}
-		}
-		if (id !== undefined) {
-			api.updatePost(id, tempUpdatedProj).then(function (res) {
-				if (res != -1) {
-					router.push(`Project?id=${id}`);
-				}
-			});
-		}
+		await createImageURL(temp);
 	};
 
 	if (isLoading) return <div>Loading...</div>;
@@ -140,7 +193,7 @@ export default function EditProject() {
 					<textarea
 						defaultValue={post.description}
 						name="projectDescription"
-						className="h-32 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
+						className="h-32 w-[70%] resize-none rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
 					></textarea>
 
 					<h2 className="mt-10 text-3xl font-medium">Add Images</h2>
@@ -162,13 +215,73 @@ export default function EditProject() {
 					<p className="mt-1 text-lg">
 						Add tags to help users find your project!
 					</p>
-					<input
-						type="text"
-						disabled={post.tags.join(", ") === "Loading..." ? true : false}
-						name="projectTags"
-						defaultValue={`${post.tags.join(", ")}`}
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+
+					<Combobox
+						value={selectedTags}
+						onChange={setSelectedTags}
+						multiple
+						name=""
+					>
+						<div className="flex h-auto w-[70%] flex-col gap-1">
+							<ul className="flex h-auto flex-row items-center justify-start">
+								{selectedTags.map((tag) => (
+									<li
+										key={Math.random()}
+										className="mx-1 flex h-7 w-fit items-center justify-between gap-2 rounded-full bg-black px-4"
+									>
+										<span className="text-base font-light text-white">
+											{tag}
+										</span>
+										<button className="text-white" type="button">
+											<img
+												src="/IconsClose.svg"
+												onClick={() =>
+													setSelectedTags(selectedTags.filter((t) => t !== tag))
+												}
+											></img>
+										</button>
+									</li>
+								))}
+							</ul>
+							<Combobox.Input
+								className="h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2 focus:outline-0"
+								placeholder="Enter your project's tags!"
+								onChange={(e) => setTagQuery(e.target.value)}
+							/>
+						</div>
+
+						<div className="relative w-[70%]">
+							<Combobox.Options
+								className={`absolute top-0 mt-1 w-full rounded-lg border-2 border-logo-blue bg-white`}
+							>
+								{filteredTags.length === 0 && tagQuery !== "" ? (
+									<p className="p-2">Nothing found</p>
+								) : (
+									filteredTags.map((tag) =>
+										selectedTags.indexOf(tag) === -1 ? (
+											<Combobox.Option
+												key={Math.random()}
+												value={tag}
+												className="flex h-8 flex-row items-center rounded-lg bg-white p-2"
+											>
+												<span className="text-base font-light">{tag}</span>
+											</Combobox.Option>
+										) : (
+											<Combobox.Option
+												key={Math.random()}
+												value={tag}
+												className="flex h-8 flex-row items-center bg-logo-blue p-2"
+											>
+												<span className="text-base font-bold text-white">
+													{tag}
+												</span>
+											</Combobox.Option>
+										)
+									)
+								)}
+							</Combobox.Options>
+						</div>
+					</Combobox>
 
 					<h2 className="mt-10 text-3xl font-medium">Technologies</h2>
 					<p className="mt-1 text-lg">
