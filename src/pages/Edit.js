@@ -21,7 +21,7 @@ export default function EditProject() {
 		contact: ["Loading..."],
 		isArchived: false,
 	});
-	const [imagesData, setImagesData] = useState();
+	const [imagesData, setImagesData] = useState([]);
 
 	const { user, error, isLoading } = useUser();
 
@@ -48,37 +48,33 @@ export default function EditProject() {
 
 	// Send POST Request to store images
 	const createImageURL = async (project) => {
-		var formData = new FormData()
-		var proj = project
+		var formData = new FormData();
+		var proj = JSON.parse(JSON.stringify(project));
 
 		for (let i = 0; i < project.images.length; i++) {
-			try {
-				if (!project.images[i].includes("projmatch-images.s3.ap-southeast-1.amazonaws.com")) {
-					formData.append("files", project.images[i])
-					proj.images.splice(proj.images.indexOf(project.images[i]))
-				}
-			} catch (e) {}
+			if (typeof project.images[i] !== "string") {
+				formData.append("files", project.images[i]);
+				proj.images.splice(proj.images.indexOf(project.images[i]));
+			}
 		}
-		formData.append("projectName", project.projectName)
-		formData.append("creatorUserID", user._id)
+
+		formData.append("projectName", project.projectName);
+		formData.append("creatorUserID", user._id);
 
 		const apiOptions = {
 			method: "POST",
 			url: `${process.env.API_URL}/images`,
 			headers: {
-				"Authorization": `Bearer ${localStorage.getItem("authorisation_token")}`,
-				"Content-Type": "multipart/form-data"
+				Authorization: `Bearer ${localStorage.getItem("authorisation_token")}`,
+				"Content-Type": "multipart/form-data",
 			},
-			data: formData
-		}
-
-		console.log(apiOptions)
+			data: formData,
+		};
 
 		axios.request(apiOptions).then(function (res) {
 			if (res.status == 200) {
-
-				const imageURLs = proj.images.concat(res.data.imageURL)
-				project.images = imageURLs
+				const imageURLs = proj.images.concat(res.data.imageURL);
+				project.images = imageURLs;
 
 				let tempUpdatedProj = {};
 				if (project !== undefined) {
@@ -91,12 +87,13 @@ export default function EditProject() {
 						"images",
 					];
 					for (let i = 0; i < keys.length; i++) {
-						if (JSON.stringify(post[keys[i]]) !== JSON.stringify(project[keys[i]])) {
+						if (
+							JSON.stringify(post[keys[i]]) !== JSON.stringify(project[keys[i]])
+						) {
 							tempUpdatedProj[keys[i]] = project[keys[i]];
 						}
 					}
 				}
-
 
 				if (id !== undefined) {
 					api.updatePost(id, tempUpdatedProj).then(function (res) {
@@ -106,8 +103,8 @@ export default function EditProject() {
 					});
 				}
 			}
-		})
-	}
+		});
+	};
 
 	// Handle Form Submission
 	const handleSubmission = async (event) => {
@@ -140,7 +137,7 @@ export default function EditProject() {
 			technologies: projectTech,
 		};
 
-		await createImageURL(temp)
+		await createImageURL(temp);
 	};
 
 	if (isLoading) return <div>Loading...</div>;
