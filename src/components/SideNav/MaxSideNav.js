@@ -12,11 +12,17 @@ let api = 0;
 const MaxSideNav = () => {
 	const { user, error, isLoading } = useUser();
 	const [userInfo, setUserInfo] = useState(null);
-	useEffect(() => {
+	function setup(count=0){
+		if (count==3){
+			console.error("failed to get user even after 3 tries")
+			return
+		}
 		const authToken = localStorage.getItem("authorisation_token");
 		if (authToken === null)
+			setTimeout(setup,3000,count+1)
 			return console.error("Authorisation Token returned Null.");
 		if (authToken === undefined) {
+			setTimeout(setup,3000,count+1)
 			console.error("Authorisation Token returned Undefined.");
 		} else if (user !== undefined) {
 			api = new PMApi(authToken);
@@ -24,9 +30,14 @@ const MaxSideNav = () => {
 			api.getUsers({ email: user.email }).then((res) => {
 				if (res != -1) {
 					setUserInfo(res.users[0]);
+				}else{
+					setTimeout(setup,3000,count+1)
 				}
 			});
 		}
+	}
+	useEffect(() => {
+		
 	}, [user, setUserInfo]);
 
 	// Navigation Data
