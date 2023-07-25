@@ -72,14 +72,10 @@ export default function ProfilePage() {
 			)}
 			<div className="absolute left-[14%] top-[10%] z-[-1] flex h-[20%] w-[70%] flex-col">
 				<div id="pfp-name" className="flex h-full w-full flex-row ">
-					{profileUser.userDat.profilePic !== "" ? (
 						<img
 							src={profileUser.userDat.profilePic}
-							className="rounded-full border-3 border-[#C7C7C7]"
+							className="bg-gray-950 object-cover rounded-full border-3 border-[#C7C7C7]" width="200" height="200"
 						></img>
-					) : (
-						<div className="rounded-full border-3 border-[#C7C7C7]"></div>
-					)}
 					{/* <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img> */}
 					<div className="ml-5 flex h-[90%] flex-col items-start justify-end">
 						<h1 className="text-4xl font-bold text-black">

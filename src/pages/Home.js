@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 // Dev Imports
 import { useRouter } from "next/router";
 let api = 0;
-
 export default function Home() {
 	const { user, error, isLoading } = useUser();
 	const [posts, setPosts] = useState([]);
@@ -21,18 +20,28 @@ export default function Home() {
 	let usersid = [];
 	const router = useRouter();
 
-	useEffect(() => {
+	function getAuthToken(count=0){
+		if (count == 3){
+			console.error("could not set get auth token after 3 tries")
+			return
+		}
 		const authToken = localStorage.getItem("authorisation_token");
-		if (authToken === null)
-			return console.error("Authorisation Token returned Null.");
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
+		if (authToken === null || authToken === undefined){
+			
+			setTimeout(getAuthToken,3000,count+1)
+			console.error("Authorisation Token returned Null, retrying...");
+			
+
 		} else {
 			api = new PMApi(authToken);
 			api.getPosts().then(function (res) {
 				setPostReq(res);
 			});
+		
 		}
+	}
+	useEffect(() => {
+		getAuthToken()
 	}, []);
 
 	useEffect(() => {
