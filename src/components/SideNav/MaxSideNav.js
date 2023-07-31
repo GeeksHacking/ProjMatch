@@ -146,7 +146,7 @@ const MaxSideNav = () => {
 // Side Navigation Options
 const SideNavOptn = ({ option }) => {
 	return (
-		<div className={`sidenav-btn p-5 pb-2 pb-3 pt-2 pt-3`}>
+		<div className={`sidenav-btn p-5 pb-2 pt-2`}>
 			<Link
 				className="flex items-center space-x-4 text-logo-blue"
 				href={option.PageLink}
