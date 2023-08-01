@@ -8,6 +8,7 @@ module.exports = {
 			"logo-blue": "#39529D",
 			"logo-lblue": "#779EE9",
 			"light-blue": "#C2D5F9",
+			"hover-blue": "#b2cbfa",
 			blue: "#779EE9",
 			white: "#FFFFFF",
 			black: "#000000",
@@ -45,6 +46,14 @@ module.exports = {
 				"3/4": "3/4",
 				"1/1.5": "1/1.5",
 				"1.5/1": "1.5/1",
+			},
+			animation: {
+				shine: "shine 1s",
+			},
+			keyframes: {
+				shine: {
+					"100%": { left: "125%" },
+				},
 			},
 		},
 	},
