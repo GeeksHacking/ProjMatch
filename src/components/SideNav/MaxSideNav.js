@@ -12,6 +12,8 @@ let api = 0;
 const MaxSideNav = () => {
 	const { user, error, isLoading } = useUser();
 	const [userInfo, setUserInfo] = useState(null);
+	const [open, setOpen] = useState(false);
+
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		if (authToken === null)
@@ -68,7 +70,10 @@ const MaxSideNav = () => {
 	return (
 		<div className={`fixed left-0 top-0 z-0 h-full w-fit`}>
 			<div
-				className={`${styles.SideNav} items-left flex h-full w-fit flex-col bg-light-blue pb-3 pt-3`}
+				className={`${styles.SideNav} items-left flex h-full w-20 flex-col bg-light-blue pb-3 pt-3`}
+				onMouseEnter={() => {
+					console.log("test");
+				}}
 			>
 				<Link
 					className={`flex items-center space-x-2 pl-3 pr-3 text-logo-blue`}
