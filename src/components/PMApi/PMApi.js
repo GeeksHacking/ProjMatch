@@ -93,11 +93,11 @@ class PMApi {
 	}
 	async updateUser(userId, updatedUser) {
 		try {
-			await axios.put(`${this.baseUrl}/users`, {
+			const res = await axios.put(`${this.baseUrl}/users`, {
 				id: userId,
 				update: updatedUser,
 			});
-			return 0;
+			return res;
 		} catch (err) {
 			console.error(`failed to update users with err:\n${err}`);
 			return -1;

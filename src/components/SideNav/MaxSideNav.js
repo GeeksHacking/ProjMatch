@@ -168,13 +168,13 @@ const MaxSideNav = () => {
 								} z-30 duration-150 group-hover:scale-105`}
 							>
 								<span
-									className={`${styles.SideNavTxt} translate-y-0.5 text-lg font-bold text-logo-blue`}
+									className={`${styles.SideNavTxt} translate-y-0.5 whitespace-nowrap text-lg font-bold text-logo-blue`}
 								>
 									{" "}
 									{userInfo.username}{" "}
 								</span>
 								<span
-									className={`${styles.SideNavTxt} -translate-y-0.5 text-start text-lg font-bold`}
+									className={`${styles.SideNavTxt} -translate-y-0.5 whitespace-nowrap text-start text-lg font-bold`}
 								>
 									{" "}
 									{userInfo.rlName}{" "}
