@@ -144,25 +144,29 @@ export default function CreateProject() {
 					<p className="mt-1 text-lg">
 						Choose a name that is simple and easy to remember!
 					</p>
-					<input
-						type="text"
-						id="projectName"
-						name="projectName"
-						placeholder="Enter your project’s name! e.g. AmazingClicker"
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<input
+							type="text"
+							id="projectName"
+							name="projectName"
+							placeholder="Enter your project’s name! e.g. AmazingClicker"
+							className="h-full w-full rounded-md px-2 outline-none"
+						/>
+					</div>
 
 					<h2 className="mt-10 text-3xl font-medium">Project Description</h2>
 					<p className="mt-1 text-lg">
 						Include important details about what your project is about and more!
 					</p>
-					<textarea
-						type="text"
-						id="projectDescription"
-						name="projectDescription"
-						placeholder="Enter your project’s description!"
-						className="h-32 w-[70%] resize-none rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
-					/>
+					<div className="group h-32 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<textarea
+							type="text"
+							id="projectDescription"
+							name="projectDescription"
+							placeholder="Enter your project’s description!"
+							className="h-full w-full resize-none rounded-md px-2 py-1 outline-none"
+						/>
+					</div>
 
 					<h2 className="mt-10 text-3xl font-medium">Add Images</h2>
 					<ImagePicker images={[]} sendToParent={dataFromPicker} />
@@ -171,13 +175,15 @@ export default function CreateProject() {
 					<p className="mt-1 text-lg">
 						Insert links or emails to allow the user to contact you
 					</p>
-					<input
-						type="text"
-						name="projectContact"
-						id="projectContact"
-						placeholder="Enter your project’s contact! e.g. https://discord.gg/AmazingClicker"
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<input
+							type="text"
+							name="projectContact"
+							id="projectContact"
+							placeholder="Enter your project’s contact! e.g. https://discord.gg/AmazingClicker"
+							className="h-full w-full rounded-md px-2 outline-none"
+						/>
+					</div>
 
 					<h2 className="mt-10 text-3xl font-medium">Tags</h2>
 					<p className="mt-1 text-lg">
@@ -210,11 +216,13 @@ export default function CreateProject() {
 									</li>
 								))}
 							</ul>
-							<Combobox.Input
-								className="h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2 focus:outline-0"
-								placeholder="Enter your project's tags!"
-								onChange={(e) => setTagQuery(e.target.value)}
-							/>
+							<div className="group h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+								<Combobox.Input
+									className="h-full w-full rounded-md px-2 outline-none"
+									placeholder="Enter your project's tags!"
+									onChange={(e) => setTagQuery(e.target.value)}
+								/>
+							</div>
 						</div>
 						<div className="relative w-[70%]">
 							<Combobox.Options
@@ -256,13 +264,15 @@ export default function CreateProject() {
 					<p className="mt-1 text-lg">
 						Let users know what Programming Language/Framework you use!
 					</p>
-					<input
-						type="text"
-						name="projectTech"
-						id="projectTech"
-						placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<input
+							type="text"
+							name="projectTech"
+							id="projectTech"
+							placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
+							className="h-full w-full rounded-md px-2 outline-none"
+						/>
+					</div>
 
 					<input
 						type="submit"

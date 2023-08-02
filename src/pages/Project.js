@@ -151,6 +151,8 @@ export default function ProjectPage() {
 	if (error) return <div>{error.message}</div>;
 	if (!user) return <div>Not logged in</div>;
 
+	console.log(pmUser);
+
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<div className="fixed z-20 h-screen">
