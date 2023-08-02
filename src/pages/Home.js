@@ -208,7 +208,7 @@ function Project({ post, uss }) {
 					<Stars rating={post.ratings} />
 				</div>
 				<Link
-					className="group relative flex grow items-center justify-center overflow-hidden rounded-full bg-logo-blue p-1 text-xl transition-all duration-150 hover:scale-105 active:scale-95"
+					className="group relative m-3 flex grow items-center justify-center overflow-hidden rounded-full bg-logo-blue p-1 text-xl transition-all duration-150 hover:scale-105 active:scale-95"
 					href={"/Project?id=" + post._id}
 				>
 					<div className=" absolute -inset-full top-0 z-40 block h-full w-1/2 -skew-x-12 transform bg-gradient-to-r from-[rgba(0,0,0,0)] to-light-blue opacity-40 group-active:left-full group-active:duration-500" />

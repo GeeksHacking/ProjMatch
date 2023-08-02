@@ -32,6 +32,7 @@ const ImagePicker = ({ images, sendToParent }) => {
 
 		temp.splice(index, 1);
 		setImgs(temp);
+		sendToParent(temp);
 	};
 
 	return (
@@ -43,11 +44,14 @@ const ImagePicker = ({ images, sendToParent }) => {
 				>
 					<img className="h-full w-full object-cover" src={img}></img>
 					<div
-						className={`group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/0 duration-150 hover:bg-white/40`}
+						className={`group absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/0 duration-150 hover:bg-black/40`}
 					>
 						<button
-							onClick={() => deleteImage(img)}
-							className="rounded-full bg-delete-red p-1 px-2 text-white opacity-0 duration-150 group-hover:opacity-100"
+							type="button"
+							onClick={() => {
+								deleteImage(img);
+							}}
+							className="rounded-full bg-delete-red p-1 px-2 text-white opacity-0 duration-150 hover:scale-110 active:scale-90 group-hover:opacity-100"
 						>
 							Delete
 						</button>
