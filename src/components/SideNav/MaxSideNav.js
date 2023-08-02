@@ -94,7 +94,7 @@ const MaxSideNav = () => {
 					<span
 						className={`${styles.SideNavTxt} z-30 text-xl font-bold ${
 							open ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"
-						} duration-150`}
+						} duration-150 `}
 					>
 						{" "}
 						ProjMatch{" "}
@@ -136,7 +136,7 @@ const MaxSideNav = () => {
 									open
 										? "translate-x-0 opacity-100"
 										: "-translate-x-8 opacity-0"
-								} duration-150 group-hover:scale-105`}
+								} duration-150 group-hover:scale-105 group-active:scale-95`}
 							>
 								{" "}
 								Create{" "}
@@ -203,7 +203,7 @@ const SideNavOptn = ({ option, style }) => {
 					className="z-40 h-8 w-8 flex-shrink-0 duration-300"
 				></img>
 				<span
-					className={`text-xl font-bold ${styles.SideNavTxt} duration-150 ${style} z-30 duration-300 group-hover:scale-105`}
+					className={`text-xl font-bold ${styles.SideNavTxt} duration-150 ${style} z-30 duration-300 group-hover:scale-105 group-active:scale-95`}
 				>
 					{option.Page}
 				</span>
