@@ -150,15 +150,21 @@ function Project({ post, uss }) {
 				className="absolute bottom-[30.7%] z-10 flex h-[12%] w-fit items-center justify-start rounded-bl-2xl rounded-tr-2xl bg-logo-blue/[0.6]"
 			>
 				<a className={`ml-4 flex flex-row items-center space-x-2`}>
-					<img
-						src={
-							uss[post.creatorUserID]
-								? uss[post.creatorUserID].userDat.profilePic
-								: ""
-						}
-						alt="logo"
-						className="h-14 w-14 flex-shrink-0 rounded-full drop-shadow-custom"
-					></img>
+					{uss[post.creatorUserID] &&
+					uss[post.creatorUserID].userDat.profilePic ? (
+						<img
+							src={
+								uss[post.creatorUserID]
+									? uss[post.creatorUserID].userDat.profilePic
+									: ""
+							}
+							alt="logo"
+							className="h-14 w-14 flex-shrink-0 rounded-full drop-shadow-custom"
+						></img>
+					) : (
+						<div className="h-14 w-14 flex-shrink-0 rounded-full bg-gray-600"></div>
+					)}
+
 					<div className="flex flex-col items-start">
 						<span className="ml-3 mr-6 translate-y-0.5 text-lg font-bold text-white">
 							{uss[post.creatorUserID]
@@ -189,7 +195,7 @@ function Project({ post, uss }) {
 				)}
 			</div>
 			<div id="project-info" className="flex w-[90%] grow flex-col">
-				<div className="flex grow flex-row">
+				<div className="flex grow flex-row items-center">
 					<h1 className="text-3xl font-bold text-black">{post.projectName}</h1>
 					<div id="Menu" className="flex grow flex-row justify-end">
 						<img
@@ -199,7 +205,7 @@ function Project({ post, uss }) {
 						></img>
 					</div>
 				</div>
-				<div className="flex grow flex-row">
+				<div className="flex grow flex-row items-center">
 					{(post.tags !== "" ? post.tags : [""]).map((tag) => (
 						<Tag tag={tag} key={tag} />
 					))}
@@ -211,10 +217,13 @@ function Project({ post, uss }) {
 					<Stars rating={post.ratings} />
 				</div>
 				<Link
-					className="flex grow items-center justify-center rounded-md border-2 border-[#D3D3D3] text-xl"
+					className="group relative m-3 flex grow items-center justify-center overflow-hidden rounded-full bg-logo-blue p-1 text-xl transition-all duration-150 hover:scale-105 active:scale-95"
 					href={"/Project?id=" + post._id}
 				>
-					<div>Find out more!</div>
+					<div className=" absolute -inset-full top-0 z-40 block h-full w-1/2 -skew-x-12 transform bg-gradient-to-r from-[rgba(0,0,0,0)] to-light-blue opacity-40 group-active:left-full group-active:duration-500" />
+					<div className="z-10 flex h-full w-full items-center justify-center rounded-full bg-white duration-150 group-hover:bg-logo-blue group-hover:text-white">
+						Find out more!
+					</div>
 				</Link>
 			</div>
 		</div>

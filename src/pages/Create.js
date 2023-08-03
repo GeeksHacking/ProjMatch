@@ -114,6 +114,8 @@ export default function CreateProject() {
 	const handleSubmission = async (event) => {
 		event.preventDefault();
 
+		console.log("test");
+
 		if (localStorage.getItem("authorisation_token") !== undefined) {
 			const project = {
 				projectName: event.target.projectName.value,
@@ -139,47 +141,64 @@ export default function CreateProject() {
 					className="flex w-full flex-col items-start justify-start"
 					onSubmit={handleSubmission}
 				>
-					<h1 className="text-6xl font-bold text-black">Create Project</h1>
-					<h2 className="mt-10 text-3xl font-medium">Project Name</h2>
+					<h1 className="text-6xl font-bold text-black">Create Project </h1>
+					<h2 className="mt-10 text-3xl font-medium">
+						Project Name <RequiredIcon />
+					</h2>
 					<p className="mt-1 text-lg">
 						Choose a name that is simple and easy to remember!
 					</p>
-					<input
-						type="text"
-						id="projectName"
-						name="projectName"
-						placeholder="Enter your project’s name! e.g. AmazingClicker"
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<input
+							type="text"
+							id="projectName"
+							name="projectName"
+							placeholder="Enter your project’s name! e.g. AmazingClicker"
+							className="h-full w-full rounded-md px-2 outline-none"
+							required
+						/>
+					</div>
 
-					<h2 className="mt-10 text-3xl font-medium">Project Description</h2>
+					<h2 className="mt-10 text-3xl font-medium">
+						Project Description <RequiredIcon />
+					</h2>
 					<p className="mt-1 text-lg">
 						Include important details about what your project is about and more!
 					</p>
-					<textarea
-						type="text"
-						id="projectDescription"
-						name="projectDescription"
-						placeholder="Enter your project’s description!"
-						className="h-32 w-[70%] resize-none rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
-					/>
+					<div className="group h-32 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<textarea
+							type="text"
+							id="projectDescription"
+							name="projectDescription"
+							placeholder="Enter your project’s description!"
+							className="h-full w-full resize-none rounded-md px-2 py-1 outline-none"
+							required
+						/>
+					</div>
 
 					<h2 className="mt-10 text-3xl font-medium">Add Images</h2>
 					<ImagePicker images={[]} sendToParent={dataFromPicker} />
 
-					<h2 className="mt-10 text-3xl font-medium">Contact</h2>
+					<h2 className="mt-10 text-3xl font-medium">
+						Contact <RequiredIcon />
+					</h2>
 					<p className="mt-1 text-lg">
 						Insert links or emails to allow the user to contact you
 					</p>
-					<input
-						type="text"
-						name="projectContact"
-						id="projectContact"
-						placeholder="Enter your project’s contact! e.g. https://discord.gg/AmazingClicker"
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<input
+							type="text"
+							name="projectContact"
+							id="projectContact"
+							placeholder="Enter your project’s contact! e.g. https://discord.gg/AmazingClicker"
+							className="h-full w-full rounded-md px-2 outline-none"
+							required
+						/>
+					</div>
 
-					<h2 className="mt-10 text-3xl font-medium">Tags</h2>
+					<h2 className="mt-10 text-3xl font-medium">
+						Tags <RequiredIcon />
+					</h2>
 					<p className="mt-1 text-lg">
 						Add tags to help users find your project!
 					</p>
@@ -210,11 +229,14 @@ export default function CreateProject() {
 									</li>
 								))}
 							</ul>
-							<Combobox.Input
-								className="h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2 focus:outline-0"
-								placeholder="Enter your project's tags!"
-								onChange={(e) => setTagQuery(e.target.value)}
-							/>
+							<div className="group h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+								<Combobox.Input
+									className="h-full w-full rounded-md px-2 outline-none"
+									placeholder="Enter your project's tags!"
+									onChange={(e) => setTagQuery(e.target.value)}
+									required
+								/>
+							</div>
 						</div>
 						<div className="relative w-[70%]">
 							<Combobox.Options
@@ -252,25 +274,48 @@ export default function CreateProject() {
 						<i>{tagError}</i>
 					</p>
 
-					<h2 className="mt-10 text-3xl font-medium">Technologies</h2>
+					<h2 className="relative mt-10 text-3xl font-medium">
+						Technologies
+						<RequiredIcon />
+					</h2>
 					<p className="mt-1 text-lg">
 						Let users know what Programming Language/Framework you use!
 					</p>
-					<input
-						type="text"
-						name="projectTech"
-						id="projectTech"
-						placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
-						className="h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-					/>
+					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+						<input
+							type="text"
+							name="projectTech"
+							id="projectTech"
+							placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
+							className="h-full w-full rounded-md px-2 outline-none"
+							required={true}
+						/>
+					</div>
 
-					<input
+					<button
 						type="submit"
-						value="Create Project"
-						className="mb-20 mt-10 h-11 w-[30%] rounded-full bg-logo-blue text-2xl font-bold text-white"
-					></input>
+						className="group relative mb-20 mt-10 h-11 w-[30%] overflow-hidden rounded-full bg-logo-blue text-2xl font-bold text-white duration-150 hover:scale-105 active:scale-95"
+					>
+						<div className="absolute -inset-full top-0 z-40 block h-full w-1/2 -skew-x-12 transform bg-gradient-to-r from-[rgba(0,0,0,0)] to-light-blue opacity-40 group-active:left-full group-active:duration-500" />
+						<div>Submit Project</div>
+					</button>
 				</form>
 			</div>
 		</div>
+	);
+}
+
+function RequiredIcon() {
+	return (
+		<span className="absolute">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="#ff0000"
+				className="bi bi-asterisk h-2 w-2"
+				viewBox="0 0 16 16"
+			>
+				<path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z" />
+			</svg>
+		</span>
 	);
 }
