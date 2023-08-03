@@ -75,19 +75,21 @@ export default function SearchPage() {
 			<SideNav />
 			<div className="absolute my-10 flex h-full w-[70%] flex-col items-center justify-start">
 				<h1 className="text-6xl font-bold text-black">Search</h1>
-				<div className="relative mt-10 flex h-16 w-full flex-row items-center justify-start rounded-lg border-2 border-[#D3D3D3] px-2">
-					<img src="/Search.svg" alt="Search" className="ml-2 mr-4 h-[60%]" />
-					<input
-						type="text"
-						name="search"
-						placeholder="Search for any project!"
-						className="border-1 w-full border-white"
-						onChange={handleSearch}
-					/>
+				<div className="mt-10 h-16 w-full rounded-lg bg-[#C7C7C7] p-0.5 duration-150 focus-within:bg-logo-blue focus-within:duration-300">
+					<div className="relative flex h-full w-full flex-row items-center justify-start rounded-md bg-white px-2">
+						<img src="/Search.svg" alt="Search" className="ml-2 mr-4 h-[60%]" />
+						<input
+							type="text"
+							name="search"
+							placeholder="Search for any project!"
+							className="border-1 w-full border-white outline-none"
+							onChange={handleSearch}
+						/>
+					</div>
 				</div>
 				<div className="mt-5 flex w-full flex-row items-center justify-end">
 					<Listbox multiple value={tagsFilter} onChange={setTagsFilter}>
-						<Listbox.Button className="mr-1 rounded-lg bg-logo-lblue px-5 py-2 text-lg font-bold text-white">
+						<Listbox.Button className="mr-1 rounded-lg bg-logo-lblue px-5 py-2 text-lg font-bold text-white duration-150 hover:scale-105 active:scale-95">
 							Filter
 						</Listbox.Button>
 						<div className="relative">
@@ -115,7 +117,7 @@ export default function SearchPage() {
 						</div>
 					</Listbox>
 					<button
-						className="ml-1 rounded-lg bg-logo-blue px-5 py-2 text-lg font-bold text-white"
+						className="ml-1 rounded-lg bg-logo-blue px-5 py-2 text-lg font-bold text-white duration-150 hover:scale-105 active:scale-95"
 						onClick={handleSubmit}
 					>
 						Search

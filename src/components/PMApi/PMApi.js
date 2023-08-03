@@ -93,11 +93,11 @@ class PMApi {
 	}
 	async updateUser(userId, updatedUser) {
 		try {
-			await axios.put(`${this.baseUrl}/users`, {
+			const res = await axios.put(`${this.baseUrl}/users`, {
 				id: userId,
 				update: updatedUser,
 			});
-			return 0;
+			return res;
 		} catch (err) {
 			console.error(`failed to update users with err:\n${err}`);
 			return -1;
@@ -130,11 +130,11 @@ class PMApi {
 	}
 	async sendEmail(subject, content) {
 		try {
-			await axios.post(`${this.baseUrl}/email`, {
+			const { data } = await axios.post(`${this.baseUrl}/email`, {
 				subject: subject,
 				text: content,
 			});
-			return 0;
+			return data;
 		} catch (err) {
 			console.error(`failed to create img with err:\n${err}`);
 			return -1;

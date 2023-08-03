@@ -83,7 +83,9 @@ export default function SettingsPage() {
 			formData.append("creatorUserID", projMatchUser._id);
 
 			api.createImgUrl(formData).then((res) => {
-				const imageURL = res.data.imageURL;
+				console.log("res");
+				console.log(res);
+				const imageURL = res.imageURL;
 				let bannerURL, profilePicURL;
 				if (imageURL.length == 2) {
 					bannerURL = imageURL[0];
@@ -196,6 +198,9 @@ export default function SettingsPage() {
 	}, []);
 
 	useEffect(() => {
+		if (user === undefined) {
+			return;
+		}
 		api.getUsers({ email: user.email }).then((data) => {
 			setProjMatchUser(data.users[0]);
 		});
@@ -254,11 +259,11 @@ export default function SettingsPage() {
 					className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue object-cover"
 				></img>
 			) : (
-				<div className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue object-cover"></div>
+				<div className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue"></div>
 			)}
 			<button
 				onClick={handleSignOut}
-				className="absolute right-[3%] top-[23%] h-fit w-fit rounded-md bg-[#ED5A5A] px-6 py-3 text-lg font-bold text-white"
+				className="absolute right-[3%] top-[23%] h-fit w-fit rounded-md bg-[#ED5A5A] px-6 py-3 text-lg font-bold text-white drop-shadow-md duration-150 hover:scale-105 active:scale-95"
 			>
 				Sign Out
 			</button>
@@ -271,7 +276,7 @@ export default function SettingsPage() {
 							className="rounded-full border-3 border-[#C7C7C7]"
 						></img>
 					) : (
-						<div className="rounded-full border-3 border-[#C7C7C7]"></div>
+						<div className="aspect-square h-full rounded-full border-3 border-[#C7C7C7] bg-gray-400"></div>
 					)}
 					<div className="ml-5 flex h-[90%] flex-col items-start justify-end">
 						<h1 className="text-4xl font-bold text-black">Settings</h1>
@@ -328,87 +333,101 @@ export default function SettingsPage() {
 									<p className="text-lg text-[#636363]">
 										You can only change your username every 7 days
 									</p>
-									<input
-										type="text"
-										name="username"
-										defaultValue={
-											Object.keys(userData).length !== 0
-												? userData.username
-												: ""
-										}
-										onChange={(e) =>
-											handleValueChange(e.target.name, e.target.value)
-										}
-										placeholder="New Username"
-										className="mt-1 h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-									/>
+									<div className="group mt-1 h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+										<input
+											type="text"
+											name="username"
+											defaultValue={
+												Object.keys(userData).length !== 0
+													? userData.username
+													: ""
+											}
+											onChange={(e) =>
+												handleValueChange(e.target.name, e.target.value)
+											}
+											placeholder="New Username"
+											className="h-full w-full rounded-md px-2 outline-none"
+										/>
+									</div>
 
 									<h1 className="mt-6 text-2xl font-bold">Name</h1>
-									<input
-										type="text"
-										name="rlName"
-										defaultValue={
-											Object.keys(userData).length !== 0 ? userData.rlName : ""
-										}
-										onChange={(e) =>
-											handleValueChange(e.target.name, e.target.value)
-										}
-										placeholder="New Name"
-										className="mt-1 h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-									/>
+									<div className="group mt-1 h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+										<input
+											type="text"
+											name="rlName"
+											defaultValue={
+												Object.keys(userData).length !== 0
+													? userData.rlName
+													: ""
+											}
+											onChange={(e) =>
+												handleValueChange(e.target.name, e.target.value)
+											}
+											placeholder="New Name"
+											className=" h-full w-full rounded-md px-2 outline-none"
+										/>
+									</div>
 
 									<h1 className="mt-6 text-2xl font-bold">Email</h1>
 									<p className="text-lg text-[#636363]">
 										<i>This input will not update your email yet</i>
 									</p>
 									<div className="flex h-fit w-[70%] flex-row justify-between">
+										<div className="group mt-1 h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+											<input
+												type="text"
+												name="regEmail"
+												defaultValue={
+													Object.keys(userData).length !== 0
+														? userData.regEmail
+														: ""
+												}
+												onChange={(e) =>
+													handleValueChange(e.target.name, e.target.value)
+												}
+												placeholder="New Email"
+												className="h-full w-full rounded-md px-2 outline-none"
+											/>
+										</div>
+									</div>
+
+									<h1 className="mt-6 text-2xl font-bold">Contact Link</h1>
+									<div className="group z-10 mt-1 h-11 w-[70%] overflow-visible rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
 										<input
 											type="text"
-											name="regEmail"
+											name="contactLink"
 											defaultValue={
 												Object.keys(userData).length !== 0
-													? userData.regEmail
+													? userData.contactLink
 													: ""
 											}
 											onChange={(e) =>
 												handleValueChange(e.target.name, e.target.value)
 											}
-											placeholder="New Email"
-											className="mt-1 h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2"
+											placeholder="Add Contact Link"
+											className="h-full w-full rounded-md px-2 outline-none"
 										/>
 									</div>
-
-									<h1 className="mt-6 text-2xl font-bold">Contact Link</h1>
-									<input
-										type="text"
-										name="contactLink"
-										defaultValue={
-											Object.keys(userData).length !== 0
-												? userData.contactLink
-												: ""
-										}
-										onChange={(e) =>
-											handleValueChange(e.target.name, e.target.value)
-										}
-										placeholder="Add Contact Link"
-										className="mt-1 h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-									/>
 
 									<h1 className="mt-6 text-2xl font-bold">About Me</h1>
 									<p className="text-lg text-[#636363]">
 										Provide a short description about you and what you do
 									</p>
-									<textarea
-										name="aboutMe"
-										defaultValue={
-											Object.keys(userData).length !== 0 ? userData.aboutMe : ""
-										}
-										onChange={(e) =>
-											handleValueChange(e.target.name, e.target.value)
-										}
-										placeholder="Write something about yourself..."
-										className="h-32 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2 py-1  "
-									/>
+									<div className="group mt-1 h-fit w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+										<textarea
+											name="aboutMe"
+											defaultValue={
+												Object.keys(userData).length !== 0
+													? userData.aboutMe
+													: ""
+											}
+											onChange={(e) =>
+												handleValueChange(e.target.name, e.target.value)
+											}
+											placeholder="Write something about yourself..."
+											className="h-32 w-full rounded-md px-2 py-1 outline-none"
+										/>
+									</div>
 
 									<h1 className="mt-6 text-2xl font-bold">Profile Picture</h1>
 									<div className="flex h-36 w-[70%] flex-row items-center justify-start">
@@ -427,10 +446,10 @@ export default function SettingsPage() {
 										)}
 										<button
 											id="profilePic"
-											className="ml-4 mt-1 h-11 w-32 rounded-md bg-logo-blue text-xl text-white"
+											className="ml-4 mt-1 h-11 w-32 rounded-md bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 											onClick={handleImageButton}
 										>
-											Add images
+											Add image
 										</button>
 										<input
 											type="file"
@@ -464,10 +483,10 @@ export default function SettingsPage() {
 										)}
 										<button
 											id="profileBanner"
-											className="mt-1 h-11 w-full rounded-md bg-logo-blue text-xl text-white"
+											className="mt-1 h-11 w-full rounded-md bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 											onClick={handleImageButton}
 										>
-											Add images
+											Add image
 										</button>
 										<input
 											type="file"
@@ -486,7 +505,7 @@ export default function SettingsPage() {
 									<input
 										type="submit"
 										value="Update!"
-										className="mb-20 mt-10 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+										className="mb-20 mt-10 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 									></input>
 								</form>
 							</Tab.Panel>
@@ -541,7 +560,7 @@ export default function SettingsPage() {
 										<></>
 									)}
 									<button
-										className="mt-4 h-11 w-32 rounded-md bg-logo-blue text-xl text-white"
+										className="mt-4 h-11 w-32 rounded-md bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 										onClick={handleSubmit}
 									>
 										Submit
@@ -589,7 +608,7 @@ export default function SettingsPage() {
 									<input
 										type="submit"
 										value="Update!"
-										className="mb-20 mt-10 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+										className="mb-20 mt-10 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 										onClick={handleSubmit}
 									></input>
 								</div>
@@ -600,41 +619,52 @@ export default function SettingsPage() {
 									<p className="text-lg text-[#636363]">
 										Your password cannot be the same as the last one
 									</p>
-									<input
-										type="text"
-										name="projectName"
-										placeholder="Current Password"
-										className="mt-1 h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-									/>
-									<input
-										type="text"
-										name="projectName"
-										placeholder="New Password"
-										className="mt-1 h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-									/>
-									<input
-										type="text"
-										name="projectName"
-										placeholder="Confirm New Password"
-										className="mt-1 h-11 w-[70%] rounded-lg border-2 border-[#D3D3D3] px-2"
-									/>
+									<div className="group mt-1 h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+										<input
+											type="text"
+											name="projectName"
+											placeholder="Current Password"
+											className="h-full w-full rounded-md px-2 outline-none"
+										/>
+									</div>
+									<div className="group mt-1 h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+										<input
+											type="text"
+											name="projectName"
+											placeholder="New Password"
+											className="h-full w-full rounded-md px-2 outline-none"
+										/>
+									</div>
+									<div className="group mt-1 h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+										<input
+											type="text"
+											name="projectName"
+											placeholder="Confirm New Password"
+											className="h-full w-full rounded-md px-2 outline-none"
+										/>
+									</div>
 									<input
 										type="submit"
 										value="Update!"
-										className="mb-20 mt-1 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+										className="mb-20 mt-1 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 									></input>
 
 									<button
-										className="mt-30 h-11 w-[30%] rounded-full bg-[#ED5A5A] text-xl text-white"
+										type="button"
+										className=" group relative h-11 w-[30%] overflow-hidden rounded-full bg-[#ED5A5A] text-xl text-white duration-150 hover:scale-105 active:scale-95"
 										onClick={() => setShowDeletePopup(true)}
 									>
-										Delete Account
+										<div className="absolute -inset-full top-0 z-40 block h-full w-1/2 -skew-x-12 transform bg-gradient-to-r from-[rgba(0,0,0,0)] to-black/50 opacity-40 group-hover:left-full group-hover:duration-500" />
+										<p>Delete Account</p>
 									</button>
-									<input
-										type="submit"
-										value="Sign Out On All Devices"
-										className="mb-10 mt-2 h-11 w-[30%] rounded-full bg-[#ED5A5A] text-xl text-white"
-									></input>
+									<button
+										type="button"
+										value=""
+										className="group relative mt-2 h-11 w-[30%] overflow-hidden rounded-full bg-[#ED5A5A] text-xl text-white duration-150 hover:scale-105 active:scale-95"
+									>
+										<div className="absolute -inset-full top-0 z-40 block h-full w-1/2 -skew-x-12 transform bg-gradient-to-r from-[rgba(0,0,0,0)] to-black/50 opacity-40 group-hover:left-full group-hover:duration-500" />
+										<p>Sign Out On All Devices</p>
+									</button>
 								</div>
 							</Tab.Panel>
 							<Tab.Panel>
@@ -647,12 +677,14 @@ export default function SettingsPage() {
 									</p>
 									<form className="mt-10 w-[60%]" onSubmit={handleEmail}>
 										<p className="text-lg font-medium text-black">Your Name</p>
-										<input
-											type="text"
-											name="emailName"
-											placeholder="Enter your name here"
-											className="mt-1 h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2"
-										/>
+										<div className="group mt-1 h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+											<input
+												type="text"
+												name="emailName"
+												placeholder="Enter your name here"
+												className="h-full w-full rounded-md px-2 outline-none"
+											/>
+										</div>
 
 										<p className="mt-5 text-lg font-medium text-black">
 											Your Email
@@ -663,12 +695,14 @@ export default function SettingsPage() {
 												further information
 											</i>
 										</p>
-										<input
-											type="text"
-											name="emailEmail"
-											placeholder="Enter your email here"
-											className="mt-1 h-11 w-full rounded-lg border-2 border-[#D3D3D3] px-2"
-										/>
+										<div className="group mt-1 h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+											<input
+												type="text"
+												name="emailEmail"
+												placeholder="Enter your email here"
+												className="h-full w-full rounded-md px-2 outline-none"
+											/>
+										</div>
 
 										<p className="mt-5 text-lg font-medium text-black">
 											The content
@@ -679,16 +713,18 @@ export default function SettingsPage() {
 												you if needed
 											</i>
 										</p>
-										<textarea
-											name="emailBody"
-											placeholder="Write the issues/feedbacks/bugs you had here..."
-											className="mt-1 h-32 w-full rounded-lg border-2 border-[#D3D3D3] px-2 py-1"
-										/>
+										<div className="group mt-1 h-fit w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
+											<textarea
+												name="emailBody"
+												placeholder="Write the issues/feedbacks/bugs you had here..."
+												className="h-32 w-full rounded-md px-2 py-1 outline-none"
+											/>
+										</div>
 
 										<input
 											type="submit"
 											value="Send Email"
-											className="mb-20 mt-5 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white"
+											className="mb-20 mt-5 h-11 w-[30%] rounded-lg bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 										></input>
 									</form>
 									<Dialog

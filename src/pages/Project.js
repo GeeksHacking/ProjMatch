@@ -151,6 +151,8 @@ export default function ProjectPage() {
 	if (error) return <div>{error.message}</div>;
 	if (!user) return <div>Not logged in</div>;
 
+	console.log(pmUser);
+
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<div className="fixed z-20 h-screen">
@@ -221,7 +223,7 @@ export default function ProjectPage() {
 							<img
 								src="/IconsFlag.svg"
 								alt="logo"
-								className="mx-1 h-6 w-6 flex-shrink-0"
+								className="mx-1 h-6 w-6 flex-shrink-0 duration-150 hover:scale-110 hover:cursor-pointer"
 								onClick={handlePopup}
 							></img>
 							<Popup trigger={showPopup} setTrigger={setShowPopup}>
@@ -261,13 +263,13 @@ export default function ProjectPage() {
 								<img
 									src="/IconsShare.svg"
 									alt="logo"
-									className="h-full w-full flex-shrink-0 hover:cursor-pointer"
+									className="h-full w-full flex-shrink-0 duration-150 hover:scale-110 hover:cursor-pointer"
 								></img>
 								<Tooltip trigger={showShareToolTip}></Tooltip>
 							</div>
 
 							<button
-								className="mx-1 flex h-6 w-6 flex-shrink-0 items-center justify-center p-1"
+								className="mx-1 flex h-6 w-6 flex-shrink-0 items-center justify-center p-1 duration-150 hover:scale-110 hover:cursor-pointer"
 								onClick={handleSavedClick}
 							>
 								{pmUser.savedPosts !== undefined ? (
@@ -313,14 +315,14 @@ export default function ProjectPage() {
 						>
 							<div
 								id="rating-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
+								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<h2 className="text-xl font-bold text-black">Ratings</h2>
 								<Stars rating={post.ratings} />
 							</div>
 							<div
 								id="technologies-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
+								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<h2 className="text-xl font-bold text-black">Technologies</h2>
 								<div className="flex flex-row">
@@ -331,7 +333,7 @@ export default function ProjectPage() {
 							</div>
 							<div
 								id="communication-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
+								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<h2 className="text-xl font-bold text-black">Communication</h2>
 								<div className="flex flex-row">
@@ -342,7 +344,7 @@ export default function ProjectPage() {
 							</div>
 							<div
 								id="owner-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
+								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<h2 className="text-xl font-bold text-black">
 									Original Poster
@@ -351,12 +353,12 @@ export default function ProjectPage() {
 							</div>
 							<div
 								id="contact-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
+								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<a
 									href={userContact}
 									target="_blank"
-									className="h-[70%] w-full rounded-md bg-logo-blue px-4 py-2 text-2xl font-bold text-white"
+									className="h-[70%] w-full rounded-md bg-logo-blue px-4 py-2 text-2xl font-bold text-white duration-150 hover:scale-105 hover:cursor-pointer active:scale-95"
 								>
 									Contact
 								</a>
