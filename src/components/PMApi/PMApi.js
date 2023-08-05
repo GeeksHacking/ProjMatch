@@ -105,7 +105,7 @@ class PMApi {
 	}
 	async createUser(username, contact, about, algoData, skills) {
 		try {
-			const { data } = await axios.post(`${this.baseUrl}/posts`, {
+			const { data } = await axios.post(`${this.baseUrl}/users`, {
 				username: username,
 				contact: contact, 
 				about: about, 

@@ -61,9 +61,9 @@ export default function ProfilePage() {
 		<div className="absolute flex h-full w-full flex-col">
 			<UserCreation />
 			<SideNav />
-			{profileUser.userDat.profileBanner !== "" ? (
+			{profileUser.bannerImg !== "" ? (
 				<img
-					src={profileUser.userDat.profileBanner}
+					src={profileUser.bannerImg}
 					id="image-banner"
 					className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue object-cover"
 				></img>
@@ -72,9 +72,9 @@ export default function ProfilePage() {
 			)}
 			<div className="absolute left-[14%] top-[10%] z-[-1] flex h-[20%] w-[70%] flex-col">
 				<div id="pfp-name" className="flex h-full w-full flex-row ">
-					{profileUser.userDat.profilePic !== "" ? (
+					{profileUser.profileImg !== "" ? (
 						<img
-							src={profileUser.userDat.profilePic}
+							src={profileUser.profileImg}
 							className="rounded-full border-3 border-[#C7C7C7]"
 						></img>
 					) : (

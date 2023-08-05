@@ -70,15 +70,15 @@ export default function SettingsPage() {
 			let formData = new FormData();
 			formData.append(
 				"files",
-				updatedData.userDat.profileBanner == undefined
+				updatedData.bannerImg == undefined
 					? ""
-					: updatedData.userDat.profileBanner
+					: updatedData.bannerImg
 			);
 			formData.append(
 				"files",
-				updatedData.userDat.profilePic == undefined
+				updatedData.bannerImg == undefined
 					? ""
-					: updatedData.userDat.profilePic
+					: updatedData.profileImg
 			);
 			formData.append("creatorUserID", projMatchUser._id);
 
@@ -86,17 +86,17 @@ export default function SettingsPage() {
 				console.log("res");
 				console.log(res);
 				const imageURL = res.imageURL;
-				let bannerURL, profilePicURL;
+				let bannerURL, profileImgURL;
 				if (imageURL.length == 2) {
 					bannerURL = imageURL[0];
-					profilePicURL = imageURL[1];
+					profileImgURL = imageURL[1];
 				} else if (imageURL.length == 1) {
-					if (updatedData.userDat.profileBanner !== undefined) {
+					if (updatedData.bannerImg !== undefined) {
 						bannerURL = imageURL[0];
-						profilePicURL = projMatchUser.userDat.profilePic;
+						profileImgURL = projMatchUser.profileImg;
 					} else {
-						bannerURL = projMatchUser.userDat.profileBanner;
-						profilePicURL = imageURL[0];
+						bannerURL = projMatchUser.bannerImg;
+						profileImgURL = imageURL[0];
 					}
 				}
 
@@ -104,7 +104,7 @@ export default function SettingsPage() {
 					...updatedData,
 					userDat: {
 						profileBanner: bannerURL,
-						profilePic: profilePicURL,
+						profileImg: profileImgURL,
 					},
 				};
 				api
@@ -142,8 +142,8 @@ export default function SettingsPage() {
 
 	const handleImageButton = (e) => {
 		e.preventDefault();
-		if (e.target.id == "profilePic") {
-			document.getElementById("profilePicInput").click();
+		if (e.target.id == "profileImg") {
+			document.getElementById("profileImgInput").click();
 		} else if (e.target.id == "profileBanner") {
 			document.getElementById("profileBannerInput").click();
 		}
@@ -252,9 +252,9 @@ export default function SettingsPage() {
 			</Dialog>
 			<SideNav />
 			{Object.keys(projMatchUser).length !== 0 &&
-			projMatchUser.userDat.profileBanner !== "" ? (
+			projMatchUser.bannerImg !== "" ? (
 				<img
-					src={projMatchUser.userDat.profileBanner}
+					src={projMatchUser.bannerImg}
 					id="image-banner"
 					className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue object-cover"
 				></img>
@@ -270,9 +270,9 @@ export default function SettingsPage() {
 			<div className="absolute left-[14%] top-[10%] z-[-1] flex h-[20%] w-[70%] flex-col">
 				<div id="pfp-name" className="flex h-full w-full flex-row ">
 					{Object.keys(projMatchUser).length !== 0 &&
-					projMatchUser.userDat.profilePic !== "" ? (
+					projMatchUser.profileImg !== "" ? (
 						<img
-							src={projMatchUser.userDat.profilePic}
+							src={projMatchUser.profileImg}
 							className="rounded-full border-3 border-[#C7C7C7]"
 						></img>
 					) : (
@@ -432,12 +432,12 @@ export default function SettingsPage() {
 									<h1 className="mt-6 text-2xl font-bold">Profile Picture</h1>
 									<div className="flex h-36 w-[70%] flex-row items-center justify-start">
 										{Object.keys(userData).length !== 0 &&
-										userData.userDat.profilePic !== "" ? (
+										userData.profileImg !== "" ? (
 											<img
 												src={
-													typeof userData.userDat.profilePic == "object"
-														? URL.createObjectURL(userData.userDat.profilePic)
-														: userData.userDat.profilePic
+													typeof userData.profileImg == "object"
+														? URL.createObjectURL(userData.profileImg)
+														: userData.profileImg
 												}
 												className="mt-2 h-32 w-32 rounded-full border-3 border-[#C7C7C7] object-cover object-center"
 											/>
@@ -445,7 +445,7 @@ export default function SettingsPage() {
 											<div className="mt-2 h-32 w-32 rounded-full border-3 border-[#C7C7C7] bg-[#D3D3D3]"></div>
 										)}
 										<button
-											id="profilePic"
+											id="profileImg"
 											className="ml-4 mt-1 h-11 w-32 rounded-md bg-logo-blue text-xl text-white duration-150 hover:scale-105 active:scale-95"
 											onClick={handleImageButton}
 										>
@@ -453,13 +453,13 @@ export default function SettingsPage() {
 										</button>
 										<input
 											type="file"
-											id="profilePicInput"
-											name="profilePic"
+											id="profileImgInput"
+											name="profileImg"
 											className="hidden"
 											onChange={(e) =>
 												handleValueChange("userDat", {
-													...userData.userDat,
-													profilePic: e.target.files[0],
+													...userData,
+													profileImg: e.target.files[0],
 												})
 											}
 										/>
@@ -467,14 +467,14 @@ export default function SettingsPage() {
 									<h1 className="mt-6 text-2xl font-bold">Profile Banner</h1>
 									<div className="flex h-fit w-[70%] flex-col items-start justify-center">
 										{Object.keys(userData).length !== 0 &&
-										userData.userDat.profileBanner !== "" ? (
+										userData.bannerImg !== "" ? (
 											<img
 												src={
-													typeof userData.userDat.profileBanner == "object"
+													typeof userData.bannerImg == "object"
 														? URL.createObjectURL(
-																userData.userDat.profileBanner
+																userData.bannerImg
 														  )
-														: userData.userDat.profileBanner
+														: userData.bannerImg
 												}
 												className="mt-2 h-36 w-full border-3 border-[#C7C7C7] object-cover object-center"
 											/>
@@ -495,7 +495,7 @@ export default function SettingsPage() {
 											className="hidden"
 											onChange={(e) =>
 												handleValueChange("userDat", {
-													...userData.userDat,
+													...userData,
 													profileBanner: e.target.files[0],
 												})
 											}

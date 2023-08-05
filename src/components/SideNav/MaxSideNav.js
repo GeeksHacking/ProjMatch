@@ -22,7 +22,7 @@ const MaxSideNav = () => {
 			console.error("Authorisation Token returned Undefined.");
 		} else if (user !== undefined) {
 			api = new PMApi(authToken);
-			const API_URL = process.env.API_URL;
+
 			api.getUsers({ email: user.email }).then((res) => {
 				if (res != -1) {
 					setUserInfo(res.users[0]);
@@ -150,9 +150,9 @@ const MaxSideNav = () => {
 							className={`group flex flex-row items-center space-x-2`}
 							href={"/Profile?id=" + userInfo._id}
 						>
-							{userInfo.userDat.profilePic !== "" ? (
+							{userInfo.profileImg !== "" ? (
 								<img
-									src={userInfo.userDat.profilePic}
+									src={userInfo.profileImg}
 									alt="logo"
 									className="z-40 h-14 w-14 flex-shrink-0 rounded-full border-2 border-logo-blue"
 								></img>
