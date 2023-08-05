@@ -100,7 +100,7 @@ const LandingHeaderBar = () => {
 				client_secret: process.env.AUTH0_CLIENT_SECRET,
 				code: accessToken,
 				audience: process.env.AUTH0_AUDIENCE,
-				redirect_uri: process.env.AUTH0_BASE_URL + "/Home",
+				redirect_uri: process.env.AUTH0_BASE_URL + "/Load",
 			}),
 		};
 
@@ -128,21 +128,16 @@ const LandingHeaderBar = () => {
 
 	return (
 		<div className="relative flex w-full flex-row p-2">
-			<Link href="/Home" className="duration-500 hover:scale-105">
+			<Link href="" className="duration-500 hover:scale-105">
 				<span className="text-2xl font-bold text-logo-blue">ProjMatch</span>
 			</Link>
 			<div className="ml-auto space-x-3">
 				<Link
-					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Home&audience=${process.env.AUTH0_AUDIENCE}`}
+					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Load&audience=${process.env.AUTH0_AUDIENCE}`}
 					className=""
 				>
 					<button className="rounded-full bg-blue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">
 						Log In
-					</button>
-				</Link>
-				<Link href="/SignUp">
-					<button className="rounded-full bg-logo-blue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">
-						Sign Up
 					</button>
 				</Link>
 			</div>
