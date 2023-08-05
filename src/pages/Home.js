@@ -57,59 +57,6 @@ export default function Home() {
 		}
 	}, [setPosts, postReq]);
 
-	const storeAuthToken = async (accessToken) => {
-		var apiOptions = {
-			method: "POST",
-			url: "https://projmatch.us.auth0.com/oauth/token",
-			headers: {
-				"content-type": "application/x-www-form-urlencoded",
-			},
-			data: new URLSearchParams({
-				grant_type: "authorization_code",
-				client_id: process.env.OAUTH_ID,
-				client_secret: process.env.OAUTH_SECRET,
-				audience: process.env.AUTH0_AUDIENCE,
-				code: accessToken,
-				redirect_uri: `${process.env.AUTH0_BASE_URL}/Main/Home`,
-			}),
-		};
-
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				const responseBody = res.data;
-				localStorage.setItem(
-					"authorisation_token",
-					responseBody["access_token"]
-				);
-
-				// Once Token has been retrieved, get data
-				if (posts !== []) {
-					console.log("first!");
-					//getPosts(responseBody["access_token"])
-					api = new PMApi(responseBody["access_token"]);
-					api.getPosts().then(function (res) {
-						setPostReq(res);
-					});
-					//.catch(console.error)
-				}
-			})
-			.catch(function (err) {
-				console.error("Failed to get API Authentication Token with: ", err);
-			});
-	};
-
-	useEffect(() => {
-		if (!router.isReady) return;
-		const query = router.query;
-		if (
-			query != undefined &&
-			localStorage.getItem("authorisation_token") !== undefined
-		) {
-			storeAuthToken(query.code);
-		}
-	}, [router.isReady, router.query]);
-
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<UserCreation />
@@ -208,7 +155,7 @@ function Project({ post, uss }) {
 					<Stars rating={post.ratings} />
 				</div>
 				<Link
-					className="group relative m-3 flex grow items-center justify-center overflow-hidden rounded-full bg-logo-blue p-1 text-xl transition-all duration-150 hover:scale-105 active:scale-95"
+					className="group relative m-3 flex grow items-center justify-center overflow-hidden rounded-full bg-logo-blue p-1 text-xl transition-all duration-150"
 					href={"/Project?id=" + post._id}
 				>
 					<div className=" absolute -inset-full top-0 z-40 block h-full w-1/2 -skew-x-12 transform bg-gradient-to-r from-[rgba(0,0,0,0)] to-light-blue opacity-40 group-active:left-full group-active:duration-500" />

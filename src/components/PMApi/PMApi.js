@@ -103,13 +103,14 @@ class PMApi {
 			return -1;
 		}
 	}
-	async createUser(userNick, userName, userEmail) {
+	async createUser(username, contact, about, algoData, skills) {
 		try {
 			const { data } = await axios.post(`${this.baseUrl}/posts`, {
-				username: userNick,
-				rlName: userName,
-				regEmail: userEmail,
-				regPhone: 0,
+				username: username,
+				contact: contact, 
+				about: about, 
+				algoData: algoData, 
+				skills: skills
 			});
 			return data;
 		} catch (err) {

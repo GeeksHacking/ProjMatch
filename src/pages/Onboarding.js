@@ -1,9 +1,18 @@
+import PMApi from "@/components/PMApi/PMApi";
 import { Tab } from "@headlessui/react";
 import e from "cors";
 import { useState, useEffect } from "react";
 import approvedTags from "src/tags.json";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useRouter } from "next/router";
 
-export default function AccountCreationPage() {
+// Create Global API
+let api = 0
+
+export default function Onboarding() {
+	const { user, error, isLoading } = useUser(); // Auth0 User
+	if (isLoading) return <div>Loading...</div>; // Check if data is still being loaded
 	const [activeTab, setActiveTab] = useState(0);
 	const [selectedTags, setSelectedTags] = useState([]);
 	const [userData, setUserData] = useState({
@@ -12,6 +21,7 @@ export default function AccountCreationPage() {
 		description: "",
 		interest: selectedTags,
 	});
+	const router = useRouter()
 
 	function changeTab(i) {
 		setActiveTab(i);
@@ -20,7 +30,10 @@ export default function AccountCreationPage() {
 	function handleSubmit(e) {
 		e.preventDefault();
 
-		console.log(userData);
+		// Create User Account
+		api.createUser(userData["username"], user.email, userData["description"], userData["interest"], userData["skills"]).then(function (res) {
+			router.push("Home")
+		}) // pass interest as algoData for now
 	}
 
 	function updateFormValues(e) {
@@ -67,6 +80,18 @@ export default function AccountCreationPage() {
 			interest: selectedTags,
 		});
 	}, [selectedTags]);
+
+	useEffect(() => {
+		// On show screen, intialise the API
+		const authToken = localStorage.getItem("authorisation_token");
+		if (authToken === null)
+			return console.error("Authorisation Token returned Null.");
+		if (authToken === undefined) {
+			console.error("Authorisation Token returned Undefined.");
+		}
+
+		api = new PMApi(authToken)
+	}, [])
 
 	return (
 		<div className="absolute flex h-full w-full flex-row">
@@ -310,3 +335,5 @@ function Card({ image, title, description, className }) {
 		</div>
 	);
 }
+
+export const getServerSideProps = withPageAuthRequired();
