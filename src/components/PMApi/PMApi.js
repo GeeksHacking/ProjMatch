@@ -23,19 +23,17 @@ class PMApi {
 			return data;
 		} catch (err) {
 			throw new Error(`failed to get posts with err:\n${err}`);
-			return -1;
 		}
 	}
 	async updatePost(postId, updatedProj) {
 		try {
-			await axios.put(`${this.baseUrl}/posts`, {
+			const { data } = await axios.put(`${this.baseUrl}/posts`, {
 				id: postId,
 				update: updatedProj,
 			});
-			return 0;
+			return data;
 		} catch (err) {
 			throw new Error(`failed to update posts with err:\n${err}`);
-			return -1;
 		}
 	}
 	async createPost(
@@ -60,20 +58,18 @@ class PMApi {
 			return data;
 		} catch (err) {
 			throw new Error(`failed to create posts with err:\n${err}`);
-			return -1;
 		}
 	}
 	async deletePosts(postId) {
 		try {
-			await axios.delete(`${this.baseUrl}/posts`, {
+			const { data } = await axios.delete(`${this.baseUrl}/posts`, {
 				data: {
 					id: postId,
 				},
 			});
-			return 0;
+			return data;
 		} catch (err) {
 			throw new Error(`failed to delete posts with err:\n${err}`);
-			return -1;
 		}
 	}
 	async getUsers(options = false) {
@@ -85,22 +81,20 @@ class PMApi {
 			const { data } = await axios.get(`${this.baseUrl}/users${querystr}`);
 			return data;
 		} catch (err) {
-			console.error(
+			throw new Error(
 				`failed to get users with err:\n${err}\nrequest:${this.baseUrl}/users${querystr}`
 			);
-			return -1;
 		}
 	}
 	async updateUser(userId, updatedUser) {
 		try {
-			const res = await axios.put(`${this.baseUrl}/users`, {
+			const { data } = await axios.put(`${this.baseUrl}/users`, {
 				id: userId,
 				update: updatedUser,
 			});
-			return res;
+			return data;
 		} catch (err) {
-			console.error(`failed to update users with err:\n${err}`);
-			return -1;
+			throw new Error(`failed to update users with err:\n${err}`);
 		}
 	}
 	async createUser(username, contact, about, algoData, skills) {
@@ -114,8 +108,7 @@ class PMApi {
 			});
 			return data;
 		} catch (err) {
-			console.error(`failed to create user with err:\n${err}`);
-			return -1;
+			throw new Error(`failed to create user with err:\n${err}`);
 		}
 	}
 	async createImgUrl(images) {
@@ -125,8 +118,7 @@ class PMApi {
 			});
 			return data;
 		} catch (err) {
-			console.error(`failed to create img with err:\n${err}`);
-			return -1;
+			throw new Error(`failed to create img with err:\n${err}`);
 		}
 	}
 	async sendEmail(subject, content) {
@@ -137,8 +129,7 @@ class PMApi {
 			});
 			return data;
 		} catch (err) {
-			console.error(`failed to create img with err:\n${err}`);
-			return -1;
+			throw new Error(`failed to create img with err:\n${err}`);
 		}
 	}
 
@@ -151,8 +142,7 @@ class PMApi {
 			});
 			return 0;
 		} catch (err) {
-			console.error(`failed to delete users with err:\n${err}`);
-			return -1;
+			throw new Error(`failed to delete users with err:\n${err}`);
 		}
 	}
 }
