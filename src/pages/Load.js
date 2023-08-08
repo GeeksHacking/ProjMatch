@@ -69,22 +69,19 @@ export default function Load() {
 
     useEffect(() => {
         async function checkUserExists() {
-            let isExist = true
-            console.log(isLoading)
-            console.log(user)
-            if (user !== undefined) {
+			if (user !== undefined) {
                 // Check if the user exists in ProjMatch DB
                 api.getUsers({email: user.email}).then((res) => {
                     if (res !== -1) {
-                        if (res.totalUsers !== 0) { isExist = false }
-                    } else { isExist = false}
+                        if (res.totalUsers === 1) {
+							router.push("Home")
+						} else {
+							router.push("Onboarding")
+						}
+                    } else {
+						router.push("Onboarding")
+					}
                 })
-        
-                if (!isExist) {
-                    router.push("Home")
-                } else {
-                    router.push("Onboarding")
-                }
             }
         }
 
