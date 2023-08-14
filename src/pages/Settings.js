@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Switch, Dialog, Tab } from "@headlessui/react";
+import { useCookies } from "react-cookie";
 
 import PMApi from "@/components/PMApi/PMApi";
 let api = 0;
@@ -14,6 +15,7 @@ export default function SettingsPage() {
 	const [popupDisplay, setPopupDisplay] = useState(false);
 	const [userData, setUserData] = useState({});
 	const [showDeletePopup, setShowDeletePopup] = useState(false);
+	const [cookies, setCookies] = useCookies();
 
 	const handleSignOut = (e) => {
 		e.preventDefault();
@@ -70,15 +72,11 @@ export default function SettingsPage() {
 			let formData = new FormData();
 			formData.append(
 				"files",
-				updatedData.bannerImg == undefined
-					? ""
-					: updatedData.bannerImg
+				updatedData.bannerImg == undefined ? "" : updatedData.bannerImg
 			);
 			formData.append(
 				"files",
-				updatedData.bannerImg == undefined
-					? ""
-					: updatedData.profileImg
+				updatedData.bannerImg == undefined ? "" : updatedData.profileImg
 			);
 			formData.append("creatorUserID", projMatchUser._id);
 
@@ -214,6 +212,20 @@ export default function SettingsPage() {
 		}
 	}, [projMatchUser]);
 
+	useEffect(() => {
+		if (cookies["web-settings"] == undefined) {
+			setCookies("web-settings", "light");
+		}
+		if (cookies["personalization"] == undefined) {
+			setCookies("personalization", false);
+		}
+		console.log(cookies);
+	}, [cookies]);
+
+	useEffect(() => {
+		console.log(userData);
+	}, [userData]);
+
 	return (
 		<div className="absolute flex h-full w-full flex-col">
 			<Dialog
@@ -276,7 +288,10 @@ export default function SettingsPage() {
 							className="rounded-full border-3 border-[#C7C7C7]"
 						></img>
 					) : (
-						<div className="aspect-square h-full rounded-full border-3 border-[#C7C7C7] bg-gray-400"></div>
+						<img
+							src="/profileIconV2.svg"
+							className="rounded-full border-3 border-[#C7C7C7]"
+						></img>
 					)}
 					<div className="ml-5 flex h-[90%] flex-col items-start justify-end">
 						<h1 className="text-4xl font-bold text-black">Settings</h1>
@@ -471,9 +486,7 @@ export default function SettingsPage() {
 											<img
 												src={
 													typeof userData.bannerImg == "object"
-														? URL.createObjectURL(
-																userData.bannerImg
-														  )
+														? URL.createObjectURL(userData.bannerImg)
 														: userData.bannerImg
 												}
 												className="mt-2 h-36 w-full border-3 border-[#C7C7C7] object-cover object-center"
@@ -518,30 +531,23 @@ export default function SettingsPage() {
 									{Object.keys(userData).length !== 0 ? (
 										<Switch
 											checked={
-												userData.settings.web_settings.theme === "dark"
-													? true
-													: false
+												cookies["web-settings"] === "dark" ? true : false
 											}
 											onChange={() => {
-												handleValueChange("settings", {
-													...userData.settings,
-													web_settings: {
-														theme:
-															userData.settings.web_settings.theme === "dark"
-																? "light"
-																: "dark",
-													},
-												});
+												setCookies(
+													"web-settings",
+													cookies["web-settings"] === "dark" ? "light" : "dark"
+												);
 											}}
 											className={`${
-												userData.settings.web_settings.theme === "dark"
+												cookies["web-settings"] === "dark"
 													? `bg-gray-400`
 													: `bg-gray-400`
 											} relative inline-flex h-8 w-16 items-center rounded-full transition`}
 										>
 											<span
 												className={`${
-													userData.settings.web_settings.theme === "dark"
+													cookies["web-settings"] === "dark"
 														? "translate-x-9 bg-black"
 														: "translate-x-1 bg-white"
 												} flex h-6 w-6 transform items-center justify-center rounded-full transition`}
@@ -549,7 +555,7 @@ export default function SettingsPage() {
 												<img
 													className="h-1/2"
 													src={
-														userData.settings.web_settings.theme === "dark"
+														cookies["web-settings"] === "dark"
 															? "/IconsMoon.svg"
 															: "/IconsSun.svg"
 													}
@@ -575,26 +581,24 @@ export default function SettingsPage() {
 									</p>
 									{Object.keys(userData).length !== 0 ? (
 										<Switch
-											checked={userData.settings.privacy.personalization}
+											checked={
+												cookies["personalization"] === "true" ? true : false
+											}
 											onChange={() => {
-												handleValueChange("settings", {
-													...userData.settings,
-													privacy: {
-														...userData.settings.privacy,
-														personalization:
-															!userData.settings.privacy.personalization,
-													},
-												});
+												setCookies(
+													"personalization",
+													cookies["personalization"] === "true" ? false : true
+												);
 											}}
 											className={`${
-												userData.settings.privacy.personalization
+												cookies["personalization"] === "true"
 													? `bg-edit-green`
 													: `bg-delete-red`
 											} relative inline-flex h-8 w-16 items-center rounded-full transition`}
 										>
 											<span
 												className={`${
-													userData.settings.privacy.personalization
+													cookies["personalization"] === "true"
 														? "translate-x-9"
 														: "translate-x-1"
 												}
