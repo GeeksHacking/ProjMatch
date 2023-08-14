@@ -157,7 +157,11 @@ const MaxSideNav = () => {
 									className="z-40 h-14 w-14 flex-shrink-0 rounded-full border-2 border-logo-blue"
 								></img>
 							) : (
-								<div className="z-40 flex h-14 w-14 flex-shrink-0 rotate-90 items-center justify-center rounded-full border-2 border-logo-blue bg-gray-400 text-xl text-gray-800">{`=)`}</div>
+								<img
+									src="/profileIconV2.svg"
+									alt="logo"
+									className="z-40 h-14 w-14 flex-shrink-0 rounded-full border-2 border-logo-blue"
+								></img>
 							)}
 
 							<div

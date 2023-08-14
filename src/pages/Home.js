@@ -57,6 +57,10 @@ export default function Home() {
 		}
 	}, [setPosts, postReq]);
 
+	useEffect(() => {
+		console.log(posts);
+	});
+
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<UserCreation />
@@ -78,6 +82,7 @@ export default function Home() {
 }
 
 function Project({ post, uss }) {
+	console.log(uss[post.creatorUserID]);
 	return (
 		<div
 			id="project-container"
@@ -88,8 +93,7 @@ function Project({ post, uss }) {
 				className="absolute bottom-[30.7%] z-10 flex h-[12%] w-fit items-center justify-start rounded-bl-2xl rounded-tr-2xl bg-logo-blue/[0.6]"
 			>
 				<a className={`ml-4 flex flex-row items-center space-x-2`}>
-					{uss[post.creatorUserID] &&
-					uss[post.creatorUserID].userDat.profilePic ? (
+					{uss[post.creatorUserID] && uss[post.creatorUserID].profileImg ? (
 						<img
 							src={
 								uss[post.creatorUserID]
@@ -100,7 +104,11 @@ function Project({ post, uss }) {
 							className="h-14 w-14 flex-shrink-0 rounded-full drop-shadow-custom"
 						></img>
 					) : (
-						<div className="h-14 w-14 flex-shrink-0 rounded-full bg-gray-600"></div>
+						<img
+							src={"/profileIconV2.svg"}
+							alt="logo"
+							className="h-14 w-14 flex-shrink-0 rounded-full "
+						></img>
 					)}
 
 					<div className="flex flex-col items-start">
