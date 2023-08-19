@@ -50,6 +50,11 @@ export default function Load() {
 					"authorisation_token",
 					responseBody["access_token"]
 				);
+
+				axios.get(`/api/setCookie?name=authorisation_token&value=${responseBody["access_token"]}`)
+					.then(function (res) {
+						console.log("Set Token to Cookie")
+					})
 			})
 			.catch(function (err) {
 				console.error("Failed to get API Authentication Token with: ", err);
