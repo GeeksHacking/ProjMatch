@@ -43,12 +43,6 @@ export default function ProjectPage() {
 			return;
 		}
 		try {
-			const authToken = localStorage.getItem("authorisation_token");
-
-			if (authToken === undefined) {
-				console.error("Authorisation Token returned Undefined.");
-			}
-
 			api.getUsers({ email: user.email }).then((data) => {
 				setPMUser(data.users[0]);
 			});
@@ -82,35 +76,34 @@ export default function ProjectPage() {
 	}
 
 	const handleDelete = () => {
-		console.log(id);
 		api.deletePosts(id);
 		router.push(`/Home`);
 	};
 
 	const handleSavedClick = () => {
-		const authToken = localStorage.getItem("authorisation_token");
+		/* 
+		If the user saves the post, we check and do the following:
+		- If the post is already saved, we remove it from saved
+		- If the post is not saved, we save it by appending to the user's saved posts array
+
+		This is then sent to the API as an update
+		*/
+	
+		let updateData = {
+			savedPosts: pmUser.savedPosts
+		}
 
 		if (pmUser.savedPosts.includes(post._id)) {
-			const savedPosts = pmUser.savedPosts.filter(
-				(savedPost) => savedPost !== post._id
-			);
-			const updateData = {
-				savedPosts: savedPosts,
-			};
-			api.updateUser(updateData, pmUser._id);
+			// If the user has saved the post before
+			updateData.savedPosts.splice(updateData.savedPosts.indexOf(post._id), 1)
 		} else {
-			const savedPosts = [];
-			if (pmUser.savedPosts !== undefined) {
-				for (let i = 0; i < pmUser.savedPosts.length; i++) {
-					savedPosts.push(pmUser.savedPosts[i]);
-				}
-			}
-			savedPosts.push(post._id);
-			const updateData = {
-				savedPosts: savedPosts,
-			};
-			api.updateUser(updateData, pmUser._id);
+			// User has not previously saved the post
+			updateData.savedPosts.push(post._id)
 		}
+		// Update the user information in the api
+		api.updateUser(pmUser._id, updateData).then(function (res) {
+			console.log("Updated user's saved posts")
+		})
 	};
 
 	const handleToolTip = () => {
@@ -151,8 +144,6 @@ export default function ProjectPage() {
 	if (error) return <div>{error.message}</div>;
 	if (!user) return <div>Not logged in</div>;
 
-	console.log(pmUser);
-
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<div className="fixed z-20 h-screen">
@@ -189,7 +180,7 @@ export default function ProjectPage() {
 							id="title-container"
 							className="flex h-full w-[40%] flex-row items-center justify-start"
 						>
-							<h1 className="text-3xl font-bold text-black">
+							<h1 className="text-3xl font-extrabold text-black">
 								{post.projectName}
 							</h1>
 						</div>
@@ -302,7 +293,7 @@ export default function ProjectPage() {
 					>
 						<div
 							id="description-container"
-							className="flex h-full w-[80%] flex-col items-start justify-start p-5"
+							className="flex h-full w-[80%] flex-col items-start justify-start pr-5 py-5"
 						>
 							<h1 className="text-2xl font-bold text-black">Description</h1>
 							<p className="text-lg font-normal text-black">
@@ -317,7 +308,7 @@ export default function ProjectPage() {
 								id="rating-container"
 								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
-								<h2 className="text-xl font-bold text-black">Ratings</h2>
+								<h2 className="text-xl font-bold text-black">Rating</h2>
 								<Stars rating={post.ratings} />
 							</div>
 							<div

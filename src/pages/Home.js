@@ -5,6 +5,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 
 export default function Home({ posts, memusers }) {
+
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<UserCreation />
@@ -25,7 +26,7 @@ export default function Home({ posts, memusers }) {
 }
 
 function Project({ post, uss }) {
-	console.log(uss[post.creatorUserID]);
+
 	return (
 		<div
 			id="project-container"
@@ -184,24 +185,27 @@ export const getServerSideProps = withPageAuthRequired({
 		// Get All Posts
 		await api.getPosts().then(function (rawPosts) {
 			posts = rawPosts.posts;
-
-			// Get Users which created posts
-			let usersid = []
-			posts.map((post) => {
-				if (!usersid.includes(post.creatorUserID)) {
-					usersid.push(post.creatorUserID);
-					api.getUsers({ id: post.creatorUserID }).then(function (res) {
-						if (res != -1) {
-							let temp;
-							temp = memusers;
-							temp[post.creatorUserID] = res.users[0];
-							memusers = { ...temp }
-						}
-					});
-				}
-			})
 		});
-		
+
+		// Get Users which created posts
+		let usersid = []
+		posts.map((post) => {
+			if (!usersid.includes(post.creatorUserID)) {
+				usersid.push(post.creatorUserID);
+			}
+		})
+
+		for (let i = 0; i < posts.length; i++) {
+			await api.getUsers({ id: posts[i].creatorUserID }).then(function (res) {
+				if (res != -1) {
+					let temp;
+					temp = memusers;
+					temp[posts[i].creatorUserID] = res.users[0];
+					memusers = { ...temp }
+				}
+			});
+		}
+
 		return {
 			props: {
 				posts,

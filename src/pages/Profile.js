@@ -1,12 +1,11 @@
 import SideNav from "@/components/SideNav/SideNav";
 import PMApi from "@/components/PMApi/PMApi";
 import UserCreation from "@/components/UserCreation/UserCreation";
-import { withPageAuthRequired, getAccessToken } from "@auth0/nextjs-auth0";
-import Link from "next/link";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import axios from "axios";
-import { use, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+
 let api = 0;
 export default function ProfilePage() {
 	const router = useRouter();
@@ -15,12 +14,14 @@ export default function ProfilePage() {
 	const { user, error, isLoading } = useUser();
 	const [profileUser, setProfileUser] = useState(null);
 
+	// Get user information from the API
 	useEffect(() => {
 		const authToken = localStorage.getItem("authorisation_token");
 		if (!(authToken === undefined)) {
 			api = new PMApi(authToken);
 		}
 	}, []);
+
 	useEffect(() => {
 		if (id !== undefined) {
 			api.getUsers({ id: id }).then(function (res) {
@@ -122,9 +123,9 @@ export default function ProfilePage() {
 							>
 								<h1>About Me</h1>
 								<p className="w-full overflow-y-auto overflow-x-hidden whitespace-normal break-words	">
-									{profileUser.aboutMe == null
+									{profileUser.about == null
 										? "No About"
-										: profileUser.aboutMe}
+										: profileUser.about}
 								</p>
 							</div>
 						</div>
@@ -251,3 +252,5 @@ export function Project({ post }) {
 		</a>
 	);
 }
+
+export const getServerSideProps = withPageAuthRequired()
