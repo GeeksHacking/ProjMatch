@@ -2,7 +2,7 @@ import axios from "axios";
 class PMApi {
 	constructor(authToken) {
 		this.baseUrl = process.env.API_URL;
-		this.basePagelength=5;
+		this.basePagelength=100;
 		axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 	}
 	#makeQueryStr(data) {

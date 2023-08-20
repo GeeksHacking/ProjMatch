@@ -86,7 +86,7 @@ export default function Home() {
 					<div onClick={setPageLoaded(pageLoaded-1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">previous</div>
 					:<></>	}
 
-					{posts.length==posts.post?
+					{posts.length==posts.posts?
 					<div onClick={setPageLoaded(pageLoaded+1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">next</div>
 					:<></>}
 				</div>
