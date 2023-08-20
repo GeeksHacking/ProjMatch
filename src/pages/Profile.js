@@ -78,7 +78,10 @@ export default function ProfilePage() {
 							className="rounded-full border-3 border-[#C7C7C7]"
 						></img>
 					) : (
-						<div className="rounded-full border-3 border-[#C7C7C7]"></div>
+						<img
+							src="/profileIconV2.svg"
+							className="rounded-full border-3 border-[#C7C7C7]"
+						></img>
 					)}
 					{/* <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img> */}
 					<div className="ml-5 flex h-[90%] flex-col items-start justify-end">

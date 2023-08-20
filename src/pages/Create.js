@@ -234,13 +234,12 @@ export default function CreateProject() {
 									className="h-full w-full rounded-md px-2 outline-none"
 									placeholder="Enter your project's tags!"
 									onChange={(e) => setTagQuery(e.target.value)}
-									required
 								/>
 							</div>
 						</div>
 						<div className="relative w-[70%]">
 							<Combobox.Options
-								className={`absolute top-0 mt-1 w-full rounded-lg border-2 border-logo-blue bg-white`}
+								className={`absolute top-0 z-10 mt-1 w-full rounded-lg border-2 border-logo-blue bg-white`}
 							>
 								{filteredTags.length === 0 && tagQuery !== "" ? (
 									<p className="p-2">Nothing found</p>
