@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 // Dev Imports
 import { useRouter } from "next/router";
 let api = 0;
-
+let PostsPerPage=0;
 export default function Home() {
 	const { user, error, isLoading } = useUser();
 	const [posts, setPosts] = useState([]);
@@ -18,6 +18,7 @@ export default function Home() {
 	//const [ users, setUsers ] = useState({});
 	const [memusers, setMemUsers] = useState({});
 	const [authToken, setAuthToken] = useState("");
+	const [pageLoaded, setPageLoaded] = useState("");
 	let usersid = [];
 	const router = useRouter();
 
@@ -34,11 +35,15 @@ export default function Home() {
 			});
 		}
 	}, []);
-
+	useEffect(()=>{
+		api.getPosts({"page":pageLoaded}).then(function (res) {
+			setPostReq(res);
+		});
+	},[pageLoaded])
 	useEffect(() => {
 		try {
 			setPosts(postReq.posts);
-
+			PostsPerPage=postReq.PostsPerPage
 			postReq.posts.map((post) => {
 				if (!usersid.includes(post.creatorUserID)) {
 					usersid.push(post.creatorUserID);
@@ -75,6 +80,17 @@ export default function Home() {
 				) : (
 					<></>
 				)}
+				<div>
+					{
+					pageLoaded!=0?
+					<div onClick={setPageLoaded(pageLoaded-1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">previous</div>
+					:<></>	}
+
+					{posts.length==posts.posts?
+					<div onClick={setPageLoaded(pageLoaded+1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">next</div>
+					:<></>}
+				</div>
+					
 				{/* <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1> */}
 			</div>
 		</main>
