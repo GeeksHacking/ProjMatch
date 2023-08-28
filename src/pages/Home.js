@@ -42,6 +42,8 @@ export default function Home() {
 	},[pageLoaded])
 	useEffect(() => {
 		try {
+			console.log(postReq)
+			console.log((postReq.postsPerPage*postReq.page)+postReq.posts.length)
 			setPosts(postReq.posts);
 			PostsPerPage=postReq.PostsPerPage
 			postReq.posts.map((post) => {
@@ -82,12 +84,12 @@ export default function Home() {
 				)}
 				<div>
 					{
-					pageLoaded!=0?
-					<div onClick={setPageLoaded(pageLoaded-1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">previous</div>
+					pageLoaded>0?
+					<div onClick={()=>setPageLoaded(pageLoaded-1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">previous</div>
 					:<></>	}
 
-					{posts.length==posts.posts?
-					<div onClick={setPageLoaded(pageLoaded+1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">next</div>
+					{(postReq.postsPerPage*postReq.page)+postReq.posts.length<postReq.totalPosts?
+					<div onClick={()=>setPageLoaded(pageLoaded+1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">next</div>
 					:<></>}
 				</div>
 					
@@ -118,12 +120,14 @@ function Project({ post, uss }) {
 							}
 							alt="logo"
 							className="h-14 w-14 flex-shrink-0 rounded-full drop-shadow-custom"
+							loading="lazy"
 						></img>
 					) : (
 						<img
 							src={"/profileIconV2.svg"}
 							alt="logo"
 							className="h-14 w-14 flex-shrink-0 rounded-full "
+							loading="lazy"
 						></img>
 					)}
 
