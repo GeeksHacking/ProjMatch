@@ -11,6 +11,7 @@ let api
 export default function Load() {
     // State Variables
     const { user, error, isLoading } = useUser(); // Auth0 User
+	const { storedToken, setStoredToken } = useState(false)
 	if (isLoading) return <div>Loading...</div>; // Check if data is still being loaded
     const router = useRouter()
 
@@ -26,17 +27,6 @@ export default function Load() {
 
     // Get Auth Token
 	const storeAuthToken = async (accessToken) => {
-		const apiOptions = {
-			method: "GET",
-			url: `${process.env.API_URL}/authtoken`,
-			headers: {
-				"content-type": "application/x-www-form-urlencoded",
-			},
-			data: {
-				"accessToken": accessToken
-			}
-		}
-
 		try {
 			// const response = await axios.request(apiOptions)
 			const response = await axios.get(`${process.env.API_URL}/authtoken`, {
@@ -46,9 +36,13 @@ export default function Load() {
 			})
 
 			const token = response.data.token
-			console.log(token)
 
-			await axios.get(`/api/setCookie?name=authorisation_token&value=${token}`)
+			if (token.includes("ey")) {
+				await axios.get(`/api/setCookie?name=authorisation_token&value=${token}`)
+				setStoredToken(true)
+			} else {
+				throw new Error("Token does not fit valid format")
+			}
 		} catch (err) {
 			console.error(`Getting Authorisation Token failed with ${err}`)
 		}
@@ -59,7 +53,7 @@ export default function Load() {
 		const query = router.query;
 		if (
 			query != undefined &&
-			localStorage.getItem("authorisation_token") !== undefined
+			!storedToken
 		) {
 			storeAuthToken(query.code);
 		}
