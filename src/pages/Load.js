@@ -25,41 +25,34 @@ export default function Load() {
     }, [])
 
     // Get Auth Token
-    const storeAuthToken = async (accessToken) => {
-		var apiOptions = {
-			method: "POST",
-			url: "https://projmatch.us.auth0.com/oauth/token",
+	const storeAuthToken = async (accessToken) => {
+		const apiOptions = {
+			method: "GET",
+			url: `${process.env.API_URL}/authtoken`,
 			headers: {
 				"content-type": "application/x-www-form-urlencoded",
 			},
-			data: new URLSearchParams({
-				grant_type: "authorization_code",
-				client_id: process.env.OAUTH_ID,
-				client_secret: process.env.OAUTH_SECRET,
-				audience: process.env.AUTH0_AUDIENCE,
-				code: accessToken,
-				redirect_uri: `${process.env.AUTH0_BASE_URL}/Load`,
-			}),
-		};
+			data: {
+				"accessToken": accessToken
+			}
+		}
 
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				const responseBody = res.data;
-				localStorage.setItem(
-					"authorisation_token",
-					responseBody["access_token"]
-				);
-
-				axios.get(`/api/setCookie?name=authorisation_token&value=${responseBody["access_token"]}`)
-					.then(function (res) {
-						console.log("Set Token to Cookie")
-					})
+		try {
+			// const response = await axios.request(apiOptions)
+			const response = await axios.get(`${process.env.API_URL}/authtoken`, {
+				params: {
+					accessToken: accessToken
+				}
 			})
-			.catch(function (err) {
-				console.error("Failed to get API Authentication Token with: ", err);
-			});
-	};
+
+			const token = response.data.token
+			console.log(token)
+
+			await axios.get(`/api/setCookie?name=authorisation_token&value=${token}`)
+		} catch (err) {
+			console.error(`Getting Authorisation Token failed with ${err}`)
+		}
+	}
 
 	useEffect(() => {
 		if (!router.isReady) return;

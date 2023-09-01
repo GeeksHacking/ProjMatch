@@ -4,6 +4,11 @@ import UserCreation from "@/components/UserCreation/UserCreation";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 
+export const metadata = {
+	title: "",
+	description: ""
+}
+
 export default function Home({ posts, memusers }) {
 
 	return (
