@@ -4,26 +4,18 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import PMApi from "@/components/PMApi/PMApi";
 import axios from "axios";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import CircularLoader from "@/components/CircularLoader/CircularLoader";
 
 // API
 let api
 
+// Token
+let authToken
+
 export default function Load() {
     // State Variables
     const { user, error, isLoading } = useUser(); // Auth0 User
-	const { storedToken, setStoredToken } = useState(false)
-	if (isLoading) return <div>Loading...</div>; // Check if data is still being loaded
     const router = useRouter()
-
-    // On Load, instanciate the API
-    useEffect(() => {
-        const authToken = localStorage.getItem("authorisation_token")
-        if (authToken === undefined) {
-            console.error("Authorisation token returned null")
-        }
-
-        api = new PMApi(authToken)
-    }, [])
 
     // Get Auth Token
 	const storeAuthToken = async (accessToken) => {
@@ -36,10 +28,9 @@ export default function Load() {
 			})
 
 			const token = response.data.token
-
-			if (token.includes("ey")) {
+			if (response.status === 200) {
 				await axios.get(`/api/setCookie?name=authorisation_token&value=${token}`)
-				setStoredToken(true)
+				sessionStorage.setItem('token', token)
 			} else {
 				throw new Error("Token does not fit valid format")
 			}
@@ -48,42 +39,50 @@ export default function Load() {
 		}
 	}
 
-	useEffect(() => {
-		if (!router.isReady) return;
-		const query = router.query;
-		if (
-			query != undefined &&
-			!storedToken
-		) {
-			storeAuthToken(query.code);
+	// Check for Users
+	const checkForUser = async (email) => {
+		console.log("Checking user's existence")
+		const response = await api.getUsers({ email: email })
+			
+		if (response !== -1 && response.totalUsers === 1) {
+			router.push("Home")
+		} else {
+			router.push("Onboarding")
 		}
-	}, [router.isReady, router.query]);
+	}
 
-    useEffect(() => {
-        async function checkUserExists() {
-			if (user !== undefined) {
-                // Check if the user exists in ProjMatch DB
-                api.getUsers({email: user.email}).then((res) => {
-                    if (res !== -1) {
-                        if (res.totalUsers === 1) {
-							router.push("Home")
-						} else {
-							router.push("Onboarding")
-						}
-                    } else {
-						router.push("Onboarding")
-					}
-                })
-            }
-        }
+	useEffect(() => {
+		// Get Auth0 Authorisation Code and Check for User
+		const query = router.query
+		storeAuthToken(query.code)
+	}, [])
 
-        checkUserExists()
-    }, [isLoading])
+	useEffect(() => {
+		const intervalCheck = setInterval(async () => {
+			if (sessionStorage.token) {
+				// Initalise PMApi
+				if (api === undefined) {
+					api = new PMApi(sessionStorage.token)
+				}
+
+				// Call PM Users API
+				if (user !== undefined && !isLoading) {
+					await checkForUser(user.email)
+					clearInterval(intervalCheck)
+				}
+			}
+		}, 1000)
+	}, [isLoading])
 
     return (
-        <div>
-
-        </div>
+        <main className="h-full w-full absolute">
+			<div className="h-screen flex items-center justify-center">
+				<div>
+					<h2 className="text-3xl font-medium pb-10">Getting <span className="text-logo-blue">ProjMatch</span> ready for you!</h2>
+					<CircularLoader />
+				</div>
+			</div>
+		</main>
     )
 }
 
