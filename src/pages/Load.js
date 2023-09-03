@@ -9,9 +9,6 @@ import CircularLoader from "@/components/CircularLoader/CircularLoader";
 // API
 let api
 
-// Token
-let authToken
-
 export default function Load() {
     // State Variables
     const { user, error, isLoading } = useUser(); // Auth0 User
@@ -43,7 +40,8 @@ export default function Load() {
 	const checkForUser = async (email) => {
 		console.log("Checking user's existence")
 		const response = await api.getUsers({ email: email })
-			
+		
+		console.log(response)
 		if (response !== -1 && response.totalUsers === 1) {
 			router.push("Home")
 		} else {
