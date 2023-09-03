@@ -12,7 +12,7 @@ export default function SearchPage() {
 	const [tagsFilter, setTagsFilter] = useState([]);
 	const [filteredPosts, setFilteredPosts] = useState([]);
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (!(authToken === undefined)) {
 			api = new PMApi(authToken);
 		}

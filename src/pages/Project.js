@@ -23,7 +23,7 @@ export default function ProjectPage() {
 	const [showDeletePopup, setShowDeletePopup] = useState(false);
 
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 
 		if (authToken === undefined) {
 			return console.error("Authorisation Token returned Undefined.");
@@ -119,7 +119,7 @@ export default function ProjectPage() {
 
 	const handleReport = (e) => {
 		e.preventDefault();
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		const reportData = e.target.reportArea.value;
 		const reporterName = pmUser.username;
 		const reporterID = pmUser._id;

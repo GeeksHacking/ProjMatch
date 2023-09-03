@@ -66,7 +66,7 @@ const UserCreation = () => {
 
 	useEffect(() => {
 		// Check if the user exists. If not, create a new user for this user
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 
 		if (authToken === undefined) {
 			console.error("Authorisation Token returned Undefined.");

@@ -41,7 +41,7 @@ export function Project({ projMatchUser, post }) {
 	const handleSavedClick = (e) => {
 		e.preventDefault()
 
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (authToken === undefined) {
 			console.error("Authorisation Token returned Undefined.");
 		}

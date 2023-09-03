@@ -16,7 +16,7 @@ export default function ProfilePage() {
 
 	// Get user information from the API
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (!(authToken === undefined)) {
 			api = new PMApi(authToken);
 		}

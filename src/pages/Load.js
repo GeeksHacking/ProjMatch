@@ -9,9 +9,6 @@ import CircularLoader from "@/components/CircularLoader/CircularLoader";
 // API
 let api
 
-// Token
-let authToken
-
 export default function Load() {
     // State Variables
     const { user, error, isLoading } = useUser(); // Auth0 User

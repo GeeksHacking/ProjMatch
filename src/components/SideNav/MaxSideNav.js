@@ -15,7 +15,7 @@ const MaxSideNav = () => {
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (authToken === null)
 			return console.error("Authorisation Token returned Null.");
 		if (authToken === undefined) {

@@ -83,7 +83,7 @@ export default function Onboarding() {
 
 	useEffect(() => {
 		// On show screen, intialise the API
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (authToken === null)
 			return console.error("Authorisation Token returned Null.");
 		if (authToken === undefined) {

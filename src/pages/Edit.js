@@ -30,7 +30,7 @@ export default function EditProject() {
 	const { user, error, isLoading } = useUser();
 
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (authToken !== undefined) {
 			api = new PMApi(authToken);
 		} else {
