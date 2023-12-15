@@ -11,6 +11,11 @@
 a {
 	text-decoration: none;
 }
+/* Project post */
+.filter-highlight{
+/* refer to https://codepen.io/sosuke/pen/Pjoqqp*/
+filter: brightness(0) saturate(100%) invert(73%) sepia(21%) saturate(7419%) hue-rotate(313deg) brightness(107%) contrast(101%);
+}
 /* Home Page Posts */
 .post-alignment {
 	position: absolute;

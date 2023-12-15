@@ -191,8 +191,7 @@ function InterestForm({
 				Tell us more about you
 			</p>
 			<p className="mb-6 flex-shrink-0 text-lg font-light text-gray-600">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua.
+				This allows us to find the right project for you
 			</p>
 			<form
 				className="flex w-full flex-grow flex-col"
@@ -258,8 +257,7 @@ function CreatAccountForm({
 				Create Your Account
 			</p>
 			<p className="mb-6 flex-shrink-0 text-lg font-light text-gray-600">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua.
+				Join us to embark on you wonderful development journey!
 			</p>
 			<form
 				className="flex w-full flex-grow flex-col"

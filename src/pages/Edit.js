@@ -300,7 +300,7 @@ export default function EditProject() {
 
 					<input
 						type="submit"
-						defaultValue="Edit Project"
+						value="Edit Project"
 						className="mb-20 mt-10 h-11 w-[30%] rounded-full bg-logo-blue text-2xl font-bold text-white"
 					></input>
 				</form>

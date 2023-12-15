@@ -3,9 +3,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-
+let color="#FEAE00"
 const Landing = () => {
 	useEffect(() => {
+		
+		
+		
 		const pythonTimeline = anime.timeline({
 			easing: "easeOutExpo",
 			loop: false,
@@ -18,7 +21,7 @@ const Landing = () => {
 				translateY: [40, 0],
 				translateX: ["-50%", "-50%"],
 				rotateX: [-90, 0],
-				color: ["#FFFFFF", "#FEAE00"],
+				color: ["#FFFFFF", color],
 				duration: 1300,
 			},
 			1000
@@ -26,7 +29,7 @@ const Landing = () => {
 		pythonTimeline.add(
 			{
 				targets: "#blank",
-				color: ["#FFFFFF", "#FEAE00"],
+				color: ["#FFFFFF", color],
 				duration: 1300,
 			},
 			1000
@@ -38,7 +41,7 @@ const Landing = () => {
 				translateY: [0, -40],
 				translateX: ["-50%", "-50%"],
 				rotateX: [0, -90],
-				color: ["#FEAE00", "#FFFFFF"],
+				color: [color, "#FFFFFF"],
 				duration: 1300,
 			},
 			3000
@@ -46,7 +49,7 @@ const Landing = () => {
 		pythonTimeline.add(
 			{
 				targets: "#blank",
-				color: ["#FEAE00", "#FFFFFF"],
+				color: [color, "#FFFFFF"],
 				duration: 1300,
 			},
 			3000
@@ -58,7 +61,12 @@ const Landing = () => {
 		});
 
 		let animationInterval = setInterval(() => {
-			document.getElementById("word").innerHTML = "Python";
+			let langs=["Python","Javascript","React", "C++"]
+			let colors=["#FEAE00", "#00ff2b","#0d00ff","#ff0037"]
+			let No=Math.floor(Math.random()*langs.length)
+			document.getElementById("word").innerHTML = langs[No];
+			color=colors[No]
+			
 			pythonTimeline.play();
 		}, 5 * 1000);
 
@@ -77,7 +85,7 @@ const Landing = () => {
 					Get Your Next
 					<br />
 					<span id="blank">___________ Project</span>
-					<span className="word" id="word"></span>
+					<span className="word" id="word">Python</span>
 				</p>
 			</div>
 		</div>
