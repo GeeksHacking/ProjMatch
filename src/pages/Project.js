@@ -214,7 +214,7 @@ export default function ProjectPage() {
 							<img
 								src="/IconsFlag.svg"
 								alt="logo"
-								className="mx-1 h-6 w-6 flex-shrink-0 duration-150 hover:scale-110 hover:cursor-pointer"
+								className="filter-highlight text-highlight mx-1 h-6 w-6 flex-shrink-0 duration-150 hover:scale-110 hover:cursor-pointer"
 								onClick={handlePopup}
 							></img>
 							<Popup trigger={showPopup} setTrigger={setShowPopup}>

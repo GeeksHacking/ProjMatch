@@ -3,7 +3,6 @@ import PMApi from "@/components/PMApi/PMApi";
 import UserCreation from "@/components/UserCreation/UserCreation";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
-
 export const metadata = {
 	title: "",
 	description: ""
@@ -51,12 +50,14 @@ function Project({ post, uss }) {
 							}
 							alt="logo"
 							className="h-14 w-14 flex-shrink-0 rounded-full drop-shadow-custom"
+							loading="lazy"
 						></img>
 					) : (
 						<img
 							src={"/profileIconV2.svg"}
 							alt="logo"
 							className="h-14 w-14 flex-shrink-0 rounded-full "
+							loading="lazy"
 						></img>
 					)}
 

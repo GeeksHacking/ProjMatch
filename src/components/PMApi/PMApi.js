@@ -2,6 +2,7 @@ import axios from "axios";
 class PMApi {
 	constructor(authToken) {
 		this.baseUrl = process.env.API_URL;
+		this.basePagelength=100;
 		axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 	}
 	#makeQueryStr(data) {
@@ -17,7 +18,9 @@ class PMApi {
 		let querystr = "";
 		if (options) {
 			querystr = "?" + this.#makeQueryStr(options);
+			querystr+=`&postsPerPage=${this.basePagelength}`
 		}
+		querystr+=`?postsPerPage=${this.basePagelength}`
 		try {
 			const { data } = await axios.get(`${this.baseUrl}/posts${querystr}`);
 			return data;

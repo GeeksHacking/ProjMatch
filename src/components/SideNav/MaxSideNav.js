@@ -87,7 +87,7 @@ const MaxSideNav = () => {
 					href="/"
 				>
 					<img
-						src="/logo/Final.svg"
+						src="favicon.ico"
 						alt="logo"
 						className="z-40 h-12 w-12 flex-shrink-0 rounded-md"
 					></img>
