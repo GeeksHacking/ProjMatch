@@ -95,45 +95,6 @@ const Landing = () => {
 const LandingHeaderBar = () => {
 	const router = useRouter();
 
-	const storeAuthToken = async (accessToken) => {
-		var apiOptions = {
-			method: "POST",
-			url: "https://projmatch.us.auth0.com/oauth/token",
-			headers: {
-				"content-type": "application/x-www-form-urlencoded",
-			},
-			data: new URLSearchParams({
-				grant_type: "authorization_code",
-				client_id: process.env.AUTH0_CLIENT_ID,
-				client_secret: process.env.AUTH0_CLIENT_SECRET,
-				code: accessToken,
-				audience: process.env.AUTH0_AUDIENCE,
-				redirect_uri: process.env.AUTH0_BASE_URL + "/Load",
-			}),
-		};
-
-		axios
-			.request(apiOptions)
-			.then(function (res) {
-				const responseBody = res.data;
-				localStorage.setItem(
-					"authorisation_token",
-					responseBody["access_token"]
-				);
-			})
-			.catch(function (err) {
-				console.error("Failed to get API Authentication Token with: ", err);
-			});
-	};
-
-	useEffect(() => {
-		if (!router.isReady) return;
-		const query = router.query;
-		if (query != undefined) {
-			storeAuthToken(query.code);
-		}
-	}, [router.isReady, router.query]);
-
 	return (
 		<div className="relative flex w-full flex-row p-2">
 			<Link href="" className="duration-500 hover:scale-105">
@@ -141,7 +102,7 @@ const LandingHeaderBar = () => {
 			</Link>
 			<div className="ml-auto space-x-3">
 				<Link
-					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Load&audience=${process.env.AUTH0_AUDIENCE}`}
+					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Load&audience=${process.env.AUTH0_AUDIENCE}&scope=openid%20profile%20email`}
 					className=""
 				>
 					<button className="rounded-full bg-blue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">

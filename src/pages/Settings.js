@@ -61,7 +61,7 @@ export default function SettingsPage() {
 			return filtered;
 		}, {});
 
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (Object.keys(updatedData).length === 0) {
 			return;
 		}
@@ -186,7 +186,7 @@ export default function SettingsPage() {
 	};
 
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 
 		if (authToken === undefined) {
 			return console.error("No token found");

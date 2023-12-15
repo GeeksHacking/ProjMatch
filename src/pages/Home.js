@@ -3,70 +3,12 @@ import PMApi from "@/components/PMApi/PMApi";
 import UserCreation from "@/components/UserCreation/UserCreation";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import axios from "axios";
-import { useEffect, useState } from "react";
+export const metadata = {
+	title: "",
+	description: ""
+}
 
-// Dev Imports
-import { useRouter } from "next/router";
-let api = 0;
-let PostsPerPage=0;
-export default function Home() {
-	const { user, error, isLoading } = useUser();
-	const [posts, setPosts] = useState([]);
-	const [postReq, setPostReq] = useState({ posts: [] });
-	//const [ users, setUsers ] = useState({});
-	const [memusers, setMemUsers] = useState({});
-	const [authToken, setAuthToken] = useState("");
-	const [pageLoaded, setPageLoaded] = useState("");
-	let usersid = [];
-	const router = useRouter();
-
-	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
-		if (authToken === null)
-			return console.error("Authorisation Token returned Null.");
-		if (authToken === undefined) {
-			console.error("Authorisation Token returned Undefined.");
-		} else {
-			api = new PMApi(authToken);
-			api.getPosts().then(function (res) {
-				setPostReq(res);
-			});
-		}
-	}, []);
-	useEffect(()=>{
-		api.getPosts({"page":pageLoaded}).then(function (res) {
-			setPostReq(res);
-		});
-	},[pageLoaded])
-	useEffect(() => {
-		try {
-			console.log(postReq)
-			console.log((postReq.postsPerPage*postReq.page)+postReq.posts.length)
-			setPosts(postReq.posts);
-			PostsPerPage=postReq.PostsPerPage
-			postReq.posts.map((post) => {
-				if (!usersid.includes(post.creatorUserID)) {
-					usersid.push(post.creatorUserID);
-					api.getUsers({ id: post.creatorUserID }).then(function (res) {
-						if (res != -1) {
-							let temp;
-							temp = memusers;
-							temp[post.creatorUserID] = res.users[0];
-							setMemUsers({ ...temp });
-						}
-					});
-				}
-			});
-		} catch (err) {
-			console.error(err);
-		}
-	}, [setPosts, postReq]);
-
-	useEffect(() => {
-		console.log(posts);
-	});
+export default function Home({ posts, memusers }) {
 
 	return (
 		<main className="relative flex h-full w-full flex-row">
@@ -82,25 +24,13 @@ export default function Home() {
 				) : (
 					<></>
 				)}
-				<div>
-					{
-					pageLoaded>0?
-					<div onClick={()=>setPageLoaded(pageLoaded-1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">previous</div>
-					:<></>	}
-
-					{(postReq.postsPerPage*postReq.page)+postReq.posts.length<postReq.totalPosts?
-					<div onClick={()=>setPageLoaded(pageLoaded+1)} class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800">next</div>
-					:<></>}
-				</div>
-					
-				{/* <h1>{posts.length !== 0 ? posts[0].projectName : ""}</h1> */}
 			</div>
 		</main>
 	);
 }
 
 function Project({ post, uss }) {
-	console.log(uss[post.creatorUserID]);
+
 	return (
 		<div
 			id="project-container"
@@ -242,11 +172,51 @@ function Star({ value }) {
 	);
 }
 
-// Helper Functions
-function getUserData() {
-	const config = {
-		headers: { Authorization: `Bearer ${token}` },
-	};
-}
+export const getServerSideProps = withPageAuthRequired({
+	async getServerSideProps({ req, res }) {
+		// Check for presense of Authorisation Token in Local Storage
+		const authToken = req.headers.cookie
+		?.split(';')
+		.find((cookie) => cookie.trim().startsWith('authorisation_token='))
+		?.split('=')[1] || '';		
+		if (authToken === undefined) {
+			console.error("Authorisation Token returned Undefined.");
+		}
 
-export const getServerSideProps = withPageAuthRequired();
+		// Initalise API Wrapper
+		let api = new PMApi(authToken)
+		let posts = []
+		let memusers = []
+
+		// Get All Posts
+		await api.getPosts().then(function (rawPosts) {
+			posts = rawPosts.posts;
+		});
+
+		// Get Users which created posts
+		let usersid = []
+		posts.map((post) => {
+			if (!usersid.includes(post.creatorUserID)) {
+				usersid.push(post.creatorUserID);
+			}
+		})
+
+		for (let i = 0; i < posts.length; i++) {
+			await api.getUsers({ id: posts[i].creatorUserID }).then(function (res) {
+				if (res != -1) {
+					let temp;
+					temp = memusers;
+					temp[posts[i].creatorUserID] = res.users[0];
+					memusers = { ...temp }
+				}
+			});
+		}
+
+		return {
+			props: {
+				posts,
+				memusers
+			}
+		}
+	},
+});

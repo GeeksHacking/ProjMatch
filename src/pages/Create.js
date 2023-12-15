@@ -26,7 +26,7 @@ export default function CreateProject() {
 
 	// Initialise new API Object
 	useEffect(() => {
-		const authToken = localStorage.getItem("authorisation_token");
+		const authToken = sessionStorage.token
 		if (authToken !== undefined) {
 			api = new PMApi(authToken);
 		} else {

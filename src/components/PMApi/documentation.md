@@ -31,7 +31,7 @@ export default function Page{
     (declarations)
 
     useEffect(() => {
-        const authToken = localStorage.getItem("authorisation_token");
+        const authToken = sessionStorage.token
         if (authToken === null)
             return console.error("Authorisation Token returned Null.");
         if (authToken === undefined) {
@@ -63,7 +63,7 @@ export default function Page{
     // declarations
 
     useEffect(() => {
-        const authToken = localStorage.getItem("authorisation_token");
+        const authToken = sessionStorage.token
         if (authToken === null)
             return console.error("Authorisation Token returned Null.");
         if (authToken === undefined) {

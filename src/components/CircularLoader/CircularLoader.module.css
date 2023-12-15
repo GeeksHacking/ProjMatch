@@ -1,0 +1,14 @@
+.circularLoader {
+    margin: auto;
+    border: 15px solid #EAF0F6;
+    border-radius: 50%;
+    border-top: 15px solid #39529D;
+    width: 120px;
+    height: 120px;
+    animation: spinner 4s linear infinite;
+}
+
+@keyframes spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
