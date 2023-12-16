@@ -25,7 +25,7 @@ const MobileMessage = () => {
 	<div style={{display:((MobileMsg)?"block":"none")}} class="fixed w-screen h-screen z-[100000] backdrop-blur-md" >
 	    <div class="absolute w-screen h-screen bg-black opacity-30">
 	    </div>
-	    <div class="absolute rounded-md p-5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white drop-shadow-sm flex justify-items-center items-center">
+	    <div class="absolute rounded-md p-5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white drop-shadow-sm flex flex-col justify-items-center items-center">
 	    <img src="warningIcon.svg" class="w-1/10 h-1/10 py-5 pr-5"></img>
 	    <div class="flex flex-col">
 	    <p>This website is not design for this aspect ratio. Please use a desktop instead or accept the risks</p>
