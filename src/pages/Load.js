@@ -23,7 +23,7 @@ export default function Load() {
 					accessToken: accessToken
 				}
 			})
-			
+
 			const token = response.data.token
 			if (response.status === 200) {
 				await axios.get(`/api/setCookie?name=authorisation_token&value=${token}`)
