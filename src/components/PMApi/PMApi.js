@@ -2,7 +2,6 @@ import axios from "axios";
 class PMApi {
 	constructor(authToken) {
 		this.baseUrl = process.env.API_URL;
-		this.v2BaseUrl = "http://localhost:8080/api/v2";
 		this.basePagelength=100;
 		axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 	}
@@ -103,7 +102,7 @@ class PMApi {
 	}
 	async createUser(username, contact, about, algoData, skills) {
 		try {
-			const { data } = await axios.post(`${this.v2BaseUrl}/users`, {
+			const { data } = await axios.post(`${this.baseUrl}/users`, {
 				username: username,
 				contact: contact, 
 				about: about, 
