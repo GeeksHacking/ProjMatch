@@ -190,6 +190,7 @@ export const getServerSideProps = withPageAuthRequired({
 
 		// Get All Posts
 		await api.getPosts().then(function (rawPosts) {
+			console.log(rawPosts)
 			posts = rawPosts.posts;
 		});
 
@@ -202,7 +203,8 @@ export const getServerSideProps = withPageAuthRequired({
 		})
 
 		for (let i = 0; i < posts.length; i++) {
-			await api.getUsers({ id: posts[i].creatorUserID }).then(function (res) {
+			await api.getUsers({ userID: posts[i].creatorUserID }).then(function (res) {
+				console.log(res)
 				if (res != -1) {
 					let temp;
 					temp = memusers;

@@ -1,7 +1,7 @@
 import axios from "axios";
 class PMApi {
 	constructor(authToken) {
-		this.baseUrl = process.env.API_URL;
+		this.baseUrl = `${process.env.API_URL}`;
 		this.basePagelength=100;
 		axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 	}
@@ -49,15 +49,35 @@ class PMApi {
 		projImg
 	) {
 		try {
-			const { data } = await axios.post(`${this.baseUrl}/posts`, {
-				projectName: projName,
-				description: projDesc,
-				creatorUserID: projMakerId,
-				contact: projContact,
-				tags: projTags,
-				technologies: projTech,
-				images: projImg,
-			});
+			console.log(projImg)
+			let formData=new FormData();
+			for (let i=0;i<projImg.length;i++){
+			formData.append("images", projImg[i])
+			}
+			formData.append("projectName",projName)
+			formData.append("description",projDesc)
+			formData.append("creatorUserID",projMakerId)
+			formData.append("contact",projContact)
+			formData.append("tags",projTags)
+			formData.append("technologies",projTech)
+			console.log(formData)
+			const apiOptions={
+				method:"POST",
+				url:`${this.baseUrl}/posts`,
+				headers:{
+					"Content-Type": "multipart/form-data",
+				},
+				data:formData
+//				body:{
+//				projectName: projName,
+//				description: projDesc,
+//				creatorUserID: projMakerId,
+//				contact: projContact,
+//				tags: projTags,
+//				technologies: projTech,
+//			}
+			}
+			const { data } = await axios.request(apiOptions)
 			return data;
 		} catch (err) {
 			throw new Error(`failed to create posts with err:\n${err}`);

@@ -68,47 +68,7 @@ export default function CreateProject() {
 					tag.toLowerCase().includes(tagQuery.toLowerCase())
 			  );
 
-	// Send POST Request to store images
-	const createImageURL = async (project) => {
-		var formData = new FormData();
-
-		for (let i = 0; i < project.images.length; i++) {
-			formData.append("files", project.images[i]);
-		}
-		formData.append("projectName", project.projectName);
-		formData.append("creatorUserID", project.creatorUserID);
-
-		const apiOptions = {
-			method: "POST",
-			url: `${process.env.API_URL}/images`,
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem("authorisation_token")}`,
-				"Content-Type": "multipart/form-data",
-			},
-			data: formData,
-		};
-		axios.request(apiOptions).then(function (res) {
-			if (res.status == 200) {
-				const imageURLs = res.data.imageURL;
-
-				api
-					.createPost(
-						project.projectName,
-						project.description,
-						project.creatorUserID,
-						project.contact,
-						project.tags,
-						project.technologies,
-						imageURLs
-					)
-					.then((res) => {
-						if (res != -1 && res.insertedProjectWithID !== "") {
-							router.push(`Project?id=${res.insertedProjectWithID}`);
-						}
-					});
-			}
-		});
-	};
+	
 
 	// Process and Send Data
 	const handleSubmission = async (event) => {
@@ -128,8 +88,21 @@ export default function CreateProject() {
 				images: projectImages,
 				contact: event.target.projectContact.value,
 			};
+			api.createPost(
+						project.projectName,
+						project.description,
+						project.creatorUserID,
+						project.contact,
+						project.tags,
+						project.technologies,
+						project.images
+					)
+					.then((res) => {
+						if (res != -1 && res.insertedProjectWithID !== "") {
+							router.push(`Project?id=${res.insertedProjectWithID}`);
+						}
+					});
 
-			await createImageURL(project);
 		}
 	};
 
