@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PMApi from "@/components/PMApi/PMApi";
 import { Dialog } from "@headlessui/react";
-import { set } from "animejs";
+import StarsContainer from "@/components/Rating/StarsContainer";
 
 let api = 0;
 
@@ -78,32 +78,6 @@ export default function ProjectPage() {
 	const handleDelete = () => {
 		api.deletePosts(id);
 		router.push(`/Home`);
-	};
-
-	const handleSavedClick = () => {
-		/* 
-		If the user saves the post, we check and do the following:
-		- If the post is already saved, we remove it from saved
-		- If the post is not saved, we save it by appending to the user's saved posts array
-
-		This is then sent to the API as an update
-		*/
-	
-		let updateData = {
-			savedPosts: pmUser.savedPosts
-		}
-
-		if (pmUser.savedPosts.includes(post._id)) {
-			// If the user has saved the post before
-			updateData.savedPosts.splice(updateData.savedPosts.indexOf(post._id), 1)
-		} else {
-			// User has not previously saved the post
-			updateData.savedPosts.push(post._id)
-		}
-		// Update the user information in the api
-		api.updateUser(pmUser._id, updateData).then(function (res) {
-			console.log("Updated user's saved posts")
-		})
 	};
 
 	const handleToolTip = () => {
@@ -259,32 +233,9 @@ export default function ProjectPage() {
 								<Tooltip trigger={showShareToolTip}></Tooltip>
 							</div>
 
-							<button
-								className="mx-1 flex h-6 w-6 flex-shrink-0 items-center justify-center p-1 duration-150 hover:scale-110 hover:cursor-pointer"
-								onClick={handleSavedClick}
-							>
-								{pmUser.savedPosts !== undefined ? (
-									pmUser.savedPosts.includes(post._id) ? (
-										<img
-											src="/NavBarIcons/IconsSaved.svg"
-											alt="logo"
-											className="w-full flex-shrink-0"
-										></img>
-									) : (
-										<img
-											src="/NavBarIcons/IconsSaved.svg"
-											alt="logo"
-											className="w-full flex-shrink-0 invert"
-										></img>
-									)
-								) : (
-									<img
-										src="/NavBarIcons/IconsSaved.svg"
-										alt="logo"
-										className="w-full flex-shrink-0 invert"
-									></img>
-								)}
-							</button>
+ 							<div className="mx-1 flex h-6 w-6 flex-shrink-0 items-center justify-center p-1 duration-150 hover:scale-110 hover:cursor-pointer">
+								<StarsContainer rating={post.rating} api={api} postId={post._id} />
+							</div>
 						</div>
 					</div>
 					<div
@@ -309,7 +260,7 @@ export default function ProjectPage() {
 								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<h2 className="text-xl font-bold text-black">Rating</h2>
-								<Stars rating={post.ratings} />
+								<StarsContainer rating={post.ratings} />
 							</div>
 							<div
 								id="technologies-container"
@@ -401,43 +352,6 @@ function Tag({ tag }) {
 			className={`mx-2 flex h-8 w-fit min-w-[62px] flex-row items-center justify-center rounded-full bg-black`}
 		>
 			<span className="mx-4 text-lg font-bold text-white">{tag}</span>
-		</div>
-	);
-}
-
-function Stars({ rating }) {
-	let stars = [0, 0, 0, 0, 0];
-	for (let i = 0; i < rating; i++) {
-		stars[i] = 1;
-	}
-	return (
-		<div className="flex flex-row">
-			{stars.map((value) => (
-				<Star value={value} key={Math.random()} />
-			))}
-		</div>
-	);
-}
-
-function Star({ value }) {
-	if (value === 1) {
-		return (
-			<div className="flex flex-row items-center justify-center">
-				<img
-					src="/IconsStarFilled.svg"
-					alt="logo"
-					className="mx-1 h-6 w-6 flex-shrink-0"
-				></img>
-			</div>
-		);
-	}
-	return (
-		<div className="flex flex-row items-center justify-center">
-			<img
-				src="/IconsStar.svg"
-				alt="logo"
-				className="mx-1 h-6 w-6 flex-shrink-0"
-			></img>
 		</div>
 	);
 }

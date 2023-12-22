@@ -1,15 +1,12 @@
 import SideNav from "@/components/SideNav/SideNav";
-import PMApi from "@/components/PMApi/PMApi";
 import UserCreation from "@/components/UserCreation/UserCreation";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
-export const metadata = {
-	title: "",
-	description: ""
-}
+import StarsContainer from "@/components/Rating/StarsContainer";
+import PMApi from "@/components/PMApi/PMApi";
+import { useEffect } from "react";
 
-export default function Home({ posts, memusers }) {
-
+export default function Home({ posts, memusers, authToken }) {
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<UserCreation />
@@ -19,7 +16,7 @@ export default function Home({ posts, memusers }) {
 			<div className="absolute flex h-full w-full flex-col items-center justify-start">
 				{posts.length !== 0 ? (
 					posts.map((post) => (
-						<Project post={post} uss={memusers} key={post._id} />
+						<Project post={post} uss={memusers} key={post._id} api={new PMApi(authToken)} />
 					))
 				) : (
 					<></>
@@ -29,8 +26,7 @@ export default function Home({ posts, memusers }) {
 	);
 }
 
-function Project({ post, uss }) {
-
+function Project({ post, uss, api }) {
 	return (
 		<div
 			id="project-container"
@@ -110,7 +106,7 @@ function Project({ post, uss }) {
 							<Tag tag={techbud} key={techbud} />
 						)
 					)}
-					<Stars rating={post.ratings} />
+					<StarsContainer rating={post.rating} api={api} postId={post._id} />
 				</div>
 				<Link
 					className="group relative m-3 flex grow items-center justify-center overflow-hidden rounded-full bg-logo-blue p-1 text-xl transition-all duration-150"
@@ -135,43 +131,6 @@ function Tag({ tag }) {
 	);
 }
 
-function Stars({ rating }) {
-	let stars = [0, 0, 0, 0, 0];
-	for (let i = 0; i < rating; i++) {
-		stars[i] = 1;
-	}
-	return (
-		<div className="flex flex-row">
-			{stars.map((value) => (
-				<Star value={value} key={Math.random()} />
-			))}
-		</div>
-	);
-}
-
-function Star({ value }) {
-	if (value === 1) {
-		return (
-			<div className="flex flex-row items-center justify-center">
-				<img
-					src="IconsStarFill.svg"
-					alt="logo"
-					className="h-6 w-6 flex-shrink-0"
-				></img>
-			</div>
-		);
-	}
-	return (
-		<div className="flex flex-row items-center justify-center">
-			<img
-				src="IconsStar.svg"
-				alt="logo"
-				className="h-6 w-6 flex-shrink-0"
-			></img>
-		</div>
-	);
-}
-
 export const getServerSideProps = withPageAuthRequired({
 	async getServerSideProps({ req, res }) {
 		// Check for presense of Authorisation Token in Local Storage
@@ -188,36 +147,40 @@ export const getServerSideProps = withPageAuthRequired({
 		let posts = []
 		let memusers = []
 
-		// Get All Posts
-		await api.getPosts().then(function (rawPosts) {
-			console.log(rawPosts)
-			posts = rawPosts.posts;
-		});
 
-		// Get Users which created posts
-		let usersid = []
-		posts.map((post) => {
-			if (!usersid.includes(post.creatorUserID)) {
-				usersid.push(post.creatorUserID);
-			}
-		})
-
-		for (let i = 0; i < posts.length; i++) {
-			await api.getUsers({ userID: posts[i].creatorUserID }).then(function (res) {
-				console.log(res)
-				if (res != -1) {
-					let temp;
-					temp = memusers;
-					temp[posts[i].creatorUserID] = res.users[0];
-					memusers = { ...temp }
-				}
+		try {
+			// Get All Posts
+			await api.getPosts().then(function (rawPosts) {
+				posts = rawPosts.posts;
 			});
+
+			// Get Users which created posts
+			let usersid = []
+			posts.map((post) => {
+				if (!usersid.includes(post.creatorUserID)) {
+					usersid.push(post.creatorUserID);
+				}
+			})
+
+			for (let i = 0; i < posts.length; i++) {
+				await api.getUsers({ id: posts[i].creatorUserID }).then(function (res) {
+					if (res != -1) {
+						let temp;
+						temp = memusers;
+						temp[posts[i].creatorUserID] = res.users[0];
+						memusers = { ...temp }
+					}
+				});
+			}
+		} catch (err) {
+			console.error(err)
 		}
 
 		return {
 			props: {
 				posts,
-				memusers
+				memusers,
+				authToken
 			}
 		}
 	},
