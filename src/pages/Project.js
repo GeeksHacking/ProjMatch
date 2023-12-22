@@ -233,9 +233,9 @@ export default function ProjectPage() {
 								<Tooltip trigger={showShareToolTip}></Tooltip>
 							</div>
 
- 							<div className="mx-1 flex h-6 w-6 flex-shrink-0 items-center justify-center p-1 duration-150 hover:scale-110 hover:cursor-pointer">
+ 							{/* <div className="mx-1 flex h-6 w-6 flex-shrink-0 items-center justify-center p-1 duration-150 hover:scale-110 hover:cursor-pointer">
 								<StarsContainer rating={post.rating} api={api} postId={post._id} />
-							</div>
+							</div> */}
 						</div>
 					</div>
 					<div
@@ -260,7 +260,7 @@ export default function ProjectPage() {
 								className="flex h-1/5 w-full flex-col items-start justify-around"
 							>
 								<h2 className="text-xl font-bold text-black">Rating</h2>
-								<StarsContainer rating={post.ratings} />
+								<StarsContainer rating={post.rating} api={api} postId={post._id} />
 							</div>
 							<div
 								id="technologies-container"
