@@ -170,10 +170,10 @@ export default function CreateProject() {
 					</div>
 
 					<h2 className="mt-10 text-3xl font-medium">
-						Tags <RequiredIcon />
+						Technologies <RequiredIcon />
 					</h2>
 					<p className="mt-1 text-lg">
-						Add tags to help users find your project!
+						Let users know what Programming Language/Framework you use!
 					</p>
 					<Combobox
 						value={selectedTags}
@@ -205,7 +205,7 @@ export default function CreateProject() {
 							<div className="group h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
 								<Combobox.Input
 									className="h-full w-full rounded-md px-2 outline-none"
-									placeholder="Enter your project's tags!"
+									placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
 									onChange={(e) => setTagQuery(e.target.value)}
 								/>
 							</div>
@@ -247,18 +247,18 @@ export default function CreateProject() {
 					</p>
 
 					<h2 className="relative mt-10 text-3xl font-medium">
-						Technologies
+						Tags
 						<RequiredIcon />
 					</h2>
 					<p className="mt-1 text-lg">
-						Let users know what Programming Language/Framework you use!
+						Add tags to help users find your project!
 					</p>
 					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
 						<input
 							type="text"
 							name="projectTech"
 							id="projectTech"
-							placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
+							placeholder="Enter your project's tags!"
 							className="h-full w-full rounded-md px-2 outline-none"
 							required={true}
 						/>
