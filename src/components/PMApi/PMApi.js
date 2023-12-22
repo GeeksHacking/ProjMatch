@@ -80,6 +80,7 @@ class PMApi {
 		if (options) {
 			querystr = "?" + this.#makeQueryStr(options);
 		}
+
 		try {
 			const { data } = await axios.get(`${this.baseUrl}/users${querystr}`);
 			return data;

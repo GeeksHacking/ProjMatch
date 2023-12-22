@@ -1,6 +1,5 @@
 import PMApi from "@/components/PMApi/PMApi";
 import { Dialog, Tab } from "@headlessui/react";
-import e from "cors";
 import { useState, useEffect } from "react";
 import approvedTags from "src/tags.json";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";

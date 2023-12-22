@@ -17,6 +17,7 @@ module.exports = {
 			gray: colors.gray,
 			slate: colors.slate,
 			zinc: colors.zinc,
+			...colors,
 		},
 		borderWidth: {
 			DEFAULT: "1px",
