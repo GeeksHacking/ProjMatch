@@ -68,47 +68,7 @@ export default function CreateProject() {
 					tag.toLowerCase().includes(tagQuery.toLowerCase())
 			  );
 
-	// Send POST Request to store images
-	const createImageURL = async (project) => {
-		var formData = new FormData();
-
-		for (let i = 0; i < project.images.length; i++) {
-			formData.append("files", project.images[i]);
-		}
-		formData.append("projectName", project.projectName);
-		formData.append("creatorUserID", project.creatorUserID);
-
-		const apiOptions = {
-			method: "POST",
-			url: `${process.env.API_URL}/images`,
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem("authorisation_token")}`,
-				"Content-Type": "multipart/form-data",
-			},
-			data: formData,
-		};
-		axios.request(apiOptions).then(function (res) {
-			if (res.status == 200) {
-				const imageURLs = res.data.imageURL;
-
-				api
-					.createPost(
-						project.projectName,
-						project.description,
-						project.creatorUserID,
-						project.contact,
-						project.tags,
-						project.technologies,
-						imageURLs
-					)
-					.then((res) => {
-						if (res != -1 && res.insertedProjectWithID !== "") {
-							router.push(`Project?id=${res.insertedProjectWithID}`);
-						}
-					});
-			}
-		});
-	};
+	
 
 	// Process and Send Data
 	const handleSubmission = async (event) => {
@@ -128,8 +88,21 @@ export default function CreateProject() {
 				images: projectImages,
 				contact: event.target.projectContact.value,
 			};
+			api.createPost(
+						project.projectName,
+						project.description,
+						project.creatorUserID,
+						project.contact,
+						project.tags,
+						project.technologies,
+						project.images
+					)
+					.then((res) => {
+						if (res != -1 && res.insertedProjectWithID !== "") {
+							router.push(`Project?id=${res.insertedProjectWithID}`);
+						}
+					});
 
-			await createImageURL(project);
 		}
 	};
 
@@ -197,10 +170,10 @@ export default function CreateProject() {
 					</div>
 
 					<h2 className="mt-10 text-3xl font-medium">
-						Tags <RequiredIcon />
+						Technologies <RequiredIcon />
 					</h2>
 					<p className="mt-1 text-lg">
-						Add tags to help users find your project!
+						Let users know what Programming Language/Framework you use!
 					</p>
 					<Combobox
 						value={selectedTags}
@@ -232,7 +205,7 @@ export default function CreateProject() {
 							<div className="group h-11 w-full rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
 								<Combobox.Input
 									className="h-full w-full rounded-md px-2 outline-none"
-									placeholder="Enter your project's tags!"
+									placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
 									onChange={(e) => setTagQuery(e.target.value)}
 								/>
 							</div>
@@ -274,18 +247,18 @@ export default function CreateProject() {
 					</p>
 
 					<h2 className="relative mt-10 text-3xl font-medium">
-						Technologies
+						Tags
 						<RequiredIcon />
 					</h2>
 					<p className="mt-1 text-lg">
-						Let users know what Programming Language/Framework you use!
+						Add tags to help users find your project!
 					</p>
 					<div className="group h-11 w-[70%] rounded-lg bg-[#D3D3D3] p-0.5 duration-300 focus-within:bg-logo-blue">
 						<input
 							type="text"
 							name="projectTech"
 							id="projectTech"
-							placeholder="Enter your project’s technologies! e.g. SwiftUI, React, JavaScript"
+							placeholder="Enter your project's tags!"
 							className="h-full w-full rounded-md px-2 outline-none"
 							required={true}
 						/>

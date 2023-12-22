@@ -147,6 +147,7 @@ export const getServerSideProps = withPageAuthRequired({
 		let posts = []
 		let memusers = []
 
+
 		try {
 			// Get All Posts
 			await api.getPosts().then(function (rawPosts) {
