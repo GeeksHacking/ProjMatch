@@ -68,14 +68,6 @@ class PMApi {
 					"Content-Type": "multipart/form-data",
 				},
 				data:formData
-//				body:{
-//				projectName: projName,
-//				description: projDesc,
-//				creatorUserID: projMakerId,
-//				contact: projContact,
-//				tags: projTags,
-//				technologies: projTech,
-//			}
 			}
 			const { data } = await axios.request(apiOptions)
 			return data;
