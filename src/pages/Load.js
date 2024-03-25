@@ -38,10 +38,8 @@ export default function Load() {
 
 	// Check for Users
 	const checkForUser = async (email) => {
-		console.log("Checking user's existence")
 		const response = await api.getUsers({ email: email })
 		
-		console.log(response)
 		if (response !== -1 && response.totalUsers === 1) {
 			router.push("Home")
 		} else {

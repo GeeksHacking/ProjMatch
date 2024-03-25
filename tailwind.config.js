@@ -9,7 +9,7 @@ module.exports = {
 			"logo-lblue": "#779EE9",
 			"light-blue": "#C2D5F9",
 			"hover-blue": "#b2cbfa",
-			blue: "#779EE9",
+			"cblue": "#779EE9",
 			white: "#FFFFFF",
 			black: "#000000",
 			"delete-red": "#ef4444",

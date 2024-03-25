@@ -4,14 +4,32 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 import StarsContainer from "@/components/Rating/StarsContainer";
 import PMApi from "@/components/PMApi/PMApi";
-import { useEffect } from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useEffect, useState } from "react";
 
 export default function Home({ posts, memusers, authToken }) {
+	
+	const [userInfo, setUserInfo] = useState()
+	const { user } = useUser();
+ 	useEffect(() => {
+		async function getUserInfo() {
+			await new PMApi(authToken).getUsers({ email: user.email }).then((res) => {
+				if (res != -1) {
+					setUserInfo(res.users[0]);
+				}
+			});
+		}
+
+		if (user !== undefined) {
+			getUserInfo()
+		}
+	}, [user])
+
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<UserCreation />
 			<div className="fixed z-20 h-screen">
-				<SideNav />
+				<SideNav user={userInfo} />
 			</div>
 			<div className="absolute flex h-full w-full flex-col items-center justify-start">
 				{posts.length !== 0 ? (
@@ -147,7 +165,6 @@ export const getServerSideProps = withPageAuthRequired({
 		let posts = []
 		let memusers = []
 
-
 		try {
 			// Get All Posts
 			await api.getPosts().then(function (rawPosts) {
@@ -163,12 +180,12 @@ export const getServerSideProps = withPageAuthRequired({
 			})
 
 			for (let i = 0; i < posts.length; i++) {
-				await api.getUsers({ id: posts[i].creatorUserID }).then(function (res) {
+				await api.getUsers({ userID: posts[i].creatorUserID }).then(function (res) {
 					if (res != -1) {
-						let temp;
-						temp = memusers;
-						temp[posts[i].creatorUserID] = res.users[0];
-						memusers = { ...temp }
+						memusers = {
+							...memusers,
+							[posts[i].creatorUserID]: res.users[0]
+						};
 					}
 				});
 			}

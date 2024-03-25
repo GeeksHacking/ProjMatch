@@ -49,7 +49,7 @@ class PMApi {
 		projImg
 	) {
 		try {
-			console.log(projImg)
+			(projImg)
 			let formData=new FormData();
 			for (let i=0;i<projImg.length;i++){
 			formData.append("images", projImg[i])
@@ -60,7 +60,7 @@ class PMApi {
 			formData.append("contact",projContact)
 			formData.append("tags",projTags)
 			formData.append("technologies",projTech)
-			console.log(formData)
+			(formData)
 			const apiOptions={
 				method:"POST",
 				url:`${this.baseUrl}/posts`,

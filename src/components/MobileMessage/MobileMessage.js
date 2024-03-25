@@ -16,7 +16,7 @@ const MobileMessage = () => {
 		return()=>window.removeEventListener("resize", handleResize);
     });
 	const onclic=()=>{
-		console.log("not my fault")
+		("not my fault")
 		setUserT(true);
 		setMobileMsg(false);
 	}

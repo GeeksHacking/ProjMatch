@@ -55,7 +55,7 @@ export function Project({ projMatchUser, post }) {
 		
 		// Update the user information in the api
 		api.updateUser(projMatchUser._id, updateData).then(function (res) {
-			console.log("Updated user's saved posts")
+			("Updated user's saved posts")
 		})
 	}
 

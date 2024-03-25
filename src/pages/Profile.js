@@ -24,7 +24,7 @@ export default function ProfilePage() {
 
 	useEffect(() => {
 		if (id !== undefined) {
-			api.getUsers({ id: id }).then(function (res) {
+			api.getUsers({ userID: id }).then(function (res) {
 				setProfileUser(res.users[0]);
 			});
 		}

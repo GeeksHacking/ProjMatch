@@ -74,7 +74,7 @@ export default function CreateProject() {
 	const handleSubmission = async (event) => {
 		event.preventDefault();
 
-		console.log("test");
+		("test");
 
 		if (localStorage.getItem("authorisation_token") !== undefined) {
 			const project = {

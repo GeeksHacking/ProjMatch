@@ -81,8 +81,8 @@ export default function SettingsPage() {
 			formData.append("creatorUserID", projMatchUser._id);
 
 			api.createImgUrl(formData).then((res) => {
-				console.log("res");
-				console.log(res);
+				("res");
+				(res);
 				const imageURL = res.imageURL;
 				let bannerURL, profileImgURL;
 				if (imageURL.length == 2) {
@@ -219,11 +219,11 @@ export default function SettingsPage() {
 		if (cookies["personalization"] == undefined) {
 			setCookies("personalization", false);
 		}
-		console.log(cookies);
+		(cookies);
 	}, [cookies]);
 
 	useEffect(() => {
-		console.log(userData);
+		(userData);
 	}, [userData]);
 
 	return (

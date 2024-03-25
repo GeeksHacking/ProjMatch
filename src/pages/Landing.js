@@ -1,14 +1,11 @@
 import anime from "animejs";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 let color="#FEAE00"
+
 const Landing = () => {
 	useEffect(() => {
-		
-		
-		
 		const pythonTimeline = anime.timeline({
 			easing: "easeOutExpo",
 			loop: false,
@@ -105,7 +102,7 @@ const LandingHeaderBar = () => {
 					href={`https://projmatch.us.auth0.com/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_BASE_URL}/Load&audience=${process.env.AUTH0_AUDIENCE}&scope=openid%20profile%20email`}
 					className=""
 				>
-					<button className="rounded-full bg-blue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">
+					<button className="rounded-full bg-cblue px-4 pb-2 pt-1 text-center font-bold text-white duration-500 hover:scale-105">
 						Log In
 					</button>
 				</Link>

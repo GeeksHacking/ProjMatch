@@ -47,7 +47,7 @@ export default function ProjectPage() {
 				setPMUser(data.users[0]);
 			});
 
-			api.getUsers({ id: postReq.posts[0].creatorUserID }).then((data) => {
+			api.getUsers({ userID: postReq.posts[0].creatorUserID }).then((data) => {
 				setUser(data.users[0]);
 			});
 
