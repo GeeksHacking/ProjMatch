@@ -9,28 +9,11 @@ import { useEffect, useState } from "react";
 
 export default function Home({ posts, memusers, authToken }) {
 	
-	const [userInfo, setUserInfo] = useState()
-	const { user } = useUser();
- 	useEffect(() => {
-		async function getUserInfo() {
-			await new PMApi(authToken).getUsers({ email: user.email }).then((res) => {
-				if (res != -1) {
-					setUserInfo(res.users[0]);
-				}
-			});
-		}
-
-		if (user !== undefined) {
-			getUserInfo()
-		}
-	}, [user])
+	
 
 	return (
 		<main className="relative flex h-full w-full flex-row">
 			<UserCreation />
-			<div className="fixed z-20 h-screen">
-				<SideNav user={userInfo} />
-			</div>
 			<div className="absolute flex h-full w-full flex-col items-center justify-start">
 				{posts.length !== 0 ? (
 					posts.map((post) => (

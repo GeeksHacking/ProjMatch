@@ -72,7 +72,6 @@ export default function SearchPage() {
 	if (!user) return <div>Not logged in</div>;
 	return (
 		<div className="absolute flex h-full w-full flex-col items-center justify-start">
-			<SideNav />
 			<div className="absolute my-10 flex h-full w-[70%] flex-col items-center justify-start">
 				<h1 className="text-6xl font-bold text-black">Search</h1>
 				<div className="mt-10 h-16 w-full rounded-lg bg-[#C7C7C7] p-0.5 duration-150 focus-within:bg-logo-blue focus-within:duration-300">

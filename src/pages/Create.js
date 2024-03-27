@@ -108,7 +108,6 @@ export default function CreateProject() {
 
 	return (
 		<div className="absolute flex h-full w-full flex-col items-center justify-start">
-			<SideNav />
 			<div className="absolute my-10 flex h-full w-[70%] flex-col items-start justify-start">
 				<form
 					className="flex w-full flex-col items-start justify-start"

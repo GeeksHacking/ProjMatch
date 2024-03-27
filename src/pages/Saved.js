@@ -5,7 +5,6 @@ import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 export default function SavedProjects({ projMatchUser, userSavedPosts }) {
 	return (
 		<div className="absolute flex h-full w-full flex-col items-center justify-start">
-			<SideNav />
 			<div className="absolute my-10 flex h-full w-[70%] flex-col items-center justify-start">
 				<h1 className="text-6xl font-bold text-black">Saved</h1>
 				{userSavedPosts.length > 0 ? 

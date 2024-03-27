@@ -1,11 +1,36 @@
 // Components Import
-import { useState } from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import PMApi from "@/components/PMApi/PMApi";
+import { useEffect, useState } from "react";
 import styles from "./SideNav.module.css";
 import Link from "next/link";
-
-const SideNav = ({ user }) => {
+import { useRouter } from "next/router";
+let options=["/Landing","/Load","/"]
+const SideNav = ({ }) => {
 	const [open, setOpen] = useState(false);
 
+	const [userInfo, setUserInfo] = useState()
+        const { user } = useUser();
+	const path = useRouter().asPath;
+	if ((options.includes(path))){
+	return <main /> }
+        useEffect(() => {
+                async function getUserInfo() {
+			const authToken = sessionStorage.token
+			if (!(authToken === undefined)) {
+               
+                        await new PMApi(authToken).getUsers({ email: user.email }).then((res) => {
+                                if (res != -1) {
+                                        setUserInfo(res.users[0]);
+                                }
+                        });
+			}
+                }
+
+                if (user !== undefined) {
+                        getUserInfo()
+                }
+        }, [user])
 	// Navigation Data
 	const navOptions = [
 		{
@@ -35,10 +60,10 @@ const SideNav = ({ user }) => {
 		},
 	];
 
-	if (!user) return <></>
+	if (!userInfo) return <></>
 
 	return (
-		<div className={`fixed left-0 top-0 z-0 h-full w-fit`}>
+		<div className={`fixed left-0 top-0 z-100 h-full w-fit`}>
 			<div
 				className={`${
 					styles.SideNav
@@ -118,11 +143,11 @@ const SideNav = ({ user }) => {
 					<div className={`pl-3`}>
 						<Link
 							className={`group flex flex-row items-center space-x-2`}
-							href={"/Profile?id=" + user._id}
+							href={"/Profile?id=" + userInfo._id}
 						>
-							{user.profileImg !== "" ? (
+							{userInfo.profileImg !== "" ? (
 								<img
-									src={user.profileImg}
+									src={userInfo.profileImg}
 									alt="logo"
 									className="z-40 h-14 w-14 flex-shrink-0 rounded-full border-2 border-logo-blue"
 								></img>
@@ -145,13 +170,13 @@ const SideNav = ({ user }) => {
 									className={`${styles.SideNavTxt} translate-y-0.5 whitespace-nowrap text-lg font-bold text-logo-blue`}
 								>
 									{" "}
-									{user.username}{" "}
+									{userInfo.username}{" "}
 								</span>
 								<span
 									className={`${styles.SideNavTxt} -translate-y-0.5 whitespace-nowrap text-start text-lg font-bold`}
 								>
 									{" "}
-									{user.rlName}{" "}
+									{userInfo.rlName}{" "}
 								</span>
 							</div>
 						</Link>
