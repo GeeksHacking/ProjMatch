@@ -1,181 +1,75 @@
-import SideNav from "@/components/SideNav/SideNav";
-import PMApi from "@/components/PMApi/PMApi";
-import UserCreation from "@/components/UserCreation/UserCreation";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import PMApi from "@/components/PMApi/PMApi";
 
-let api = 0;
-export default function ProfilePage() {
-	const router = useRouter();
-	const { id } = router.query;
-	const [posts, setPosts] = useState([]);
-	const { user, error, isLoading } = useUser();
-	const [profileUser, setProfileUser] = useState(null);
-
-	// Get user information from the API
-	useEffect(() => {
-		const authToken = sessionStorage.token
-		if (!(authToken === undefined)) {
-			api = new PMApi(authToken);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (id !== undefined) {
-			api.getUsers({ userID: id }).then(function (res) {
-				setProfileUser(res.users[0]);
-			});
-		}
-	}, [id]);
-
-	useEffect(() => {
-		if (profileUser !== null) {
-			api.getPosts({ userID: profileUser._id }).then(function (res) {
-				setPosts(res.posts);
-			});
-			if (
-				String(profileUser.contactLink).match(
-					/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-				)
-			) {
-				setProfileUser({
-					...profileUser,
-					contactLink: `mailto:${profileUser.contactLink}`,
-				});
-			} else if (String(profileUser.contact).match(/^\d{10}$/)) {
-				setProfileUser({
-					...profileUser,
-					contactLink: `tel:${profileUser.contact}`,
-				});
-			}
-		}
-	}, [profileUser]);
-
-	if (isLoading) return <div>Loading...</div>;
-	if (error) return <div>{error.message}</div>;
-	if (!user) return <div>Not logged in</div>;
-	if (profileUser === null) return <div>Loading...</div>;
-
+export default function ProfilePage(props) {
 	return (
-		<div className="absolute flex h-full w-full flex-col">
-			<UserCreation />
-			<SideNav />
-			{profileUser.bannerImg !== "" ? (
+		<main className="h-full">
+			{/* Banner Image */}
+			<div className="h-[20%] w-screen bg-logo-blue">
+				{props.user.bannerImg !== "" ? 
 				<img
-					src={profileUser.bannerImg}
-					id="image-banner"
-					className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue object-cover"
-				></img>
-			) : (
-				<div className="absolute z-[-1] h-[20%] w-full border-b-2 border-[#C7C7C7] bg-logo-blue object-cover"></div>
-			)}
-			<div className="absolute left-[14%] top-[10%] z-[-1] flex h-[20%] w-[70%] flex-col">
-				<div id="pfp-name" className="flex h-full w-full flex-row ">
-					{profileUser.profileImg !== "" ? (
-						<img
-							src={profileUser.profileImg}
-							className="rounded-full border-3 border-[#C7C7C7]"
-						></img>
-					) : (
-						<img
-							src="/profileIconV2.svg"
-							className="rounded-full border-3 border-[#C7C7C7]"
-						></img>
-					)}
-					{/* <img src="/NavBarIcons/IconsProfile.jpg" className="rounded-full border-3 border-[#C7C7C7]"></img> */}
-					<div className="ml-5 flex h-[90%] flex-col items-start justify-end">
-						<h1 className="text-4xl font-bold text-black">
-							{profileUser.username}
-						</h1>
-						<h3 className="text-xl text-logo-blue">{profileUser.rlName}</h3>
-					</div>
+					src={props.user.bannerImg}
+ 					className="object-fill h-full w-full"
+				></img> : <></>}
+			</div>
+			{/* Profile Picture */}
+			<div className="absolute left-[10%] top-[10%] aspect-square flex flex-row h-[20%] w-[60%]">
+				{props.user.profileImg !== "" && false ? 
+				<img
+					src={props.user.profileImg}
+					className="rounded-full border-3 border-[#C7C7C7]"
+				></img> : 
+				<img
+					src="/profileIconV2.svg"
+					className="rounded-full border-3 border-[#C7C7C7]"
+				></img>}
+				<div className="ml-5 flex h-[90%] flex-col items-start justify-end">
+					<h1 className="md:text-5xl text-4xl font-bold text-black">
+						{props.user.username}
+					</h1>
 				</div>
 			</div>
-			<div className="absolute flex h-full w-full flex-col items-center justify-start">
-				<div
-					id="project-details-container"
-					className="relative my-10 flex w-2/3 flex-col"
-				>
-					<div
-						id="description-details-container"
-						className="mt-[25%] flex h-[40vh] w-full flex-row"
-					>
-						<div
-							id="description-container"
-							className="flex h-full w-[80%] flex-col items-start justify-start p-5"
-						>
-							<div
-								id="experience-container"
-								className="flex h-[30%] w-full flex-col items-start justify-start"
-							>
-								<h1>Experience</h1>
-								<p>
-									{profileUser.experience == null
-										? "No Experience"
-										: profileUser.experience}
-								</p>
-							</div>
-							<div
-								id="About-container"
-								className="flex h-[65%] w-full flex-col items-start justify-start"
-							>
-								<h1>About Me</h1>
-								<p className="w-full overflow-y-auto overflow-x-hidden whitespace-normal break-words	">
-									{profileUser.about == null
-										? "No About"
-										: profileUser.about}
-								</p>
-							</div>
+
+			{/* Main Content */}
+			<div className="px-[10%] pt-[8%] flex flex-row h-full w-full">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col gap-4">
+						<div>
+							<h2 className="font-bold md:text-4xl text-3xl mb-1">Experience</h2>
+							<p>{props.user.experience == null ? "No Experience" : props.user.experience}</p>
 						</div>
-						<div
-							id="details-container"
-							className=" flex h-full w-[20%] flex-col items-start justify-start"
-						>
-							<div
-								id="rating-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
-							>
-								<h2 className="text-xl font-bold text-black">Ratings</h2>
-								<Stars rating={3} />
-							</div>
-							<div
-								id="technologies-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
-							>
-								<h2 className="text-xl font-bold text-black">Technologies</h2>
-								<div className="flex flex-row">
-									{["Swift", "Python"].map((tag) => (
-										<Tag tag={tag} key={Math.random()} />
-									))}
-								</div>
-							</div>
-							<div
-								id="contact-container"
-								className="flex h-1/5 w-full flex-col items-start justify-center"
-							>
-								<a
-									href={profileUser.contactLink}
-									className="h-[70%] w-full rounded-md bg-logo-blue px-4 py-2 text-2xl font-bold text-white"
-								>
-									Contact
-								</a>
-							</div>
+						<div>
+							<h2 className="font-bold md:text-4xl text-3xl mb-1">About Me</h2>
+							<p>{props.user.about == null ? "No Experience" : props.user.about}</p>
 						</div>
 					</div>
-					<div id="projects-container" className="flex w-full flex-col">
-						<h1 className="text-3xl font-bold text-black">Projects</h1>
-						<div className="relative my-5 grid h-fit w-full grid-cols-3 gap-4">
-							{posts.map((post) => (
-								<Project post={post} key={post._id} />
-							))}
+					<div className="ml-auto flex flex-col gap-4">
+						<div>
+							<h2 className="font-bold md:text-4xl text-3xl mb-1">Ratings</h2>
+							<Stars rating={props.user.rating} />
+						</div>
+						<div>
+							<h2 className="font-bold md:text-4xl text-3xl mb-1">Technologies</h2>
+							<div className="flex flex-row">
+								{Array(props.user.technologies).map((tag) => (
+									<Tag tag={tag} key={Math.random()} />
+								))}
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	);
+
+			<div id="projects-container" className="flex w-full flex-col">
+				<h1 className="text-3xl font-bold text-black">Projects</h1>
+				<div className="relative my-5 grid h-fit w-full grid-cols-3 gap-4">
+					{props.userPosts.map((post) => (
+						<Project post={post} key={post._id} />
+					))}
+				</div>
+			</div>
+		</main>
+	)
 }
 
 function Tag({ tag }) {
@@ -253,4 +147,39 @@ export function Project({ post }) {
 	);
 }
 
-export const getServerSideProps = withPageAuthRequired()
+export const getServerSideProps = withPageAuthRequired({
+	async getServerSideProps({ req, res }) {
+		// Check for presense of Authorisation Token in Local Storage
+		const authToken = req.headers.cookie
+		?.split(';')
+		.find((cookie) => cookie.trim().startsWith('authorisation_token='))
+		?.split('=')[1] || '';		
+		if (authToken === undefined) {
+			console.error("Authorisation Token returned Undefined.");
+		}
+
+		// Get user ID
+		const id = req.url.match(/id=([a-zA-Z0-9]+)/)[1]
+
+		// Initalise API Wrapper
+		let api = new PMApi(authToken)
+		let user = []
+		let userPosts = [];
+		userPosts = ""
+
+		try {
+			// const userResponse = await api.getUsers({ userID: id })
+			// user = userResponse.users[0]
+		} catch (err) {
+			console.error(err)
+		}
+
+		return {
+			props: {
+				authToken,
+				user,
+				userPosts,
+			}
+		}
+	},
+});
